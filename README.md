@@ -8,73 +8,121 @@ A static web dashboard for tracking World Cup group stage predictions.
 
 | File | Purpose |
 |------|---------|
-| `index.html` | The dashboard (open this in a browser) |
-| `data.json` | All match data, predictions, actual scores |
+| `index.html` | The dashboard |
+| `data.json` | All match data, predictions, actual scores — the single source of truth |
 | `parse_predictions.ps1` | Regenerates `data.json` from Excel files |
 | `predictii *.xlsx` | Each player's predictions |
 
 ---
 
-## Hosting on GitHub Pages (free, shareable link)
+## Hosting — Netlify (free, private repo)
 
-### One-time setup (~5 minutes)
+The site is deployed via [Netlify](https://netlify.com), connected to a private GitHub repo.
+Every `git push` to `main` triggers an automatic redeploy (~30 seconds).
 
-1. **Create a GitHub account** at https://github.com if you don't have one.
+**Live URL:** `https://mondial2026.netlify.app` *(update if you renamed it)*
 
-2. **Create a new repository**
-   - Click the **+** icon → "New repository"
-   - Name it something like `mondial-2026`
-   - Set it to **Public** (required for free GitHub Pages)
-   - Click **Create repository**
+### One-time setup (already done)
 
-3. **Upload the files**
-   - On the new repo page, click **"uploading an existing file"**
-   - Drag and drop: `index.html` and `data.json`
-   - Click **Commit changes**
-
-4. **Enable GitHub Pages**
-   - Go to your repo **Settings** → scroll down to **Pages**
-   - Under "Source", select **Deploy from a branch**
-   - Branch: `main`, Folder: `/ (root)`
-   - Click **Save**
-
-5. **Get the link**
-   - Wait ~1 minute, then refresh the Pages settings
-   - Your site will be at: `https://YOUR-USERNAME.github.io/mondial-2026/`
-   - Share this link with everyone!
+1. Create a private GitHub repo and push the files (see "Pushing to GitHub" below)
+2. Sign in to [app.netlify.com](https://app.netlify.com) with GitHub
+3. "Add new site" → pick the repo → Deploy
+4. Optionally rename: **Site configuration → Site details → Change site name**
 
 ---
 
-## Updating actual scores
+## Common commands
 
-### Option A — Admin Mode (easiest, no git knowledge needed)
+All commands assume you're in the project folder. Open a terminal there, or run:
 
-1. Open the site
-2. Click the **⚙ gear button** in the bottom-right corner
-3. Enter the admin password: `mondial2026` (change it in `parse_predictions.ps1`)
-4. Type actual scores into each match (format: `2-1`)
-5. Click **Export JSON**
-6. Copy the JSON, replace `data.json` on GitHub:
-   - Go to your GitHub repo
-   - Click `data.json` → click the pencil ✏️ edit icon
-   - Select all, paste the new content
-   - Click **Commit changes**
-7. Site updates in ~60 seconds ✓
+```powershell
+cd "C:\Users\tiakkel\onedrive - endava\desktop\Folderul\Personal Projects\Predictii Mondial"
+```
 
-### Option B — Direct edit
+### Regenerate data.json from Excel files
 
-Edit `data.json` locally, find the match, set `"actual_score": "2-1"` (replacing `null`).
-Then upload the updated file to GitHub as above.
+Run this whenever you add a new player or their Excel file changes:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ".\parse_predictions.ps1"
+```
+
+### Push changes to GitHub (triggers Netlify redeploy)
+
+After regenerating `data.json` or editing any file:
+
+```powershell
+git add data.json parse_predictions.ps1
+git commit -m "your message here"
+git push
+```
+
+First-time push (one-time setup, already done):
+
+```powershell
+git init
+git add index.html data.json parse_predictions.ps1 README.md
+git commit -m "Initial dashboard"
+git branch -M main
+git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git
+git push -u origin main
+```
+
+### Preview locally before pushing
+
+```powershell
+py -m http.server 8080
+```
+
+Then open http://localhost:8080 — useful for testing score colors and layout.
 
 ---
 
-## Adding more players
+## Adding a new player
 
-1. Get their Excel file (same format as the existing ones)
-2. Save it in this folder
-3. Open `parse_predictions.ps1` and add their name + file to `$playerFiles`
-4. Run the script: `.\parse_predictions.ps1`
-5. Upload the new `data.json` to GitHub
+1. Save their Excel file in this folder
+2. Open `parse_predictions.ps1` and add them to `$playerFiles` at the top:
+   ```powershell
+   $playerFiles = [ordered]@{
+       "IAKKEL"      = "$BasePath\predictii IAKKEL.xlsx"
+       "OLO"         = "$BasePath\predictii-OLO.xlsx"
+       "MARC BORLEANU" = "$BasePath\predictii BORLEANU MARC.xlsx"
+       "BEN"         = "$BasePath\predictii BEN.xlsx"
+       "NEWPLAYER"   = "$BasePath\predictii-NEWPLAYER.xlsx"  # add here
+   }
+   ```
+3. Regenerate and push:
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File ".\parse_predictions.ps1"
+   git add data.json parse_predictions.ps1
+   git commit -m "Add NEWPLAYER predictions"
+   git push
+   ```
+
+---
+
+## Updating actual scores after a match
+
+### Option A — Admin Mode on the site (easiest)
+
+1. Open the live site
+2. Click the **⚙ gear button** (bottom-right) → password: `mondial2026`
+3. Type the actual score on each match card (format: `2-1`)
+4. Click **Export JSON**
+5. Copy the JSON → replace `data.json` in the GitHub repo:
+   - Go to your GitHub repo → click `data.json` → pencil ✏️ edit icon
+   - Select all, paste → **Commit changes**
+6. Netlify redeploys in ~30 seconds ✓
+
+### Option B — Edit data.json directly
+
+Open `data.json`, find the match, change `"actual_score": null` to `"actual_score": "2-1"`, then push:
+
+```powershell
+git add data.json
+git commit -m "Add scores for June 11"
+git push
+```
 
 ---
 
@@ -86,11 +134,4 @@ Then upload the updated file to GitHub as above.
 | Correct outcome (win/draw/loss) but wrong score | **1 point** |
 | Wrong outcome | **0 points** |
 
----
-
-## Running locally (for testing before pushing)
-
-```
-py -m http.server 8080
-```
-Then open http://localhost:8080
+Colors on the dashboard: green = 3 pts, amber = 1 pt, red = 0 pts, gray = not played yet.
