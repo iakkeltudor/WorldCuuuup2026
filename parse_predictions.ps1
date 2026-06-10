@@ -18,8 +18,9 @@ param(
 $playerFiles = [ordered]@{
     "IAKKEL" = "$BasePath\predictii IAKKEL.xlsx"
     "OLO"    = "$BasePath\predictii-OLO.xlsx"
-    # Add more players below:
-    # "PLAYER3" = "$BasePath\predictii-PLAYER3.xlsx"
+    "MARC BORLEANU" = "$BasePath\predictii BORLEANU MARC.xlsx"
+    "BEN" = "$BasePath\predictii BEN.xlsx"
+    
 }
 
 # Admin password for the dashboard (change this!)
