@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Cup 2026 — Predictions</title>
+  <style>
+    :root {
+      --bg:          #08090f;
+      --surface:     #0d1120;
+      --card:        #111827;
+      --card2:       #1a2436;
+      --border:      #1e2d45;
+      --border2:     #253550;
+      --accent:      #f59e0b;
+      --accent-dim:  rgba(245,158,11,.12);
+      --accent-glow: rgba(245,158,11,.25);
+      --green:       #10b981;
+      --green-bg:    rgba(16,185,129,.13);
+      --amber:       #f59e0b;
+      --amber-bg:    rgba(245,158,11,.13);
+      --red:         #ef4444;
+      --red-bg:      rgba(239,68,68,.13);
+      --text:        #e2e8f0;
+      --text2:       #94a3b8;
+      --text3:       #4b5e75;
+      --gold:        #fbbf24;
+      --silver:      #9ca3af;
+      --bronze:      #c8854a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────── */
+    .header {
+      position: relative;
+      padding: 28px 20px 22px;
+      text-align: center;
+      background: linear-gradient(160deg, #0d1120 0%, #131f35 50%, #0d1120 100%);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(245,158,11,.10) 0%, transparent 70%);
+    }
+    .header-inner { position: relative; z-index: 1; }
+    .header h1 {
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 900;
+      letter-spacing: -.03em;
+    }
+    .header h1 em { font-style: normal; color: var(--accent); }
+    .header-sub {
+      margin-top: 5px;
+      font-size: .8rem;
+      color: var(--text2);
+      letter-spacing: .02em;
+    }
+    .header-progress {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: .72rem;
+      color: var(--text2);
+    }
+    .progress-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+    /* ── LEADERBOARD ────────────────────────────────────── */
+    .lb-wrap {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+    }
+    .section-label {
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--text3);
+      margin-bottom: 10px;
+    }
+    .lb-list {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .lb-list::-webkit-scrollbar { display: none; }
+    .lb-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      min-width: 155px;
+      flex-shrink: 0;
+      transition: border-color .15s;
+    }
+    .lb-card:hover { border-color: var(--border2); }
+    .lb-card.rank-1 { border-color: rgba(251,191,36,.35); }
+    .lb-card.rank-2 { border-color: rgba(156,163,175,.25); }
+    .lb-card.rank-3 { border-color: rgba(200,133,74,.25); }
+    .lb-medal { font-size: 1.25rem; line-height: 1; min-width: 24px; }
+    .lb-rank-num {
+      font-size: .95rem;
+      font-weight: 800;
+      color: var(--text3);
+      min-width: 24px;
+      text-align: center;
+    }
+    .lb-body { flex: 1; min-width: 0; }
+    .lb-name { font-size: .9rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lb-detail {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .lb-pip {
+      font-size: .6rem;
+      font-weight: 600;
+      border-radius: 3px;
+      padding: 1px 5px;
+      background: var(--card2);
+      color: var(--text2);
+    }
+    .lb-pip.green { background: var(--green-bg); color: var(--green); }
+    .lb-pip.amber { background: var(--amber-bg); color: var(--amber); }
+    .lb-pts { text-align: right; }
+    .lb-pts-val {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .lb-pts-lbl { font-size: .55rem; color: var(--text3); text-align: center; margin-top: 2px; }
+
+    /* ── ADMIN BAR ──────────────────────────────────────── */
+    .admin-bar {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      background: rgba(245,158,11,.08);
+      border-bottom: 1px solid rgba(245,158,11,.25);
+      font-size: .78rem;
+      color: var(--accent);
+      flex-wrap: wrap;
+    }
+    .admin-bar.on { display: flex; }
+    .admin-label { font-weight: 700; }
+    .admin-hint { margin-left: auto; font-size: .68rem; opacity: .65; }
+
+    /* ── DAY NAV ────────────────────────────────────────── */
+    .day-nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 9px 16px;
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .day-nav::-webkit-scrollbar { display: none; }
+    .day-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: .72rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      white-space: nowrap;
+      transition: all .12s;
+      line-height: 1;
+    }
+    .day-btn:hover { border-color: var(--border2); color: var(--text); }
+    .day-btn.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .day-btn.has-results { position: relative; }
+    .day-btn.has-results::after {
+      content: '';
+      position: absolute;
+      top: 3px; right: 3px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    /* ── MAIN ───────────────────────────────────────────── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 16px 60px;
+    }
+    .day-section { margin-bottom: 28px; }
+    .day-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .day-heading-text {
+      font-size: .7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .day-heading-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* ── MATCH CARD ─────────────────────────────────────── */
+    .match-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 9px;
+      overflow: hidden;
+      transition: border-color .15s;
+    }
+    .match-card:hover { border-color: var(--border2); }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+    }
+    .group-tag {
+      font-size: .62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 2px 7px;
+      white-space: nowrap;
+    }
+    .card-meta {
+      font-size: .68rem;
+      color: var(--text2);
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-meta .time { font-weight: 700; color: var(--text); }
+    .card-meta .tz   { opacity: .6; }
+    .card-meta .sep  { margin: 0 4px; opacity: .3; }
+    .card-meta .venue { opacity: .55; }
+
+    .card-body {
+      padding: 12px 14px;
+    }
+    .teams-row {
+      display: grid;
+      grid-template-columns: 1fr 80px 1fr;
+      align-items: center;
+      gap: 8px;
+    }
+    .team { display: flex; flex-direction: column; }
+    .team.away { text-align: right; }
+    .team-name {
+      font-size: clamp(.82rem, 2.2vw, 1rem);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .team-rank {
+      font-size: .63rem;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+    .score-col { text-align: center; }
+    .score-display {
+      display: inline-block;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text);
+      background: rgba(0,0,0,.28);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 5px 10px;
+      letter-spacing: .06em;
+      min-width: 58px;
+    }
+    .score-display.pending {
+      color: var(--text3);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+    .score-input {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+      background: rgba(0,0,0,.45);
+      border: 1px solid var(--accent);
+      border-radius: 7px;
+      padding: 5px 8px;
+      width: 70px;
+      text-align: center;
+      letter-spacing: .06em;
+      outline: none;
+    }
+    .score-input::placeholder { color: var(--text3); font-size: .8rem; }
+    .score-input:focus { box-shadow: 0 0 0 2px var(--accent-glow); }
+
+    /* ── PREDICTION BADGES ──────────────────────────────── */
+    .preds-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 9px 14px;
+      border-top: 1px solid var(--border);
+      background: rgba(0,0,0,.12);
+    }
+    .badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+      border-radius: 6px;
+      padding: 4px 9px;
+      min-width: 55px;
+      border: 1px solid transparent;
+      transition: all .15s;
+    }
+    .badge.st-pending { background: var(--card2); border-color: transparent; }
+    .badge.st-exact   { background: var(--green-bg); border-color: var(--green); }
+    .badge.st-outcome { background: var(--amber-bg); border-color: var(--amber); }
+    .badge.st-wrong   { background: var(--red-bg);   border-color: var(--red);   }
+
+    .badge-player {
+      font-size: .58rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--text2);
+    }
+    .badge.st-exact   .badge-player { color: var(--green); }
+    .badge.st-outcome .badge-player { color: var(--amber); }
+    .badge.st-wrong   .badge-player { color: var(--red);   }
+
+    .badge-score {
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .badge.st-exact   .badge-score { color: #d1fae5; }
+    .badge.st-outcome .badge-score { color: #fef3c7; }
+    .badge.st-wrong   .badge-score { color: #fee2e2; }
+
+    .badge-pts {
+      font-size: .57rem;
+      font-weight: 600;
+      color: var(--text3);
+    }
+    .badge.st-exact   .badge-pts { color: var(--green); }
+    .badge.st-outcome .badge-pts { color: var(--amber); }
+
+    /* ── FLOATING ADMIN BUTTON ──────────────────────────── */
+    #admin-toggle {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text3);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s;
+      z-index: 50;
+      box-shadow: 0 4px 16px rgba(0,0,0,.4);
+    }
+    #admin-toggle:hover { border-color: var(--border2); color: var(--text2); }
+    #admin-toggle.on { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+    /* ── BUTTONS ────────────────────────────────────────── */
+    .btn {
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: .75rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      transition: opacity .12s;
+    }
+    .btn:hover { opacity: .88; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    .btn-ghost:hover { background: var(--accent-dim); }
+    .btn-sm { padding: 4px 10px; font-size: .7rem; }
+
+    /* ── MODAL ──────────────────────────────────────────── */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+    .modal-bg.on { display: flex; }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      width: 100%;
+      max-width: 580px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .modal h3 { font-size: .95rem; color: var(--accent); }
+    .modal p  { font-size: .78rem; color: var(--text2); line-height: 1.5; }
+    .modal code {
+      background: rgba(255,255,255,.07);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: .8em;
+    }
+    .modal-ta {
+      flex: 1;
+      min-height: 260px;
+      background: rgba(0,0,0,.45);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: .72rem;
+      line-height: 1.45;
+      padding: 10px;
+      resize: none;
+      outline: none;
+    }
+    .modal-footer { display: flex; gap: 8px; }
+
+    /* ── LOADING / ERROR ────────────────────────────────── */
+    .state-msg {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text2);
+      font-size: .88rem;
+      line-height: 1.7;
+    }
+    .state-msg .err { color: var(--red); font-weight: 700; margin-bottom: 10px; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 540px) {
+      .teams-row { grid-template-columns: 1fr 64px 1fr; }
+      .score-display { font-size: .95rem; padding: 4px 6px; min-width: 50px; }
+      .card-meta .venue { display: none; }
+      .card-meta .sep   { display: none; }
+      .lb-pip { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────── -->
+<div class="header">
+  <div class="header-inner">
+    <h1>&#9917; World Cup <em>2026</em> &#8212; Predictions</h1>
+    <div class="header-sub">Group Stage &middot; USA &bull; Canada &bull; Mexico</div>
+    <div class="header-progress">
+      <span class="progress-dot"></span>
+      <span id="hdr-progress">Loading&hellip;</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN BAR ────────────────────────────────────── -->
+<div class="admin-bar" id="admin-bar">
+  <span class="admin-label">Admin Mode</span>
+  <button class="btn btn-ghost btn-sm" onclick="exportJSON()">Export JSON</button>
+  <button class="btn btn-ghost btn-sm" onclick="leaveAdmin()">Exit</button>
+  <span class="admin-hint">Enter actual scores &rarr; Export JSON &rarr; replace data.json in your repo &rarr; push</span>
+</div>
+
+<!-- ── LEADERBOARD ──────────────────────────────────── -->
+<div class="lb-wrap">
+  <div class="section-label">Standings</div>
+  <div class="lb-list" id="lb-list"></div>
+</div>
+
+<!-- ── DAY NAV ──────────────────────────────────────── -->
+<div class="day-nav" id="day-nav"></div>
+
+<!-- ── MATCHES ──────────────────────────────────────── -->
+<main id="main"><div class="state-msg">Loading&hellip;</div></main>
+
+<!-- ── ADMIN TOGGLE ─────────────────────────────────── -->
+<button id="admin-toggle" title="Admin Mode" onclick="enterAdmin()">&#9881;</button>
+
+<!-- ── EXPORT MODAL ─────────────────────────────────── -->
+<div class="modal-bg" id="export-modal">
+  <div class="modal">
+    <h3>Updated data.json</h3>
+    <p>
+      Copy everything below, replace <code>data.json</code> in your repo,
+      then commit &amp; push to GitHub. The site updates in ~60&nbsp;seconds.
+    </p>
+    <textarea class="modal-ta" id="export-ta" readonly></textarea>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="copyJSON(this)">Copy to clipboard</button>
+      <button class="btn btn-ghost"   onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────
+let DATA   = null;
+let ADMIN  = false;
+let FILTER = 'all';
+
+// ── Scoring helpers ───────────────────────────────────
+function matchOutcome(score) {
+  const [h, a] = score.split('-').map(Number);
+  return h > a ? 'H' : a > h ? 'A' : 'D';
+}
+function calcPts(pred, actual) {
+  if (!actual || !pred) return null;
+  if (pred.trim() === actual.trim()) return 3;
+  if (matchOutcome(pred.trim()) === matchOutcome(actual.trim())) return 1;
+  return 0;
+}
+function badgeClass(pts) {
+  if (pts === null) return 'st-pending';
+  if (pts === 3)    return 'st-exact';
+  if (pts === 1)    return 'st-outcome';
+  return 'st-wrong';
+}
+
+// ── Parse "Mexico (15)" ───────────────────────────────
+function parseTeam(str) {
+  const m = str.match(/^(.+?)\s*\((\d+)\)$/);
+  return m ? { name: m[1].trim(), rank: +m[2] } : { name: str, rank: null };
+}
+
+// ── Date helpers ──────────────────────────────────────
+function fmtDateLong(d)  {
+  return new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+function fmtDateShort(d) {
+  return new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
+// ── Group matches by date ─────────────────────────────
+function byDate() {
+  const g = {};
+  DATA.matches.forEach(m => { (g[m.date] = g[m.date] || []).push(m); });
+  return g;
+}
+
+// ── Leaderboard data ──────────────────────────────────
+function calcLB() {
+  return DATA.players.map(player => {
+    let pts = 0, exact = 0, outcome = 0, played = 0;
+    DATA.matches.forEach(m => {
+      if (!m.actual_score) return;
+      const pred = m.predictions[player];
+      if (!pred) return;
+      played++;
+      const p = calcPts(pred, m.actual_score);
+      pts += p;
+      if (p === 3) exact++;
+      if (p === 1) outcome++;
+    });
+    return { player, pts, exact, outcome, played };
+  }).sort((a, b) => b.pts - a.pts || b.exact - a.exact);
+}
+
+// ── Render leaderboard ────────────────────────────────
+function renderLB() {
+  const lb = calcLB();
+  const medals = ['🥇','🥈','🥉'];
+  document.getElementById('lb-list').innerHTML = lb.map((e, i) => {
+    const rankClass = i < 3 ? `rank-${i+1}` : '';
+    const rankIcon  = i < 3
+      ? `<div class="lb-medal">${medals[i]}</div>`
+      : `<div class="lb-rank-num">#${i+1}</div>`;
+    return `<div class="lb-card ${rankClass}">
+      ${rankIcon}
+      <div class="lb-body">
+        <div class="lb-name">${e.player}</div>
+        <div class="lb-detail">
+          <span class="lb-pip green">${e.exact}&times;exact</span>
+          <span class="lb-pip amber">${e.outcome}&times;outcome</span>
+          <span class="lb-pip">${e.played} played</span>
+        </div>
+      </div>
+      <div class="lb-pts">
+        <div class="lb-pts-val">${e.pts}</div>
+        <div class="lb-pts-lbl">pts</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Render day nav ────────────────────────────────────
+function renderNav() {
+  const groups = byDate();
+  const dates  = Object.keys(groups).sort();
+  const played = new Set(DATA.matches.filter(m => m.actual_score).map(m => m.date));
+
+  document.getElementById('day-nav').innerHTML =
+    `<button class="day-btn ${FILTER==='all'?'active':''}" onclick="setFilter('all')">All days</button>` +
+    dates.map(d =>
+      `<button class="day-btn ${FILTER===d?'active':''} ${played.has(d)?'has-results':''}"
+               onclick="setFilter('${d}')">${fmtDateShort(d)}</button>`
+    ).join('');
+}
+
+function setFilter(val) {
+  FILTER = val;
+  renderNav();
+  renderMatches();
+}
+
+// ── Build prediction badges HTML ──────────────────────
+function buildBadges(match) {
+  return DATA.players.map(player => {
+    const pred = match.predictions[player];
+    if (!pred) return '';
+    const pts  = calcPts(pred, match.actual_score);
+    const cls  = badgeClass(pts);
+    const ptsHtml = pts !== null
+      ? `<span class="badge-pts">${pts > 0 ? '+' : ''}${pts}pt${pts !== 1 ? 's' : ''}</span>`
+      : '';
+    return `<div class="badge ${cls}">
+      <span class="badge-player">${player}</span>
+      <span class="badge-score">${pred}</span>
+      ${ptsHtml}
+    </div>`;
+  }).join('');
+}
+
+// ── Render match card ─────────────────────────────────
+function renderCard(match) {
+  const ht = parseTeam(match.home);
+  const at = parseTeam(match.away);
+  const actualScore = match.actual_score;
+  const venueName   = match.venue.split(',')[0];
+
+  const scoreHtml = ADMIN
+    ? `<input class="score-input" type="text" placeholder="0-0"
+             value="${actualScore || ''}"
+             onchange="setScore(${match.id}, this.value.trim())"
+             oninput="setScore(${match.id}, this.value.trim())">`
+    : actualScore
+      ? `<div class="score-display">${actualScore}</div>`
+      : `<div class="score-display pending">vs</div>`;
+
+  return `<div class="match-card" data-id="${match.id}">
+    <div class="card-top">
+      <span class="group-tag">${match.group}</span>
+      <span class="card-meta">
+        <span class="time">${match.time}</span>
+        <span class="tz">${match.timezone}</span>
+        <span class="sep">|</span>
+        <span class="venue">${venueName}</span>
+      </span>
+    </div>
+    <div class="card-body">
+      <div class="teams-row">
+        <div class="team home">
+          <div class="team-name">${ht.name}</div>
+          ${ht.rank ? `<div class="team-rank">FIFA #${ht.rank}</div>` : ''}
+        </div>
+        <div class="score-col">${scoreHtml}</div>
+        <div class="team away">
+          <div class="team-name">${at.name}</div>
+          ${at.rank ? `<div class="team-rank">FIFA #${at.rank}</div>` : ''}
+        </div>
+      </div>
+    </div>
+    <div class="preds-row" id="preds-${match.id}">${buildBadges(match)}</div>
+  </div>`;
+}
+
+// ── Render all matches ────────────────────────────────
+function renderMatches() {
+  const groups  = byDate();
+  const dates   = Object.keys(groups).sort();
+  const visible = FILTER === 'all' ? dates : dates.filter(d => d === FILTER);
+
+  document.getElementById('main').innerHTML = visible.map(d => `
+    <div class="day-section">
+      <div class="day-heading">
+        <span class="day-heading-text">${fmtDateLong(d)}</span>
+        <div class="day-heading-line"></div>
+      </div>
+      ${groups[d].map(m => renderCard(m)).join('')}
+    </div>`
+  ).join('');
+}
+
+// ── Set actual score (admin) ──────────────────────────
+function setScore(matchId, val) {
+  const match = DATA.matches.find(m => m.id === matchId);
+  if (!match) return;
+  match.actual_score = /^\d{1,2}-\d{1,2}$/.test(val) ? val : null;
+  // Update only the badges row — keeps input focused
+  const predsEl = document.getElementById(`preds-${matchId}`);
+  if (predsEl) predsEl.innerHTML = buildBadges(match);
+  renderLB();
+}
+
+// ── Admin mode ────────────────────────────────────────
+function enterAdmin() {
+  const pwd = DATA.admin_password;
+  if (pwd) {
+    const entered = window.prompt('Enter admin password:');
+    if (entered !== pwd) { alert('Wrong password.'); return; }
+  }
+  ADMIN = true;
+  document.getElementById('admin-bar').classList.add('on');
+  document.getElementById('admin-toggle').classList.add('on');
+  renderMatches();
+}
+function leaveAdmin() {
+  ADMIN = false;
+  document.getElementById('admin-bar').classList.remove('on');
+  document.getElementById('admin-toggle').classList.remove('on');
+  renderMatches();
+}
+
+// ── JSON export ───────────────────────────────────────
+function exportJSON() {
+  document.getElementById('export-ta').value = JSON.stringify(DATA, null, 2);
+  document.getElementById('export-modal').classList.add('on');
+}
+function closeModal() {
+  document.getElementById('export-modal').classList.remove('on');
+}
+function copyJSON(btn) {
+  navigator.clipboard.writeText(document.getElementById('export-ta').value).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy to clipboard'; }, 2200);
+  });
+}
+
+// ── Init ──────────────────────────────────────────────
+async function init() {
+  try {
+    const res = await fetch('./data.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    DATA = await res.json();
+  } catch (e) {
+    document.getElementById('main').innerHTML = `
+      <div class="state-msg">
+        <div class="err">Could not load data.json</div>
+        <div>Running locally? Start a server first:</div>
+        <div style="margin:8px 0"><code style="background:var(--card);padding:4px 10px;border-radius:5px">py -m http.server 8080</code></div>
+        <div>then open <a href="http://localhost:8080" style="color:var(--accent)">localhost:8080</a></div>
+        <div style="margin-top:10px;opacity:.5">On GitHub Pages this works automatically.</div>
+      </div>`;
+    return;
+  }
+
+  // Header progress
+  const played = DATA.matches.filter(m => m.actual_score).length;
+  const total  = DATA.matches.length;
+  document.getElementById('hdr-progress').textContent =
+    `${played} of ${total} matches scored`;
+
+  renderLB();
+  renderNav();
+  renderMatches();
+
+  // Auto-scroll nav to today's date
+  const today = new Date().toISOString().slice(0, 10);
+  if (DATA.matches.some(m => m.date === today)) {
+    setFilter(today);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
