@@ -28,6 +28,7 @@ $playerFiles = [ordered]@{
     "MATEI" = "$BasePath\predictii MATEI.xlsx"
     "ADRIAN" = "$BasePath\predictii ADRIAN.xlsx"
     "ARTHUR" = "$BasePath\predictii ARTHUR.xlsx"
+    "SONE" = "$BasePath\predictii SONE.xlsx"
 }
 
 # Admin password for the dashboard (change this!)
