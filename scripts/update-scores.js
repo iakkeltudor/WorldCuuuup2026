@@ -57,7 +57,7 @@ async function main() {
   const finished = result.matches.filter(m => m.status === 'FINISHED');
   console.log(`API returned ${result.matches.length} total matches, ${finished.length} finished.`);
 
-  const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+  const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8').replace(/^﻿/, ''));
   let updatedCount = 0;
 
   for (const match of data.matches) {
