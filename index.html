@@ -584,8 +584,8 @@
         <thead>
           <tr>
             <th class="col-rank">#</th>
-            <th style="color:var(--accent)">PTS</th>
             <th class="col-player" style="text-align:left">Player</th>
+            <th style="color:var(--accent)">PTS</th>
             <th class="col-gp"   title="Matches with a known result">GP</th>
             <th title="Exact score — 3 pts" style="color:var(--green)">Exact</th>
             <th title="Correct outcome — 1 pt" style="color:var(--amber)">Outcome</th>
@@ -742,8 +742,8 @@ function renderLeagueTable() {
       : `<span class="rank-num">${i+1}</span>`;
     return `<tr class="${posClass}">
       <td class="col-rank">${rankCell}</td>
-      <td class="val-pts">${e.pts}</td>
       <td class="col-player">${e.player}</td>
+      <td class="val-pts">${e.pts}</td>
       <td class="col-gp">${e.played}</td>
       <td class="val-exact">${e.exact}</td>
       <td class="val-outcome">${e.ocount}</td>

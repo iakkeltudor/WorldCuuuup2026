@@ -54,6 +54,8 @@ async function main() {
     headers
   );
 
+  // To test during a live match, temporarily change 'FINISHED' to include 'IN_PLAY':
+  // const finished = result.matches.filter(m => m.status === 'FINISHED' || m.status === 'IN_PLAY');
   const finished = result.matches.filter(m => m.status === 'FINISHED');
   console.log(`API returned ${result.matches.length} total matches, ${finished.length} finished.`);
 
