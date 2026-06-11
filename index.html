@@ -533,6 +533,11 @@
       .score-display { font-size: .9rem; padding: 4px 6px; min-width: 48px; }
       .card-meta .venue, .card-meta .sep { display: none; }
       .pred-col { flex: 1 0 64px; }
+      /* Leaderboard: hide secondary columns, keep # PTS Player Exact Outcome */
+      .league-table .col-gp,
+      .league-table .col-wrong,
+      .league-table .col-ppg,
+      .league-table .col-form { display: none; }
     }
   </style>
 </head>
@@ -579,14 +584,14 @@
         <thead>
           <tr>
             <th class="col-rank">#</th>
+            <th style="color:var(--accent)">PTS</th>
             <th class="col-player" style="text-align:left">Player</th>
-            <th title="Matches with a known result">GP</th>
+            <th class="col-gp"   title="Matches with a known result">GP</th>
             <th title="Exact score — 3 pts" style="color:var(--green)">Exact</th>
             <th title="Correct outcome — 1 pt" style="color:var(--amber)">Outcome</th>
-            <th title="Wrong prediction — 0 pts" style="color:var(--red)">Wrong</th>
-            <th title="Points per game">PPG</th>
-            <th title="Last 5 results (oldest → newest)">Form</th>
-            <th style="color:var(--accent)">PTS</th>
+            <th class="col-wrong" title="Wrong prediction — 0 pts" style="color:var(--red)">Wrong</th>
+            <th class="col-ppg"  title="Points per game">PPG</th>
+            <th class="col-form" title="Last 5 results (oldest → newest)">Form</th>
           </tr>
         </thead>
         <tbody id="lb-tbody"></tbody>
@@ -737,14 +742,14 @@ function renderLeagueTable() {
       : `<span class="rank-num">${i+1}</span>`;
     return `<tr class="${posClass}">
       <td class="col-rank">${rankCell}</td>
+      <td class="val-pts">${e.pts}</td>
       <td class="col-player">${e.player}</td>
-      <td>${e.played}</td>
+      <td class="col-gp">${e.played}</td>
       <td class="val-exact">${e.exact}</td>
       <td class="val-outcome">${e.ocount}</td>
-      <td class="val-wrong">${e.wrong}</td>
-      <td class="val-ppg">${e.ppg}</td>
-      <td>${renderFormDots(getForm(e.player))}</td>
-      <td class="val-pts">${e.pts}</td>
+      <td class="col-wrong val-wrong">${e.wrong}</td>
+      <td class="col-ppg val-ppg">${e.ppg}</td>
+      <td class="col-form">${renderFormDots(getForm(e.player))}</td>
     </tr>`;
   }).join('');
 }
