@@ -20,7 +20,7 @@ A static web dashboard for tracking World Cup group stage predictions.
 The site is deployed via [Netlify](https://netlify.com), connected to a private GitHub repo.
 Every `git push` to `main` triggers an automatic redeploy (~30 seconds).
 
-**Live URL:** `https://mondial2026.netlify.app` *(update if you renamed it)*
+**Live URL:** `https://worldcuuuup.netlify.app` *(update if you renamed it)*
 
 ### One-time setup (already done)
 

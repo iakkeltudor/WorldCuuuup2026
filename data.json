@@ -1,13 +1,16 @@
 ﻿{
     "admin_password":  "mondial2026",
     "players":  [
-                    "IOAN",
+                    "MATEI",
+                    "FLORIN",
+                    "MARC-BORL",
                     "OLO",
                     "BEN",
                     "CALIN",
                     "IAKKEL",
                     "MURI",
-                    "MARC BORLEANU"
+                    "TUDOR-BORL",
+                    "IOAN"
                 ],
     "matches":  [
                     {
@@ -21,13 +24,16 @@
                         "group":  "Group A",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "3-1",
+                                            "MATEI":  "3-1",
+                                            "FLORIN":  "2-0",
+                                            "MARC-BORL":  "2-1",
                                             "OLO":  "2-0",
                                             "BEN":  "2-1",
                                             "CALIN":  "3-0",
                                             "IAKKEL":  "2-0",
                                             "MURI":  "2-1",
-                                            "MARC BORLEANU":  "2-1"
+                                            "TUDOR-BORL":  "2 1",
+                                            "IOAN":  "3-1"
                                         }
                     },
                     {
@@ -41,13 +47,16 @@
                         "group":  "Group A",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-0",
+                                            "MATEI":  "1-1",
+                                            "FLORIN":  "1-1",
+                                            "MARC-BORL":  "1-0",
                                             "OLO":  "1-2",
                                             "BEN":  "1-0",
                                             "CALIN":  "1-1",
                                             "IAKKEL":  "1-1",
                                             "MURI":  "1-1",
-                                            "MARC BORLEANU":  "1-0"
+                                            "TUDOR-BORL":  "2 1",
+                                            "IOAN":  "2-0"
                                         }
                     },
                     {
@@ -61,13 +70,16 @@
                         "group":  "Group B",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-1",
+                                            "MATEI":  "2-0",
+                                            "FLORIN":  "1-2",
+                                            "MARC-BORL":  "0-2",
                                             "OLO":  "1-1",
                                             "BEN":  "1-0",
                                             "CALIN":  "0-1",
                                             "IAKKEL":  "1-1",
                                             "MURI":  "2-2",
-                                            "MARC BORLEANU":  "0-2"
+                                            "TUDOR-BORL":  "1 0",
+                                            "IOAN":  "1-1"
                                         }
                     },
                     {
@@ -81,13 +93,16 @@
                         "group":  "Group D",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-0",
+                                            "MATEI":  "2-0",
+                                            "FLORIN":  "1-0",
+                                            "MARC-BORL":  "0-0",
                                             "OLO":  "2-1",
                                             "BEN":  "2-0",
                                             "CALIN":  "1-0",
                                             "IAKKEL":  "1-0",
                                             "MURI":  "1-0",
-                                            "MARC BORLEANU":  "0-0"
+                                            "TUDOR-BORL":  "2 2",
+                                            "IOAN":  "1-0"
                                         }
                     },
                     {
@@ -101,13 +116,16 @@
                         "group":  "Group B",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "0-3",
+                                            "MATEI":  "1-3",
+                                            "FLORIN":  "0-3",
+                                            "MARC-BORL":  "0-2",
                                             "OLO":  "0-3",
                                             "BEN":  "0-3",
                                             "CALIN":  "0-4",
                                             "IAKKEL":  "0-3",
                                             "MURI":  "0-1",
-                                            "MARC BORLEANU":  "0-2"
+                                            "TUDOR-BORL":  "1 3",
+                                            "IOAN":  "0-3"
                                         }
                     },
                     {
@@ -121,13 +139,16 @@
                         "group":  "Group C",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-3",
+                                            "MATEI":  "2-1",
+                                            "FLORIN":  "2-1",
+                                            "MARC-BORL":  "2-1",
                                             "OLO":  "1-1",
                                             "BEN":  "2-2",
                                             "CALIN":  "1-3",
                                             "IAKKEL":  "2-2",
                                             "MURI":  "1-2",
-                                            "MARC BORLEANU":  "2-1"
+                                            "TUDOR-BORL":  "2 2",
+                                            "IOAN":  "2-3"
                                         }
                     },
                     {
@@ -141,13 +162,16 @@
                         "group":  "Group C",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-5",
+                                            "MATEI":  "0-3",
+                                            "FLORIN":  "0-3",
+                                            "MARC-BORL":  "0-2",
                                             "OLO":  "0-2",
                                             "BEN":  "0-3",
                                             "CALIN":  "1-4",
                                             "IAKKEL":  "0-1",
                                             "MURI":  "0-3",
-                                            "MARC BORLEANU":  "0-2"
+                                            "TUDOR-BORL":  "0 3",
+                                            "IOAN":  "1-5"
                                         }
                     },
                     {
@@ -161,13 +185,16 @@
                         "group":  "Group D",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "0-1",
+                                            "MATEI":  "0-1",
+                                            "FLORIN":  "0-2",
+                                            "MARC-BORL":  "0-1",
                                             "OLO":  "0-1",
                                             "BEN":  "1-2",
                                             "CALIN":  "0-2",
                                             "IAKKEL":  "1-2",
                                             "MURI":  "0-1",
-                                            "MARC BORLEANU":  "0-1"
+                                            "TUDOR-BORL":  "1 2",
+                                            "IOAN":  "0-1"
                                         }
                     },
                     {
@@ -181,13 +208,16 @@
                         "group":  "Group E",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "7-0",
+                                            "MATEI":  "5-1",
+                                            "FLORIN":  "6-0",
+                                            "MARC-BORL":  "5-0",
                                             "OLO":  "4-0",
                                             "BEN":  "3-0",
                                             "CALIN":  "3-0",
                                             "IAKKEL":  "5-0",
                                             "MURI":  "5-0",
-                                            "MARC BORLEANU":  "5-0"
+                                            "TUDOR-BORL":  "6 0",
+                                            "IOAN":  "7-0"
                                         }
                     },
                     {
@@ -201,13 +231,16 @@
                         "group":  "Group F",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-3",
+                                            "MATEI":  "3-0",
+                                            "FLORIN":  "1-2",
+                                            "MARC-BORL":  "2-1",
                                             "OLO":  "0-0",
                                             "BEN":  "1-1",
                                             "CALIN":  "1-2",
                                             "IAKKEL":  "2-2",
                                             "MURI":  "1-3",
-                                            "MARC BORLEANU":  "2-1"
+                                            "TUDOR-BORL":  "1 1",
+                                            "IOAN":  "2-3"
                                         }
                     },
                     {
@@ -221,13 +254,16 @@
                         "group":  "Group E",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-1",
+                                            "MATEI":  "2-1",
+                                            "FLORIN":  "0-0",
+                                            "MARC-BORL":  "1-1",
                                             "OLO":  "0-1",
                                             "BEN":  "0-0",
                                             "CALIN":  "0-1",
                                             "IAKKEL":  "0-0",
                                             "MURI":  "0-2",
-                                            "MARC BORLEANU":  "1-1"
+                                            "TUDOR-BORL":  "2 2",
+                                            "IOAN":  "1-1"
                                         }
                     },
                     {
@@ -241,13 +277,16 @@
                         "group":  "Group F",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "3-1",
+                                            "MATEI":  "0-0",
+                                            "FLORIN":  "2-0",
+                                            "MARC-BORL":  "1-0",
                                             "OLO":  "2-1",
                                             "BEN":  "0-1",
                                             "CALIN":  "3-1",
                                             "IAKKEL":  "2-0",
                                             "MURI":  "1-1",
-                                            "MARC BORLEANU":  "1-0"
+                                            "TUDOR-BORL":  "3 0",
+                                            "IOAN":  "3-1"
                                         }
                     },
                     {
@@ -261,13 +300,16 @@
                         "group":  "Group H",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "5-0",
+                                            "MATEI":  "5-0",
+                                            "FLORIN":  "5-0",
+                                            "MARC-BORL":  "5-1",
                                             "OLO":  "4-0",
                                             "BEN":  "3-0",
                                             "CALIN":  "4-0",
                                             "IAKKEL":  "4-0",
                                             "MURI":  "4-0",
-                                            "MARC BORLEANU":  "5-1"
+                                            "TUDOR-BORL":  "7 1",
+                                            "IOAN":  "5-0"
                                         }
                     },
                     {
@@ -281,13 +323,16 @@
                         "group":  "Group G",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "3-1",
+                                            "MATEI":  "1-3",
+                                            "FLORIN":  "3-1",
+                                            "MARC-BORL":  "2-1",
                                             "OLO":  "2-1",
                                             "BEN":  "2-0",
                                             "CALIN":  "3-1",
                                             "IAKKEL":  "3-1",
                                             "MURI":  "2-1",
-                                            "MARC BORLEANU":  "2-1"
+                                            "TUDOR-BORL":  "3 2",
+                                            "IOAN":  "3-1"
                                         }
                     },
                     {
@@ -301,13 +346,16 @@
                         "group":  "Group H",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-2",
+                                            "MATEI":  "0-3",
+                                            "FLORIN":  "0-2",
+                                            "MARC-BORL":  "0-2",
                                             "OLO":  "0-2",
                                             "BEN":  "0-2",
                                             "CALIN":  "0-1",
                                             "IAKKEL":  "0-1",
                                             "MURI":  "1-1",
-                                            "MARC BORLEANU":  "0-2"
+                                            "TUDOR-BORL":  "1 4",
+                                            "IOAN":  "1-2"
                                         }
                     },
                     {
@@ -321,13 +369,16 @@
                         "group":  "Group G",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "0-0",
+                                            "MATEI":  "2-1",
+                                            "FLORIN":  "1-1",
+                                            "MARC-BORL":  "2-0",
                                             "OLO":  "3-1",
                                             "BEN":  "1-0",
                                             "CALIN":  "3-2",
                                             "IAKKEL":  "2-0",
                                             "MURI":  "1-0",
-                                            "MARC BORLEANU":  "2-0"
+                                            "TUDOR-BORL":  "3 0",
+                                            "IOAN":  "0-0"
                                         }
                     },
                     {
@@ -341,13 +392,16 @@
                         "group":  "Group I",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "4-3",
+                                            "MATEI":  "3-0",
+                                            "FLORIN":  "2-2",
+                                            "MARC-BORL":  "3-1",
                                             "OLO":  "1-1",
                                             "BEN":  "2-1",
                                             "CALIN":  "3-1",
                                             "IAKKEL":  "3-1",
                                             "MURI":  "3-1",
-                                            "MARC BORLEANU":  "3-1"
+                                            "TUDOR-BORL":  "1 1",
+                                            "IOAN":  "4-3"
                                         }
                     },
                     {
@@ -361,13 +415,16 @@
                         "group":  "Group I",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-5",
+                                            "MATEI":  "0-1",
+                                            "FLORIN":  "0-4",
+                                            "MARC-BORL":  "0-3",
                                             "OLO":  "0-3",
                                             "BEN":  "0-2",
                                             "CALIN":  "1-4",
                                             "IAKKEL":  "0-1",
                                             "MURI":  "0-2",
-                                            "MARC BORLEANU":  "0-3"
+                                            "TUDOR-BORL":  "1 2",
+                                            "IOAN":  "1-5"
                                         }
                     },
                     {
@@ -381,13 +438,16 @@
                         "group":  "Group J",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "3-0",
+                                            "MATEI":  "3-1",
+                                            "FLORIN":  "1-1",
+                                            "MARC-BORL":  "2-0",
                                             "OLO":  "2-0",
                                             "BEN":  "3-1",
                                             "CALIN":  "3-1",
                                             "IAKKEL":  "2-0",
                                             "MURI":  "3-1",
-                                            "MARC BORLEANU":  "2-0"
+                                            "TUDOR-BORL":  "4 1",
+                                            "IOAN":  "3-0"
                                         }
                     },
                     {
@@ -401,13 +461,16 @@
                         "group":  "Group J",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "4-1",
+                                            "MATEI":  "2-0",
+                                            "FLORIN":  "3-1",
+                                            "MARC-BORL":  "2-0",
                                             "OLO":  "1-0",
                                             "BEN":  "2-0",
                                             "CALIN":  "4-0",
                                             "IAKKEL":  "3-0",
                                             "MURI":  "2-0",
-                                            "MARC BORLEANU":  "2-0"
+                                            "TUDOR-BORL":  "2 0",
+                                            "IOAN":  "4-1"
                                         }
                     },
                     {
@@ -421,13 +484,16 @@
                         "group":  "Group K",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "5-2",
+                                            "MATEI":  "3-1",
+                                            "FLORIN":  "2-0",
+                                            "MARC-BORL":  "3-0",
                                             "OLO":  "2-0",
                                             "BEN":  "3-0",
                                             "CALIN":  "5-0",
                                             "IAKKEL":  "3-0",
                                             "MURI":  "2-0",
-                                            "MARC BORLEANU":  "3-0"
+                                            "TUDOR-BORL":  "3 0",
+                                            "IOAN":  "5-2"
                                         }
                     },
                     {
@@ -441,13 +507,16 @@
                         "group":  "Group L",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "3-4",
+                                            "MATEI":  "0-0",
+                                            "FLORIN":  "1-3",
+                                            "MARC-BORL":  "2-1",
                                             "OLO":  "0-0",
                                             "BEN":  "2-1",
                                             "CALIN":  "1-1",
                                             "IAKKEL":  "1-1",
                                             "MURI":  "2-2",
-                                            "MARC BORLEANU":  "2-1"
+                                            "TUDOR-BORL":  "1 1",
+                                            "IOAN":  "3-4"
                                         }
                     },
                     {
@@ -461,13 +530,16 @@
                         "group":  "Group L",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-1",
+                                            "MATEI":  "0-2",
+                                            "FLORIN":  "1-0",
+                                            "MARC-BORL":  "0-0",
                                             "OLO":  "1-1",
                                             "BEN":  "0-1",
                                             "CALIN":  "0-2",
                                             "IAKKEL":  "3-0",
                                             "MURI":  "1-0",
-                                            "MARC BORLEANU":  "0-0"
+                                            "TUDOR-BORL":  "3 0",
+                                            "IOAN":  "2-1"
                                         }
                     },
                     {
@@ -481,13 +553,16 @@
                         "group":  "Group K",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "0-3",
+                                            "MATEI":  "0-3",
+                                            "FLORIN":  "0-2",
+                                            "MARC-BORL":  "0-2",
                                             "OLO":  "0-2",
                                             "BEN":  "0-3",
                                             "CALIN":  "0-3",
                                             "IAKKEL":  "1-2",
                                             "MURI":  "0-1",
-                                            "MARC BORLEANU":  "0-2"
+                                            "TUDOR-BORL":  "0 2",
+                                            "IOAN":  "0-3"
                                         }
                     },
                     {
@@ -501,13 +576,16 @@
                         "group":  "Group A",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-0",
+                                            "MATEI":  "1-0",
+                                            "FLORIN":  "3-1",
+                                            "MARC-BORL":  "1-1",
                                             "OLO":  "1-0",
                                             "BEN":  "1-0",
                                             "CALIN":  "2-1",
                                             "IAKKEL":  "3-2",
                                             "MURI":  "1-1",
-                                            "MARC BORLEANU":  "1-1"
+                                            "TUDOR-BORL":  "0 0",
+                                            "IOAN":  "2-0"
                                         }
                     },
                     {
@@ -521,13 +599,16 @@
                         "group":  "Group B",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "3-1",
+                                            "MATEI":  "0-1",
+                                            "FLORIN":  "1-1",
+                                            "MARC-BORL":  "2-1",
                                             "OLO":  "2-1",
                                             "BEN":  "2-0",
                                             "CALIN":  "0-0",
                                             "IAKKEL":  "3-2",
                                             "MURI":  "1-1",
-                                            "MARC BORLEANU":  "2-1"
+                                            "TUDOR-BORL":  "1 0",
+                                            "IOAN":  "3-1"
                                         }
                     },
                     {
@@ -541,13 +622,16 @@
                         "group":  "Group B",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "4-1",
+                                            "MATEI":  "2-0",
+                                            "FLORIN":  "2-2",
+                                            "MARC-BORL":  "1-0",
                                             "OLO":  "2-0",
                                             "BEN":  "1-0",
                                             "CALIN":  "0-1",
                                             "IAKKEL":  "2-0",
                                             "MURI":  "2-0",
-                                            "MARC BORLEANU":  "1-0"
+                                            "TUDOR-BORL":  "3 1",
+                                            "IOAN":  "4-1"
                                         }
                     },
                     {
@@ -561,13 +645,16 @@
                         "group":  "Group A",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-1",
+                                            "MATEI":  "2-0",
+                                            "FLORIN":  "1-2",
+                                            "MARC-BORL":  "1-1",
                                             "OLO":  "1-1",
                                             "BEN":  "0-1",
                                             "CALIN":  "3-1",
                                             "IAKKEL":  "1-0",
                                             "MURI":  "2-1",
-                                            "MARC BORLEANU":  "1-1"
+                                            "TUDOR-BORL":  "2 2",
+                                            "IOAN":  "2-1"
                                         }
                     },
                     {
@@ -581,13 +668,16 @@
                         "group":  "Group D",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-1",
+                                            "MATEI":  "3-2",
+                                            "FLORIN":  "1-2",
+                                            "MARC-BORL":  "1-1",
                                             "OLO":  "1-2",
                                             "BEN":  "1-0",
                                             "CALIN":  "1-2",
                                             "IAKKEL":  "1-1",
                                             "MURI":  "1-0",
-                                            "MARC BORLEANU":  "1-1"
+                                            "TUDOR-BORL":  "1 0",
+                                            "IOAN":  "2-1"
                                         }
                     },
                     {
@@ -601,13 +691,16 @@
                         "group":  "Group C",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-1",
+                                            "MATEI":  "0-2",
+                                            "FLORIN":  "2-2",
+                                            "MARC-BORL":  "1-2",
                                             "OLO":  "2-2",
                                             "BEN":  "0-2",
                                             "CALIN":  "0-2",
                                             "IAKKEL":  "0-2",
                                             "MURI":  "1-2",
-                                            "MARC BORLEANU":  "1-2"
+                                            "TUDOR-BORL":  "1 3",
+                                            "IOAN":  "2-1"
                                         }
                     },
                     {
@@ -621,13 +714,16 @@
                         "group":  "Group C",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "7-0",
+                                            "MATEI":  "4-0",
+                                            "FLORIN":  "5-0",
+                                            "MARC-BORL":  "4-0",
                                             "OLO":  "6-0",
                                             "BEN":  "4-0",
                                             "CALIN":  "6-0",
                                             "IAKKEL":  "4-0",
                                             "MURI":  "4-0",
-                                            "MARC BORLEANU":  "4-0"
+                                            "TUDOR-BORL":  "5 1",
+                                            "IOAN":  "7-0"
                                         }
                     },
                     {
@@ -641,13 +737,16 @@
                         "group":  "Group D",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-3",
+                                            "MATEI":  "0-2",
+                                            "FLORIN":  "2-0",
+                                            "MARC-BORL":  "1-0",
                                             "OLO":  "1-1",
                                             "BEN":  "2-0",
                                             "CALIN":  "5-2",
                                             "IAKKEL":  "3-1",
                                             "MURI":  "1-0",
-                                            "MARC BORLEANU":  "1-0"
+                                            "TUDOR-BORL":  "0 0",
+                                            "IOAN":  "2-3"
                                         }
                     },
                     {
@@ -661,13 +760,16 @@
                         "group":  "Group F",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-1",
+                                            "MATEI":  "3-1",
+                                            "FLORIN":  "1-1",
+                                            "MARC-BORL":  "2-0",
                                             "OLO":  "2-0",
                                             "BEN":  "1-0",
                                             "CALIN":  "3-3",
                                             "IAKKEL":  "1-1",
                                             "MURI":  "2-2",
-                                            "MARC BORLEANU":  "2-0"
+                                            "TUDOR-BORL":  "3 2",
+                                            "IOAN":  "1-1"
                                         }
                     },
                     {
@@ -681,13 +783,16 @@
                         "group":  "Group E",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-3",
+                                            "MATEI":  "3-0",
+                                            "FLORIN":  "2-0",
+                                            "MARC-BORL":  "2-1",
                                             "OLO":  "3-1",
                                             "BEN":  "2-0",
                                             "CALIN":  "2-2",
                                             "IAKKEL":  "3-1",
                                             "MURI":  "3-0",
-                                            "MARC BORLEANU":  "2-1"
+                                            "TUDOR-BORL":  "1 2",
+                                            "IOAN":  "2-3"
                                         }
                     },
                     {
@@ -701,13 +806,16 @@
                         "group":  "Group E",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "5-0",
+                                            "MATEI":  "4-0",
+                                            "FLORIN":  "2-0",
+                                            "MARC-BORL":  "3-1",
                                             "OLO":  "2-0",
                                             "BEN":  "2-0",
                                             "CALIN":  "2-0",
                                             "IAKKEL":  "3-1",
                                             "MURI":  "4-0",
-                                            "MARC BORLEANU":  "3-1"
+                                            "TUDOR-BORL":  "3 0",
+                                            "IOAN":  "5-0"
                                         }
                     },
                     {
@@ -721,13 +829,16 @@
                         "group":  "Group F",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-1",
+                                            "MATEI":  "1-1",
+                                            "FLORIN":  "1-3",
+                                            "MARC-BORL":  "0-2",
                                             "OLO":  "1-2",
                                             "BEN":  "1-2",
                                             "CALIN":  "2-2",
                                             "IAKKEL":  "0-1",
                                             "MURI":  "1-3",
-                                            "MARC BORLEANU":  "0-2"
+                                            "TUDOR-BORL":  "1 3",
+                                            "IOAN":  "1-1"
                                         }
                     },
                     {
@@ -741,13 +852,16 @@
                         "group":  "Group H",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "5-1",
+                                            "MATEI":  "3-0",
+                                            "FLORIN":  "5-0",
+                                            "MARC-BORL":  "4-0",
                                             "OLO":  "2-0",
                                             "BEN":  "4-1",
                                             "CALIN":  "5-0",
                                             "IAKKEL":  "3-0",
                                             "MURI":  "2-0",
-                                            "MARC BORLEANU":  "4-0"
+                                            "TUDOR-BORL":  "4 0",
+                                            "IOAN":  "5-1"
                                         }
                     },
                     {
@@ -761,13 +875,16 @@
                         "group":  "Group G",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-0",
+                                            "MATEI":  "1-1",
+                                            "FLORIN":  "2-1",
+                                            "MARC-BORL":  "2-1",
                                             "OLO":  "2-1",
                                             "BEN":  "4-0",
                                             "CALIN":  "4-0",
                                             "IAKKEL":  "2-0",
                                             "MURI":  "2-0",
-                                            "MARC BORLEANU":  "2-1"
+                                            "TUDOR-BORL":  "2 1",
+                                            "IOAN":  "2-0"
                                         }
                     },
                     {
@@ -781,13 +898,16 @@
                         "group":  "Group H",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "5-1",
+                                            "MATEI":  "3-1",
+                                            "FLORIN":  "2-0",
+                                            "MARC-BORL":  "3-0",
                                             "OLO":  "3-1",
                                             "BEN":  "3-0",
                                             "CALIN":  "3-1",
                                             "IAKKEL":  "2-1",
                                             "MURI":  "3-0",
-                                            "MARC BORLEANU":  "3-0"
+                                            "TUDOR-BORL":  "3 0",
+                                            "IOAN":  "5-1"
                                         }
                     },
                     {
@@ -801,13 +921,16 @@
                         "group":  "Group G",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "0-1",
+                                            "MATEI":  "0-2",
+                                            "FLORIN":  "1-2",
+                                            "MARC-BORL":  "0-2",
                                             "OLO":  "1-1",
                                             "BEN":  "1-2",
                                             "CALIN":  "1-2",
                                             "IAKKEL":  "1-1",
                                             "MURI":  "0-2",
-                                            "MARC BORLEANU":  "0-2"
+                                            "TUDOR-BORL":  "0 2",
+                                            "IOAN":  "0-1"
                                         }
                     },
                     {
@@ -821,13 +944,16 @@
                         "group":  "Group J",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-1",
+                                            "MATEI":  "2-1",
+                                            "FLORIN":  "2-1",
+                                            "MARC-BORL":  "3-0",
                                             "OLO":  "1-0",
                                             "BEN":  "1-1",
                                             "CALIN":  "1-0",
                                             "IAKKEL":  "4-2",
                                             "MURI":  "2-1",
-                                            "MARC BORLEANU":  "3-0"
+                                            "TUDOR-BORL":  "3 1",
+                                            "IOAN":  "1-1"
                                         }
                     },
                     {
@@ -841,13 +967,16 @@
                         "group":  "Group I",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "5-0",
+                                            "MATEI":  "4-1",
+                                            "FLORIN":  "5-0",
+                                            "MARC-BORL":  "5-0",
                                             "OLO":  "4-0",
                                             "BEN":  "4-0",
                                             "CALIN":  "6-0",
                                             "IAKKEL":  "4-0",
                                             "MURI":  "3-0",
-                                            "MARC BORLEANU":  "5-0"
+                                            "TUDOR-BORL":  "4 0",
+                                            "IOAN":  "5-0"
                                         }
                     },
                     {
@@ -861,13 +990,16 @@
                         "group":  "Group I",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-1",
+                                            "MATEI":  "0-1",
+                                            "FLORIN":  "2-2",
+                                            "MARC-BORL":  "2-2",
                                             "OLO":  "0-0",
                                             "BEN":  "2-2",
                                             "CALIN":  "0-2",
                                             "IAKKEL":  "1-0",
                                             "MURI":  "3-2",
-                                            "MARC BORLEANU":  "2-2"
+                                            "TUDOR-BORL":  "3 3",
+                                            "IOAN":  "1-1"
                                         }
                     },
                     {
@@ -881,13 +1013,16 @@
                         "group":  "Group J",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "0-1",
+                                            "MATEI":  "2-1",
+                                            "FLORIN":  "0-3",
+                                            "MARC-BORL":  "0-3",
                                             "OLO":  "1-2",
                                             "BEN":  "1-3",
                                             "CALIN":  "2-4",
                                             "IAKKEL":  "1-3",
                                             "MURI":  "0-2",
-                                            "MARC BORLEANU":  "0-3"
+                                            "TUDOR-BORL":  "0 1",
+                                            "IOAN":  "0-1"
                                         }
                     },
                     {
@@ -901,13 +1036,16 @@
                         "group":  "Group K",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "3-0",
+                                            "MATEI":  "3-0",
+                                            "FLORIN":  "4-0",
+                                            "MARC-BORL":  "3-0",
                                             "OLO":  "3-1",
                                             "BEN":  "4-0",
                                             "CALIN":  "4-0",
                                             "IAKKEL":  "3-1",
                                             "MURI":  "3-1",
-                                            "MARC BORLEANU":  "3-0"
+                                            "TUDOR-BORL":  "4 1",
+                                            "IOAN":  "3-0"
                                         }
                     },
                     {
@@ -921,13 +1059,16 @@
                         "group":  "Group L",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-1",
+                                            "MATEI":  "3-0",
+                                            "FLORIN":  "2-0",
+                                            "MARC-BORL":  "3-0",
                                             "OLO":  "3-2",
                                             "BEN":  "4-0",
                                             "CALIN":  "4-0",
                                             "IAKKEL":  "2-0",
                                             "MURI":  "2-1",
-                                            "MARC BORLEANU":  "3-0"
+                                            "TUDOR-BORL":  "0 0",
+                                            "IOAN":  "2-1"
                                         }
                     },
                     {
@@ -941,13 +1082,16 @@
                         "group":  "Group L",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-5",
+                                            "MATEI":  "1-3",
+                                            "FLORIN":  "0-3",
+                                            "MARC-BORL":  "1-2",
                                             "OLO":  "0-2",
                                             "BEN":  "1-2",
                                             "CALIN":  "0-1",
                                             "IAKKEL":  "0-1",
                                             "MURI":  "0-2",
-                                            "MARC BORLEANU":  "1-2"
+                                            "TUDOR-BORL":  "0 2",
+                                            "IOAN":  "1-5"
                                         }
                     },
                     {
@@ -961,13 +1105,16 @@
                         "group":  "Group K",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "5-0",
+                                            "MATEI":  "3-0",
+                                            "FLORIN":  "3-0",
+                                            "MARC-BORL":  "2-0",
                                             "OLO":  "2-1",
                                             "BEN":  "2-0",
                                             "CALIN":  "2-0",
                                             "IAKKEL":  "2-0",
                                             "MURI":  "2-0",
-                                            "MARC BORLEANU":  "2-0"
+                                            "TUDOR-BORL":  "3 1",
+                                            "IOAN":  "5-0"
                                         }
                     },
                     {
@@ -981,13 +1128,16 @@
                         "group":  "Group B",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-1",
+                                            "MATEI":  "2-0",
+                                            "FLORIN":  "2-1",
+                                            "MARC-BORL":  "2-1",
                                             "OLO":  "1-1",
                                             "BEN":  "2-1",
                                             "CALIN":  "0-1",
                                             "IAKKEL":  "1-0",
                                             "MURI":  "1-1",
-                                            "MARC BORLEANU":  "2-1"
+                                            "TUDOR-BORL":  "1 1",
+                                            "IOAN":  "1-1"
                                         }
                     },
                     {
@@ -1001,13 +1151,16 @@
                         "group":  "Group B",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "4-1",
+                                            "MATEI":  "2-0",
+                                            "FLORIN":  "3-1",
+                                            "MARC-BORL":  "2-0",
                                             "OLO":  "2-1",
                                             "BEN":  "1-0",
                                             "CALIN":  "2-2",
                                             "IAKKEL":  "2-1",
                                             "MURI":  "2-0",
-                                            "MARC BORLEANU":  "2-0"
+                                            "TUDOR-BORL":  "0 1",
+                                            "IOAN":  "4-1"
                                         }
                     },
                     {
@@ -1021,13 +1174,16 @@
                         "group":  "Group C",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-3",
+                                            "MATEI":  "1-2",
+                                            "FLORIN":  "2-1",
+                                            "MARC-BORL":  "1-3",
                                             "OLO":  "2-4",
                                             "BEN":  "1-2",
                                             "CALIN":  "1-1",
                                             "IAKKEL":  "0-1",
                                             "MURI":  "1-3",
-                                            "MARC BORLEANU":  "1-3"
+                                            "TUDOR-BORL":  "0 1",
+                                            "IOAN":  "1-3"
                                         }
                     },
                     {
@@ -1041,13 +1197,16 @@
                         "group":  "Group C",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "5-0",
+                                            "MATEI":  "3-0",
+                                            "FLORIN":  "2-0",
+                                            "MARC-BORL":  "2-0",
                                             "OLO":  "3-0",
                                             "BEN":  "2-0",
                                             "CALIN":  "1-0",
                                             "IAKKEL":  "3-0",
                                             "MURI":  "3-0",
-                                            "MARC BORLEANU":  "2-0"
+                                            "TUDOR-BORL":  "3 0",
+                                            "IOAN":  "5-0"
                                         }
                     },
                     {
@@ -1061,13 +1220,16 @@
                         "group":  "Group A",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "3-3",
+                                            "MATEI":  "1-3",
+                                            "FLORIN":  "0-0",
+                                            "MARC-BORL":  "1-1",
                                             "OLO":  "0-1",
                                             "BEN":  "0-1",
                                             "CALIN":  "0-0",
                                             "IAKKEL":  "1-1",
                                             "MURI":  "2-2",
-                                            "MARC BORLEANU":  "1-1"
+                                            "TUDOR-BORL":  "0 1",
+                                            "IOAN":  "3-3"
                                         }
                     },
                     {
@@ -1081,13 +1243,16 @@
                         "group":  "Group A",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-3",
+                                            "MATEI":  "0-1",
+                                            "FLORIN":  "0-1",
+                                            "MARC-BORL":  "1-2",
                                             "OLO":  "1-2",
                                             "BEN":  "1-3",
                                             "CALIN":  "1-5",
                                             "IAKKEL":  "0-0",
                                             "MURI":  "1-2",
-                                            "MARC BORLEANU":  "1-2"
+                                            "TUDOR-BORL":  "1 2",
+                                            "IOAN":  "1-3"
                                         }
                     },
                     {
@@ -1101,13 +1266,16 @@
                         "group":  "Group E",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "0-5",
+                                            "MATEI":  "0-3",
+                                            "FLORIN":  "1-2",
+                                            "MARC-BORL":  "0-2",
                                             "OLO":  "1-2",
                                             "BEN":  "0-1",
                                             "CALIN":  "2-7",
                                             "IAKKEL":  "1-1",
                                             "MURI":  "1-3",
-                                            "MARC BORLEANU":  "0-2"
+                                            "TUDOR-BORL":  "0 2",
+                                            "IOAN":  "0-5"
                                         }
                     },
                     {
@@ -1121,13 +1289,16 @@
                         "group":  "Group E",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-3",
+                                            "MATEI":  "1-0",
+                                            "FLORIN":  "1-2",
+                                            "MARC-BORL":  "1-3",
                                             "OLO":  "1-1",
                                             "BEN":  "0-1",
                                             "CALIN":  "0-0",
                                             "IAKKEL":  "1-2",
                                             "MURI":  "0-3",
-                                            "MARC BORLEANU":  "1-3"
+                                            "TUDOR-BORL":  "1 1",
+                                            "IOAN":  "1-3"
                                         }
                     },
                     {
@@ -1141,13 +1312,16 @@
                         "group":  "Group F",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-1",
+                                            "MATEI":  "3-2",
+                                            "FLORIN":  "1-1",
+                                            "MARC-BORL":  "1-2",
                                             "OLO":  "1-0",
                                             "BEN":  "1-0",
                                             "CALIN":  "1-0",
                                             "IAKKEL":  "0-0",
                                             "MURI":  "2-1",
-                                            "MARC BORLEANU":  "1-2"
+                                            "TUDOR-BORL":  "0 0",
+                                            "IOAN":  "1-1"
                                         }
                     },
                     {
@@ -1161,13 +1335,16 @@
                         "group":  "Group F",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "0-3",
+                                            "MATEI":  "1-3",
+                                            "FLORIN":  "0-3",
+                                            "MARC-BORL":  "0-3",
                                             "OLO":  "0-2",
                                             "BEN":  "0-2",
                                             "CALIN":  "1-5",
                                             "IAKKEL":  "0-3",
                                             "MURI":  "1-2",
-                                            "MARC BORLEANU":  "0-3"
+                                            "TUDOR-BORL":  "0 3",
+                                            "IOAN":  "0-3"
                                         }
                     },
                     {
@@ -1181,13 +1358,16 @@
                         "group":  "Group D",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-2",
+                                            "MATEI":  "1-2",
+                                            "FLORIN":  "4-2",
+                                            "MARC-BORL":  "1-2",
                                             "OLO":  "2-1",
                                             "BEN":  "2-2",
                                             "CALIN":  "2-4",
                                             "IAKKEL":  "2-1",
                                             "MURI":  "1-1",
-                                            "MARC BORLEANU":  "1-2"
+                                            "TUDOR-BORL":  "1 1",
+                                            "IOAN":  "2-2"
                                         }
                     },
                     {
@@ -1201,13 +1381,16 @@
                         "group":  "Group D",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-0",
+                                            "MATEI":  "0-0",
+                                            "FLORIN":  "0-0",
+                                            "MARC-BORL":  "1-1",
                                             "OLO":  "1-1",
                                             "BEN":  "0-1",
                                             "CALIN":  "3-3",
                                             "IAKKEL":  "1-1",
                                             "MURI":  "1-0",
-                                            "MARC BORLEANU":  "1-1"
+                                            "TUDOR-BORL":  "0 1",
+                                            "IOAN":  "1-0"
                                         }
                     },
                     {
@@ -1221,13 +1404,16 @@
                         "group":  "Group I",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-1",
+                                            "MATEI":  "1-2",
+                                            "FLORIN":  "2-2",
+                                            "MARC-BORL":  "1-3",
                                             "OLO":  "1-2",
                                             "BEN":  "0-1",
                                             "CALIN":  "2-0",
                                             "IAKKEL":  "1-1",
                                             "MURI":  "1-3",
-                                            "MARC BORLEANU":  "1-3"
+                                            "TUDOR-BORL":  "2 2",
+                                            "IOAN":  "1-1"
                                         }
                     },
                     {
@@ -1241,13 +1427,16 @@
                         "group":  "Group I",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "5-0",
+                                            "MATEI":  "4-1",
+                                            "FLORIN":  "3-0",
+                                            "MARC-BORL":  "2-0",
                                             "OLO":  "2-0",
                                             "BEN":  "2-0",
                                             "CALIN":  "1-1",
                                             "IAKKEL":  "2-0",
                                             "MURI":  "1-1",
-                                            "MARC BORLEANU":  "2-0"
+                                            "TUDOR-BORL":  "4 1",
+                                            "IOAN":  "5-0"
                                         }
                     },
                     {
@@ -1261,13 +1450,16 @@
                         "group":  "Group H",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-3",
+                                            "MATEI":  "1-0",
+                                            "FLORIN":  "2-0",
+                                            "MARC-BORL":  "1-1",
                                             "OLO":  "2-2",
                                             "BEN":  "0-2",
                                             "CALIN":  "0-2",
                                             "IAKKEL":  "2-0",
                                             "MURI":  "0-2",
-                                            "MARC BORLEANU":  "1-1"
+                                            "TUDOR-BORL":  "0 1",
+                                            "IOAN":  "1-3"
                                         }
                     },
                     {
@@ -1281,13 +1473,16 @@
                         "group":  "Group H",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-1",
+                                            "MATEI":  "2-2",
+                                            "FLORIN":  "0-2",
+                                            "MARC-BORL":  "1-2",
                                             "OLO":  "1-1",
                                             "BEN":  "1-3",
                                             "CALIN":  "1-4",
                                             "IAKKEL":  "0-2",
                                             "MURI":  "2-3",
-                                            "MARC BORLEANU":  "1-2"
+                                            "TUDOR-BORL":  "1 2",
+                                            "IOAN":  "1-1"
                                         }
                     },
                     {
@@ -1301,13 +1496,16 @@
                         "group":  "Group G",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "0-0",
+                                            "MATEI":  "1-0",
+                                            "FLORIN":  "1-1",
+                                            "MARC-BORL":  "2-2",
                                             "OLO":  "1-1",
                                             "BEN":  "1-0",
                                             "CALIN":  "3-0",
                                             "IAKKEL":  "1-1",
                                             "MURI":  "1-0",
-                                            "MARC BORLEANU":  "2-2"
+                                            "TUDOR-BORL":  "1 1",
+                                            "IOAN":  "0-0"
                                         }
                     },
                     {
@@ -1321,13 +1519,16 @@
                         "group":  "Group G",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "0-3",
+                                            "MATEI":  "0-3",
+                                            "FLORIN":  "0-2",
+                                            "MARC-BORL":  "0-3",
                                             "OLO":  "1-3",
                                             "BEN":  "0-4",
                                             "CALIN":  "0-1",
                                             "IAKKEL":  "0-3",
                                             "MURI":  "0-2",
-                                            "MARC BORLEANU":  "0-3"
+                                            "TUDOR-BORL":  "0 3",
+                                            "IOAN":  "0-3"
                                         }
                     },
                     {
@@ -1341,13 +1542,16 @@
                         "group":  "Group L",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-6",
+                                            "MATEI":  "0-3",
+                                            "FLORIN":  "0-4",
+                                            "MARC-BORL":  "1-2",
                                             "OLO":  "0-3",
                                             "BEN":  "0-2",
                                             "CALIN":  "0-2",
                                             "IAKKEL":  "0-1",
                                             "MURI":  "0-2",
-                                            "MARC BORLEANU":  "1-2"
+                                            "TUDOR-BORL":  "2 5",
+                                            "IOAN":  "1-6"
                                         }
                     },
                     {
@@ -1361,13 +1565,16 @@
                         "group":  "Group L",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-2",
+                                            "MATEI":  "2-0",
+                                            "FLORIN":  "2-2",
+                                            "MARC-BORL":  "2-2",
                                             "OLO":  "2-1",
                                             "BEN":  "3-0",
                                             "CALIN":  "3-0",
                                             "IAKKEL":  "2-1",
                                             "MURI":  "2-1",
-                                            "MARC BORLEANU":  "2-2"
+                                            "TUDOR-BORL":  "1 1",
+                                            "IOAN":  "2-2"
                                         }
                     },
                     {
@@ -1381,13 +1588,16 @@
                         "group":  "Group K",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-2",
+                                            "MATEI":  "0-2",
+                                            "FLORIN":  "2-2",
+                                            "MARC-BORL":  "1-2",
                                             "OLO":  "3-2",
                                             "BEN":  "2-2",
                                             "CALIN":  "1-4",
                                             "IAKKEL":  "0-0",
                                             "MURI":  "2-1",
-                                            "MARC BORLEANU":  "1-2"
+                                            "TUDOR-BORL":  "3 2",
+                                            "IOAN":  "2-2"
                                         }
                     },
                     {
@@ -1401,13 +1611,16 @@
                         "group":  "Group K",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "2-1",
+                                            "MATEI":  "2-2",
+                                            "FLORIN":  "1-1",
+                                            "MARC-BORL":  "2-1",
                                             "OLO":  "1-1",
                                             "BEN":  "1-0",
                                             "CALIN":  "2-2",
                                             "IAKKEL":  "1-3",
                                             "MURI":  "2-2",
-                                            "MARC BORLEANU":  "2-1"
+                                            "TUDOR-BORL":  "6 7",
+                                            "IOAN":  "2-1"
                                         }
                     },
                     {
@@ -1421,13 +1634,16 @@
                         "group":  "Group J",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-1",
+                                            "MATEI":  "0-0",
+                                            "FLORIN":  "1-1",
+                                            "MARC-BORL":  "2-1",
                                             "OLO":  "1-2",
                                             "BEN":  "0-1",
                                             "CALIN":  "3-4",
                                             "IAKKEL":  "0-2",
                                             "MURI":  "1-1",
-                                            "MARC BORLEANU":  "2-1"
+                                            "TUDOR-BORL":  "0 2",
+                                            "IOAN":  "1-1"
                                         }
                     },
                     {
@@ -1441,13 +1657,16 @@
                         "group":  "Group J",
                         "actual_score":  null,
                         "predictions":  {
-                                            "IOAN":  "1-5",
+                                            "MATEI":  "1-3",
+                                            "FLORIN":  "0-4",
+                                            "MARC-BORL":  "0-4",
                                             "OLO":  "0-3",
                                             "BEN":  "0-3",
                                             "CALIN":  "1-3",
                                             "IAKKEL":  "0-3",
                                             "MURI":  "0-3",
-                                            "MARC BORLEANU":  "0-4"
+                                            "TUDOR-BORL":  "0 5",
+                                            "IOAN":  "1-5"
                                         }
                     }
                 ]

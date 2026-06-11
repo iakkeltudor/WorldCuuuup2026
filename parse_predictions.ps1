@@ -18,11 +18,14 @@ param(
 $playerFiles = [ordered]@{
     "IAKKEL" = "$BasePath\predictii IAKKEL.xlsx"
     "OLO"    = "$BasePath\predictii-OLO.xlsx"
-    "MARC BORLEANU" = "$BasePath\predictii BORLEANU MARC.xlsx"
+    "MARC-BORL" = "$BasePath\predictii BORLEANU MARC.xlsx"
     "BEN" = "$BasePath\predictii BEN.xlsx"
     "CALIN" = "$BasePath\predictii CALIN.xlsx"
     "MURI" = "$BasePath\predictii MURI.xlsx"
     "IOAN" = "$BasePath\predictii IOAN.xlsx"
+    "TUDOR-BORL" = "$BasePath\predictii BORLEANU TUDOR.xlsx"
+    "FLORIN" = "$BasePath\predictii FLORIN.xlsx"
+    "MATEI" = "$BasePath\predictii MATEI.xlsx"
 }
 
 # Admin password for the dashboard (change this!)
