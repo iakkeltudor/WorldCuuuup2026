@@ -2,18 +2,29 @@ name: Update Match Scores
 
 on:
   schedule:
-    # 19:00–04:00 UTC = 22:00–07:00 UTC+3, covers all match windows
+    # 19:00-04:00 UTC = 22:00-07:00 UTC+3, covers all match windows
     - cron: '0 19,20,21,22,23,0,1,2,3,4 * * *'
-  workflow_dispatch:  # lets you trigger it manually from the GitHub Actions UI
+  workflow_dispatch: # lets you trigger it manually from the GitHub Actions UI
+
+concurrency:
+  group: update-scores
+  cancel-in-progress: false
 
 jobs:
   update-scores:
     runs-on: ubuntu-latest
+
     permissions:
-      contents: write  # needed to push commits back to the repo
+      contents: write # needed to push commits back to the repo
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync latest main
+        run: |
+          git pull --ff-only origin main
 
       - uses: actions/setup-node@v4
         with:
@@ -27,13 +38,20 @@ jobs:
       - name: Check for changes
         id: diff
         run: |
-          git diff --quiet data.json && echo "changed=false" >> $GITHUB_OUTPUT || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --quiet data.json && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Commit and push updated scores
         if: steps.diff.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
           git add data.json
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
           git commit -m "chore: update match scores [skip ci]"
           git push
