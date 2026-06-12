@@ -1,5 +1,4 @@
 [build]
-  # Skip Netlify rebuild unless index.html itself changed.
-  # Score updates only touch data.json, which is now fetched directly
-  # from the GitHub raw CDN — no rebuild needed for those.
-  ignore = "git diff --quiet HEAD^ HEAD -- index.html"
+  # data.json is served from the GitHub raw CDN, so Netlify only needs to
+  # rebuild when index.html itself changes. All other commits are skipped.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- index.html"
