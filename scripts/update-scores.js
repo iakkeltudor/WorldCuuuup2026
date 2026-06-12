@@ -12,6 +12,7 @@ const TEAM_NAME_MAP = {
   "Côte d'Ivoire":     'Ivory Coast',
   "Cote d'Ivoire":     'Ivory Coast',
   'Curacao':           'Curaçao',
+  'Czechia':           'Czech Republic',
 };
 
 function stripRanking(name) {
@@ -76,6 +77,10 @@ async function main() {
 
     if (found) {
       const { home, away } = found.score.fullTime;
+      if (home === null || away === null) {
+        console.log(`  Match ${match.id}: ${match.home} vs ${match.away} — status FINISHED but score not yet populated (fullTime: ${JSON.stringify(found.score.fullTime)}, halfTime: ${JSON.stringify(found.score.halfTime)})`);
+        continue;
+      }
       match.actual_score = `${home}-${away}`;
       console.log(`  Match ${match.id}: ${match.home} vs ${match.away} → ${match.actual_score}`);
       updatedCount++;
