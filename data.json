@@ -2,6 +2,7 @@
     "admin_password":  "mondial2026",
     "players":  [
                     "MARC-BORL",
+                    "MURI TUDOR",
                     "ADRIAN",
                     "IOAN",
                     "IAKKEL",
@@ -26,9 +27,10 @@
                         "home":  "Mexico (15)",
                         "away":  "South Africa (60)",
                         "group":  "Group A",
-                        "actual_score":  "2-0",
+                        "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-1",
+                                            "MURI TUDOR":  "",
                                             "ADRIAN":  "2-1",
                                             "IOAN":  "3-1",
                                             "IAKKEL":  "2-0",
@@ -53,9 +55,10 @@
                         "home":  "South Korea (25)",
                         "away":  "Czech Republic (41)",
                         "group":  "Group A",
-                        "actual_score":  "2-1",
+                        "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-0",
+                                            "MURI TUDOR":  "",
                                             "ADRIAN":  "1-1",
                                             "IOAN":  "2-0",
                                             "IAKKEL":  "1-1",
@@ -83,6 +86,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-2",
+                                            "MURI TUDOR":  "2-1",
                                             "ADRIAN":  "2-0",
                                             "IOAN":  "1-1",
                                             "IAKKEL":  "1-1",
@@ -110,6 +114,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-0",
+                                            "MURI TUDOR":  "1-1",
                                             "ADRIAN":  "0-1",
                                             "IOAN":  "1-0",
                                             "IAKKEL":  "1-0",
@@ -137,6 +142,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-2",
+                                            "MURI TUDOR":  "0-2",
                                             "ADRIAN":  "0-3",
                                             "IOAN":  "0-3",
                                             "IAKKEL":  "0-3",
@@ -164,6 +170,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-1",
+                                            "MURI TUDOR":  "3-2",
                                             "ADRIAN":  "3-1",
                                             "IOAN":  "2-3",
                                             "IAKKEL":  "2-2",
@@ -191,6 +198,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-2",
+                                            "MURI TUDOR":  "0-2",
                                             "ADRIAN":  "0-2",
                                             "IOAN":  "1-5",
                                             "IAKKEL":  "0-1",
@@ -218,6 +226,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-1",
+                                            "MURI TUDOR":  "1-3",
                                             "ADRIAN":  "2-2",
                                             "IOAN":  "0-1",
                                             "IAKKEL":  "1-2",
@@ -245,6 +254,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "5-0",
+                                            "MURI TUDOR":  "4-0",
                                             "ADRIAN":  "4-0",
                                             "IOAN":  "7-0",
                                             "IAKKEL":  "5-0",
@@ -272,6 +282,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-1",
+                                            "MURI TUDOR":  "3-1",
                                             "ADRIAN":  "1-1",
                                             "IOAN":  "2-3",
                                             "IAKKEL":  "2-2",
@@ -299,6 +310,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-1",
+                                            "MURI TUDOR":  "1-2",
                                             "ADRIAN":  "1-2",
                                             "IOAN":  "1-1",
                                             "IAKKEL":  "0-0",
@@ -326,6 +338,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-0",
+                                            "MURI TUDOR":  "2-0",
                                             "ADRIAN":  "2-0",
                                             "IOAN":  "3-1",
                                             "IAKKEL":  "2-0",
@@ -353,6 +366,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "5-1",
+                                            "MURI TUDOR":  "3-0",
                                             "ADRIAN":  "5-0",
                                             "IOAN":  "5-0",
                                             "IAKKEL":  "4-0",
@@ -380,6 +394,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-1",
+                                            "MURI TUDOR":  "2-2",
                                             "ADRIAN":  "3-2",
                                             "IOAN":  "3-1",
                                             "IAKKEL":  "3-1",
@@ -407,6 +422,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-2",
+                                            "MURI TUDOR":  "1-3",
                                             "ADRIAN":  "0-1",
                                             "IOAN":  "1-2",
                                             "IAKKEL":  "0-1",
@@ -434,6 +450,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-0",
+                                            "MURI TUDOR":  "0-0",
                                             "ADRIAN":  "2-0",
                                             "IOAN":  "0-0",
                                             "IAKKEL":  "2-0",
@@ -461,6 +478,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "3-1",
+                                            "MURI TUDOR":  "3-2",
                                             "ADRIAN":  "2-0",
                                             "IOAN":  "4-3",
                                             "IAKKEL":  "3-1",
@@ -488,6 +506,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-3",
+                                            "MURI TUDOR":  "0-4",
                                             "ADRIAN":  "1-2",
                                             "IOAN":  "1-5",
                                             "IAKKEL":  "0-1",
@@ -515,6 +534,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-0",
+                                            "MURI TUDOR":  "1-0",
                                             "ADRIAN":  "3-0",
                                             "IOAN":  "3-0",
                                             "IAKKEL":  "2-0",
@@ -542,6 +562,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-0",
+                                            "MURI TUDOR":  "3-1",
                                             "ADRIAN":  "4-1",
                                             "IOAN":  "4-1",
                                             "IAKKEL":  "3-0",
@@ -569,6 +590,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "3-0",
+                                            "MURI TUDOR":  "4-0",
                                             "ADRIAN":  "3-1",
                                             "IOAN":  "5-2",
                                             "IAKKEL":  "3-0",
@@ -596,6 +618,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-1",
+                                            "MURI TUDOR":  "2-2",
                                             "ADRIAN":  "1-1",
                                             "IOAN":  "3-4",
                                             "IAKKEL":  "1-1",
@@ -623,6 +646,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-0",
+                                            "MURI TUDOR":  "1-1",
                                             "ADRIAN":  "4-1",
                                             "IOAN":  "2-1",
                                             "IAKKEL":  "3-0",
@@ -650,6 +674,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-2",
+                                            "MURI TUDOR":  "0-2",
                                             "ADRIAN":  "1-1",
                                             "IOAN":  "0-3",
                                             "IAKKEL":  "1-2",
@@ -677,6 +702,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-1",
+                                            "MURI TUDOR":  "1-0",
                                             "ADRIAN":  "1-0",
                                             "IOAN":  "2-0",
                                             "IAKKEL":  "3-2",
@@ -704,6 +730,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-1",
+                                            "MURI TUDOR":  "2-2",
                                             "ADRIAN":  "2-1",
                                             "IOAN":  "3-1",
                                             "IAKKEL":  "3-2",
@@ -731,6 +758,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-0",
+                                            "MURI TUDOR":  "1-0",
                                             "ADRIAN":  "4-0",
                                             "IOAN":  "4-1",
                                             "IAKKEL":  "2-0",
@@ -758,6 +786,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-1",
+                                            "MURI TUDOR":  "2-1",
                                             "ADRIAN":  "1-2",
                                             "IOAN":  "2-1",
                                             "IAKKEL":  "1-0",
@@ -785,6 +814,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-1",
+                                            "MURI TUDOR":  "0-1",
                                             "ADRIAN":  "2-0",
                                             "IOAN":  "2-1",
                                             "IAKKEL":  "1-1",
@@ -812,6 +842,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-2",
+                                            "MURI TUDOR":  "1-3",
                                             "ADRIAN":  "2-2",
                                             "IOAN":  "2-1",
                                             "IAKKEL":  "0-2",
@@ -839,6 +870,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "4-0",
+                                            "MURI TUDOR":  "6-0",
                                             "ADRIAN":  "5-1",
                                             "IOAN":  "7-0",
                                             "IAKKEL":  "4-0",
@@ -866,6 +898,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-0",
+                                            "MURI TUDOR":  "2-1",
                                             "ADRIAN":  "1-1",
                                             "IOAN":  "2-3",
                                             "IAKKEL":  "3-1",
@@ -893,6 +926,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-0",
+                                            "MURI TUDOR":  "2-1",
                                             "ADRIAN":  "4-2",
                                             "IOAN":  "1-1",
                                             "IAKKEL":  "1-1",
@@ -920,6 +954,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-1",
+                                            "MURI TUDOR":  "1-0",
                                             "ADRIAN":  "3-0",
                                             "IOAN":  "2-3",
                                             "IAKKEL":  "3-1",
@@ -947,6 +982,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "3-1",
+                                            "MURI TUDOR":  "1-0",
                                             "ADRIAN":  "3-0",
                                             "IOAN":  "5-0",
                                             "IAKKEL":  "3-1",
@@ -974,6 +1010,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-2",
+                                            "MURI TUDOR":  "1-3",
                                             "ADRIAN":  "0-2",
                                             "IOAN":  "1-1",
                                             "IAKKEL":  "0-1",
@@ -1001,6 +1038,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "4-0",
+                                            "MURI TUDOR":  "4-1",
                                             "ADRIAN":  "3-0",
                                             "IOAN":  "5-1",
                                             "IAKKEL":  "3-0",
@@ -1028,6 +1066,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-1",
+                                            "MURI TUDOR":  "2-0",
                                             "ADRIAN":  "1-1",
                                             "IOAN":  "2-0",
                                             "IAKKEL":  "2-0",
@@ -1055,6 +1094,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "3-0",
+                                            "MURI TUDOR":  "2-0",
                                             "ADRIAN":  "3-1",
                                             "IOAN":  "5-1",
                                             "IAKKEL":  "2-1",
@@ -1082,6 +1122,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-2",
+                                            "MURI TUDOR":  "0-1",
                                             "ADRIAN":  "1-1",
                                             "IOAN":  "0-1",
                                             "IAKKEL":  "1-1",
@@ -1109,6 +1150,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "3-0",
+                                            "MURI TUDOR":  "2-2",
                                             "ADRIAN":  "2-1",
                                             "IOAN":  "1-1",
                                             "IAKKEL":  "4-2",
@@ -1136,6 +1178,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "5-0",
+                                            "MURI TUDOR":  "5-0",
                                             "ADRIAN":  "6-0",
                                             "IOAN":  "5-0",
                                             "IAKKEL":  "4-0",
@@ -1163,6 +1206,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-2",
+                                            "MURI TUDOR":  "2-2",
                                             "ADRIAN":  "1-1",
                                             "IOAN":  "1-1",
                                             "IAKKEL":  "1-0",
@@ -1190,6 +1234,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-3",
+                                            "MURI TUDOR":  "1-1",
                                             "ADRIAN":  "0-1",
                                             "IOAN":  "0-1",
                                             "IAKKEL":  "1-3",
@@ -1217,6 +1262,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "3-0",
+                                            "MURI TUDOR":  "3-0",
                                             "ADRIAN":  "4-1",
                                             "IOAN":  "3-0",
                                             "IAKKEL":  "3-1",
@@ -1244,6 +1290,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "3-0",
+                                            "MURI TUDOR":  "3-1",
                                             "ADRIAN":  "3-0",
                                             "IOAN":  "2-1",
                                             "IAKKEL":  "2-0",
@@ -1271,6 +1318,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-2",
+                                            "MURI TUDOR":  "0-2",
                                             "ADRIAN":  "0-2",
                                             "IOAN":  "1-5",
                                             "IAKKEL":  "0-1",
@@ -1298,6 +1346,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-0",
+                                            "MURI TUDOR":  "2-1",
                                             "ADRIAN":  "3-1",
                                             "IOAN":  "5-0",
                                             "IAKKEL":  "2-0",
@@ -1325,6 +1374,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-1",
+                                            "MURI TUDOR":  "1-1",
                                             "ADRIAN":  "3-2",
                                             "IOAN":  "1-1",
                                             "IAKKEL":  "1-0",
@@ -1352,6 +1402,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-0",
+                                            "MURI TUDOR":  "1-0",
                                             "ADRIAN":  "2-1",
                                             "IOAN":  "4-1",
                                             "IAKKEL":  "2-1",
@@ -1379,6 +1430,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-3",
+                                            "MURI TUDOR":  "0-3",
                                             "ADRIAN":  "0-3",
                                             "IOAN":  "1-3",
                                             "IAKKEL":  "0-1",
@@ -1406,6 +1458,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-0",
+                                            "MURI TUDOR":  "3-0",
                                             "ADRIAN":  "7-0",
                                             "IOAN":  "5-0",
                                             "IAKKEL":  "3-0",
@@ -1433,6 +1486,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-1",
+                                            "MURI TUDOR":  "1-1",
                                             "ADRIAN":  "1-2",
                                             "IOAN":  "3-3",
                                             "IAKKEL":  "1-1",
@@ -1460,6 +1514,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-2",
+                                            "MURI TUDOR":  "0-1",
                                             "ADRIAN":  "1-3",
                                             "IOAN":  "1-3",
                                             "IAKKEL":  "0-0",
@@ -1487,6 +1542,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-2",
+                                            "MURI TUDOR":  "1-2",
                                             "ADRIAN":  "0-3",
                                             "IOAN":  "0-5",
                                             "IAKKEL":  "1-1",
@@ -1514,6 +1570,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-3",
+                                            "MURI TUDOR":  "1-1",
                                             "ADRIAN":  "0-2",
                                             "IOAN":  "1-3",
                                             "IAKKEL":  "1-2",
@@ -1541,6 +1598,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-2",
+                                            "MURI TUDOR":  "1-2",
                                             "ADRIAN":  "2-0",
                                             "IOAN":  "1-1",
                                             "IAKKEL":  "0-0",
@@ -1568,6 +1626,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-3",
+                                            "MURI TUDOR":  "1-3",
                                             "ADRIAN":  "0-1",
                                             "IOAN":  "0-3",
                                             "IAKKEL":  "0-3",
@@ -1595,6 +1654,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-2",
+                                            "MURI TUDOR":  "1-1",
                                             "ADRIAN":  "2-2",
                                             "IOAN":  "2-2",
                                             "IAKKEL":  "2-1",
@@ -1622,6 +1682,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-1",
+                                            "MURI TUDOR":  "3-2",
                                             "ADRIAN":  "1-1",
                                             "IOAN":  "1-0",
                                             "IAKKEL":  "1-1",
@@ -1649,6 +1710,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-3",
+                                            "MURI TUDOR":  "1-0",
                                             "ADRIAN":  "0-1",
                                             "IOAN":  "1-1",
                                             "IAKKEL":  "1-1",
@@ -1676,6 +1738,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-0",
+                                            "MURI TUDOR":  "1-0",
                                             "ADRIAN":  "1-0",
                                             "IOAN":  "5-0",
                                             "IAKKEL":  "2-0",
@@ -1703,6 +1766,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-1",
+                                            "MURI TUDOR":  "0-0",
                                             "ADRIAN":  "0-2",
                                             "IOAN":  "1-3",
                                             "IAKKEL":  "2-0",
@@ -1730,6 +1794,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-2",
+                                            "MURI TUDOR":  "1-1",
                                             "ADRIAN":  "0-2",
                                             "IOAN":  "1-1",
                                             "IAKKEL":  "0-2",
@@ -1757,6 +1822,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-2",
+                                            "MURI TUDOR":  "2-0",
                                             "ADRIAN":  "1-3",
                                             "IOAN":  "0-0",
                                             "IAKKEL":  "1-1",
@@ -1784,6 +1850,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-3",
+                                            "MURI TUDOR":  "0-3",
                                             "ADRIAN":  "1-3",
                                             "IOAN":  "0-3",
                                             "IAKKEL":  "0-3",
@@ -1811,6 +1878,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-2",
+                                            "MURI TUDOR":  "0-3",
                                             "ADRIAN":  "0-4",
                                             "IOAN":  "1-6",
                                             "IAKKEL":  "0-1",
@@ -1838,6 +1906,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-2",
+                                            "MURI TUDOR":  "2-1",
                                             "ADRIAN":  "1-0",
                                             "IOAN":  "2-2",
                                             "IAKKEL":  "2-1",
@@ -1865,6 +1934,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "1-2",
+                                            "MURI TUDOR":  "2-2",
                                             "ADRIAN":  "0-2",
                                             "IOAN":  "2-2",
                                             "IAKKEL":  "0-0",
@@ -1892,6 +1962,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-1",
+                                            "MURI TUDOR":  "1-1",
                                             "ADRIAN":  "1-2",
                                             "IOAN":  "2-1",
                                             "IAKKEL":  "1-3",
@@ -1919,6 +1990,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "2-1",
+                                            "MURI TUDOR":  "1-3",
                                             "ADRIAN":  "2-1",
                                             "IOAN":  "1-1",
                                             "IAKKEL":  "0-2",
@@ -1946,6 +2018,7 @@
                         "actual_score":  null,
                         "predictions":  {
                                             "MARC-BORL":  "0-4",
+                                            "MURI TUDOR":  "0-5",
                                             "ADRIAN":  "0-3",
                                             "IOAN":  "1-5",
                                             "IAKKEL":  "0-3",

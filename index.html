@@ -276,19 +276,15 @@
 
     /* ── PREDICTION COLUMN GRID ───────────────────────── */
     .pred-grid {
-      display: flex;
-      overflow-x: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 1px;
+      background: var(--border);
       border-top: 1px solid var(--border);
-      scrollbar-width: thin;
-      scrollbar-color: var(--border2) transparent;
     }
-    .pred-grid::-webkit-scrollbar { height: 3px; }
-    .pred-grid::-webkit-scrollbar-track { background: transparent; }
-    .pred-grid::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
     .pred-col {
-      flex: 1 0 76px;
-      border-right: 1px solid var(--border);
+      background: var(--card);
       padding: 7px 5px 6px;
       text-align: center;
       display: flex;
@@ -298,8 +294,7 @@
       min-width: 0;
       transition: background .15s;
     }
-    .pred-col:last-child { border-right: none; }
-    .pred-col.st-pending  { background: rgba(0,0,0,.1); }
+    .pred-col.st-pending  { background: var(--card); }
     .pred-col.st-exact    { background: var(--green-bg); }
     .pred-col.st-outcome  { background: var(--amber-bg); }
     .pred-col.st-wrong    { background: var(--red-bg); }
@@ -532,13 +527,114 @@
       .teams-row { grid-template-columns: 1fr 62px 1fr; }
       .score-display { font-size: .9rem; padding: 4px 6px; min-width: 48px; }
       .card-meta .venue, .card-meta .sep { display: none; }
-      .pred-col { flex: 1 0 64px; }
       /* Leaderboard: hide secondary columns, keep # PTS Player Exact Outcome */
       .league-table .col-gp,
       .league-table .col-wrong,
       .league-table .col-ppg,
       .league-table .col-form { display: none; }
     }
+
+    /* ── CHAT TAB ─────────────────────────────────────── */
+    #tab-chat {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 96px);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .chat-name-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      font-size: .76rem;
+      color: var(--text2);
+      flex-shrink: 0;
+    }
+    .chat-name-select {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: .78rem;
+      cursor: pointer;
+    }
+    .chat-msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .chat-empty {
+      margin: auto;
+      text-align: center;
+      color: var(--text3);
+      font-size: .85rem;
+    }
+    .chat-msg { display: flex; flex-direction: column; gap: 3px; max-width: 82%; }
+    .chat-msg.me    { align-self: flex-end;   align-items: flex-end; }
+    .chat-msg.other { align-self: flex-start; align-items: flex-start; }
+    .chat-msg-meta {
+      font-size: .62rem;
+      color: var(--text3);
+      display: flex;
+      gap: 5px;
+    }
+    .chat-msg-name { font-weight: 700; color: var(--accent); }
+    .chat-msg-bubble {
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: .875rem;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+    .chat-msg.me    .chat-msg-bubble {
+      background: var(--accent-dim);
+      border: 1px solid rgba(245,158,11,.3);
+      border-bottom-right-radius: 3px;
+    }
+    .chat-msg.other .chat-msg-bubble {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 3px;
+    }
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .chat-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: .9rem;
+      outline: none;
+      font-family: inherit;
+    }
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-send-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-weight: 700;
+      font-size: .85rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .chat-send-btn:hover { opacity: .85; }
   </style>
 </head>
 <body>
@@ -567,6 +663,7 @@
 <div class="tab-nav">
   <button class="tab-btn active" data-tab="matches"     onclick="showTab('matches')">&#9917; Matches</button>
   <button class="tab-btn"        data-tab="leaderboard" onclick="showTab('leaderboard')">&#127942; Leaderboard</button>
+  <button class="tab-btn"        data-tab="chat"        onclick="showTab('chat')">&#128172; Chat</button>
 </div>
 
 <!-- ── MATCHES TAB ────────────────────────────────── -->
@@ -597,6 +694,24 @@
         <tbody id="lb-tbody"></tbody>
       </table>
     </div>
+  </div>
+</div>
+
+<!-- ── CHAT TAB ───────────────────────────────────── -->
+<div id="tab-chat" class="tab-panel hidden">
+  <div class="chat-name-bar">
+    Chatting as:
+    <select id="chat-name-select" class="chat-name-select" onchange="setChatName(this.value)">
+      <option value="">— pick your name —</option>
+    </select>
+  </div>
+  <div id="chat-msgs" class="chat-msgs">
+    <div class="chat-empty">No messages yet. Say something! 👋</div>
+  </div>
+  <div class="chat-input-row">
+    <input id="chat-input" class="chat-input" type="text" placeholder="Type a message…" maxlength="300"
+           onkeydown="if(event.key==='Enter')sendMsg()">
+    <button class="chat-send-btn" onclick="sendMsg()">Send</button>
   </div>
 </div>
 
@@ -701,9 +816,9 @@ function showTab(tab) {
   );
   document.getElementById('tab-matches').classList.toggle('hidden', tab !== 'matches');
   document.getElementById('tab-leaderboard').classList.toggle('hidden', tab !== 'leaderboard');
-  if (tab === 'leaderboard') {
-    renderLeaderboard();
-  }
+  document.getElementById('tab-chat').classList.toggle('hidden', tab !== 'chat');
+  if (tab === 'leaderboard') renderLeaderboard();
+  if (tab === 'chat') initChat();
 }
 
 // ── Render leaderboard tab ─────────────────────────
@@ -734,12 +849,21 @@ function renderStatCards() {
 
 function renderLeagueTable() {
   const lb     = calcLB();
-  const medals = ['🥇','🥈','🥉'];
+  const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+
+  // Compute competition ranks: tied on pts+exact share the same rank (1224 style)
+  const ranks = lb.map((e, i) => {
+    if (i === 0) return 1;
+    const prev = lb[i - 1];
+    return (e.pts === prev.pts && e.exact === prev.exact) ? ranks[i - 1] : i + 1;
+  });
+
   document.getElementById('lb-tbody').innerHTML = lb.map((e, i) => {
-    const posClass = i < 3 ? `pos-${i+1}` : '';
-    const rankCell = i < 3
-      ? `<span class="rank-medal">${medals[i]}</span>`
-      : `<span class="rank-num">${i+1}</span>`;
+    const rank     = ranks[i];
+    const posClass = rank <= 3 ? `pos-${rank}` : '';
+    const rankCell = medals[rank]
+      ? `<span class="rank-medal">${medals[rank]}</span>`
+      : `<span class="rank-num">${rank}</span>`;
     return `<tr class="${posClass}">
       <td class="col-rank">${rankCell}</td>
       <td class="col-player">${e.player}</td>
@@ -928,6 +1052,86 @@ async function init() {
 }
 
 init();
+</script>
+
+<!-- ── FIREBASE CHAT ──────────────────────────────── -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyDTtPQvGHeMMDe2txT9UfvOYNFFSqg6yF8",
+    authDomain:        "worldcuuuup-9a603.firebaseapp.com",
+    projectId:         "worldcuuuup-9a603",
+    storageBucket:     "worldcuuuup-9a603.firebasestorage.app",
+    messagingSenderId: "979404614028",
+    appId:             "1:979404614028:web:3584e091e1de829e88cea9"
+  });
+  const db = firebase.firestore();
+
+  let CHAT_NAME = localStorage.getItem('chatName') || '';
+  let chatUnsub  = null;
+  let chatInited = false;
+
+  function setChatName(val) {
+    CHAT_NAME = val;
+    if (val) localStorage.setItem('chatName', val);
+  }
+
+  function initChat() {
+    const sel = document.getElementById('chat-name-select');
+    sel.innerHTML = '<option value="">— pick your name —</option>' +
+      (DATA ? DATA.players : []).map(p =>
+        `<option value="${p}"${p === CHAT_NAME ? ' selected' : ''}>${p}</option>`
+      ).join('');
+
+    if (chatInited) return;
+    chatInited = true;
+
+    chatUnsub = db.collection('chat')
+      .orderBy('ts')
+      .limitToLast(200)
+      .onSnapshot(snap => renderChatMsgs(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+  }
+
+  function renderChatMsgs(msgs) {
+    const el = document.getElementById('chat-msgs');
+    if (!msgs.length) {
+      el.innerHTML = '<div class="chat-empty">No messages yet. Say something! 👋</div>';
+      return;
+    }
+    const wasAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 60;
+    el.innerHTML = msgs.map(m => {
+      const isMe = m.name === CHAT_NAME;
+      const time = m.ts ? m.ts.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+      return `<div class="chat-msg ${isMe ? 'me' : 'other'}">
+        <div class="chat-msg-meta">
+          <span class="chat-msg-name">${esc(m.name)}</span>
+          <span>${time}</span>
+        </div>
+        <div class="chat-msg-bubble">${esc(m.text)}</div>
+      </div>`;
+    }).join('');
+    if (wasAtBottom) el.scrollTop = el.scrollHeight;
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c =>
+      ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])
+    );
+  }
+
+  function sendMsg() {
+    if (!CHAT_NAME) { alert('Pick your name first!'); return; }
+    const input = document.getElementById('chat-input');
+    const text  = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    db.collection('chat').add({
+      name: CHAT_NAME,
+      text,
+      ts: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
 </script>
 </body>
 </html>
