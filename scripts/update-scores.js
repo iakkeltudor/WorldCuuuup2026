@@ -15,6 +15,19 @@ const TEAM_NAME_MAP = {
   'Czechia':           'Czech Republic',
 };
 
+// API-Football name  ->  name used in data.json after ranking is stripped
+const AF_TEAM_NAME_MAP = {
+  'Korea Republic':    'South Korea',
+  'Republic of Korea': 'South Korea',
+  "Côte d'Ivoire":     'Ivory Coast',
+  "Cote d'Ivoire":     'Ivory Coast',
+  'Curacao':           'Curaçao',
+  'Czech Republic':    'Czech Republic',
+  'United States':     'USA',
+  'IR Iran':           'Iran',
+  'DR Congo':          'Congo DR',
+};
+
 function stripRanking(name) {
   return name.replace(/\s*\(\d+\)\s*$/, '').trim();
 }
@@ -52,19 +65,9 @@ function fetchJson(url, headers) {
   });
 }
 
-function hasValidScore(score) {
-  return (
-    score &&
-    score.fullTime &&
-    score.fullTime.home !== null &&
-    score.fullTime.home !== undefined &&
-    score.fullTime.away !== null &&
-    score.fullTime.away !== undefined
-  );
-}
-
 async function main() {
-  const token = process.env.FOOTBALL_API_KEY;
+  const token   = process.env.FOOTBALL_API_KEY;
+  const afToken = process.env.API_FOOTBALL_KEY;
 
   if (!token) {
     console.error('FOOTBALL_API_KEY environment variable is not set.');
@@ -86,11 +89,10 @@ async function main() {
     `API returned ${result.matches.length} total matches, ${finished.length} finished.`
   );
 
-  const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8').replace(/^\uFEFF/, ''));
+  const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8').replace(/^﻿/, ''));
 
   let updatedCount = 0;
   let cleanedCount = 0;
-  let skippedBecauseNoScoreCount = 0;
 
   for (const match of data.matches) {
     // Clean bad value created by previous script version
@@ -124,7 +126,7 @@ async function main() {
     if (found) {
       const { home, away } = found.score.fullTime;
       if (home === null || away === null) {
-        console.log(`  Match ${match.id}: ${match.home} vs ${match.away} — status FINISHED but score not yet populated (fullTime: ${JSON.stringify(found.score.fullTime)}, halfTime: ${JSON.stringify(found.score.halfTime)})`);
+        console.log(`  Match ${match.id}: ${match.home} vs ${match.away} — status FINISHED but score not yet populated`);
         continue;
       }
       match.actual_score = `${home}-${away}`;
@@ -133,20 +135,99 @@ async function main() {
     }
   }
 
-  if (updatedCount > 0 || cleanedCount > 0) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 4) + '\n');
+  // ── API-Football: fetch goal scorers + referees ───
+  const needsGoals = data.matches.filter(
+    m => m.actual_score && !Array.isArray(m.goals)
+  );
 
-    console.log(
-      `\nSaved changes to data.json. Updated ${updatedCount} score(s), cleaned ${cleanedCount} invalid score(s).`
-    );
-  } else {
-    console.log('\nNo new scores found — data.json unchanged.');
+  let goalsUpdatedCount = 0;
+
+  if (afToken && needsGoals.length > 0) {
+    console.log(`\nFetching goal data for ${needsGoals.length} match(es) from API-Football...`);
+
+    let afFixtures;
+    try {
+      const afResult = await fetchJson(
+        'https://v3.football.api-sports.io/fixtures?league=1&season=2026',
+        { 'x-apisports-key': afToken }
+      );
+      afFixtures = afResult.response || [];
+      console.log(`  API-Football returned ${afFixtures.length} fixtures.`);
+    } catch (err) {
+      console.warn(`  Could not fetch API-Football fixtures: ${err.message}`);
+      afFixtures = [];
+    }
+
+    // Build lookup: normalised "home_away" → fixture object
+    const afMap = {};
+    for (const f of afFixtures) {
+      const hRaw = AF_TEAM_NAME_MAP[f.teams.home.name] ?? f.teams.home.name;
+      const aRaw = AF_TEAM_NAME_MAP[f.teams.away.name] ?? f.teams.away.name;
+      const key  = normalize(hRaw) + '_' + normalize(aRaw);
+      afMap[key] = f;
+    }
+
+    for (const match of needsGoals) {
+      const hName = stripRanking(match.home);
+      const aName = stripRanking(match.away);
+      const key   = normalize(hName) + '_' + normalize(aName);
+      const af    = afMap[key];
+
+      if (!af) {
+        console.log(`  Match ${match.id}: no API-Football fixture found for ${hName} vs ${aName}`);
+        continue;
+      }
+
+      // Referee (may be null before the match)
+      match.referee = af.fixture.referee || null;
+
+      // Fetch goal events for this fixture
+      try {
+        const evResult = await fetchJson(
+          `https://v3.football.api-sports.io/fixtures/events?fixture=${af.fixture.id}`,
+          { 'x-apisports-key': afToken }
+        );
+
+        const events = evResult.response || [];
+
+        match.goals = events
+          .filter(e => e.type === 'Goal')
+          .map(e => {
+            const min    = e.time.elapsed;
+            const extra  = e.time.extra;
+            const minute = extra ? `${min}+${extra}` : `${min}`;
+
+            const teamNorm = normalize(AF_TEAM_NAME_MAP[e.team.name] ?? e.team.name);
+            const team = teamNorm === normalize(hName) ? 'home'
+                       : teamNorm === normalize(aName) ? 'away' : 'unknown';
+
+            return {
+              player: e.player.name,
+              minute,
+              team,
+              detail: e.detail, // "Normal Goal", "Penalty", "Own Goal"
+            };
+          });
+
+        console.log(`  Match ${match.id}: ${hName} vs ${aName} — ${match.goals.length} goal(s), referee: ${match.referee || 'N/A'}`);
+        goalsUpdatedCount++;
+      } catch (err) {
+        console.warn(`  Match ${match.id}: could not fetch events — ${err.message}`);
+      }
+    }
+  } else if (!afToken && needsGoals.length > 0) {
+    console.log(`\nAPI_FOOTBALL_KEY not set — skipping goal scorer fetch for ${needsGoals.length} match(es).`);
   }
 
-  if (skippedBecauseNoScoreCount > 0) {
+  const hasChanges = updatedCount > 0 || cleanedCount > 0 || goalsUpdatedCount > 0;
+
+  if (hasChanges) {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 4) + '\n');
     console.log(
-      `${skippedBecauseNoScoreCount} finished match(es) were found but had no valid full-time score in the API response.`
+      `\nSaved changes to data.json. Scores: ${updatedCount} updated, ${cleanedCount} cleaned. Goals: ${goalsUpdatedCount} match(es) updated.`
     );
+  } else {
+    console.log('\nNo changes — data.json unchanged.');
   }
 }
 

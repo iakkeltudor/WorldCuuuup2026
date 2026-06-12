@@ -33,6 +33,7 @@ jobs:
       - name: Fetch and update scores
         env:
           FOOTBALL_API_KEY: ${{ secrets.FOOTBALL_API_KEY }}
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: node scripts/update-scores.js
 
       - name: Check for changes
