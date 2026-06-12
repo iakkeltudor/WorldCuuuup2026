@@ -449,6 +449,122 @@
     .fd-wrong   { background: var(--red); }
     .form-empty { color: var(--text3); font-size: .75rem; }
 
+    /* CHAT TAB */
+    #main-chat {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 20px 14px 70px;
+    }
+    .chat-shell {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .chat-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .chat-title {
+      color: var(--accent);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .chat-status {
+      color: var(--text3);
+      font-size: .67rem;
+      margin-top: 2px;
+    }
+    .chat-status.error { color: var(--red); }
+    .chat-messages {
+      height: min(58vh, 520px);
+      min-height: 300px;
+      overflow-y: auto;
+      padding: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border2) transparent;
+    }
+    .chat-messages::-webkit-scrollbar { width: 5px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 5px; }
+    .chat-empty {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: var(--text3);
+      font-size: .85rem;
+    }
+    .chat-message {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      margin-bottom: 8px;
+    }
+    .chat-message:last-child { margin-bottom: 0; }
+    .chat-msg-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+    .chat-name {
+      color: var(--accent);
+      font-size: .72rem;
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .chat-time {
+      color: var(--text3);
+      flex-shrink: 0;
+      font-size: .64rem;
+    }
+    .chat-text {
+      color: var(--text);
+      font-size: .86rem;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+    .chat-form {
+      display: grid;
+      grid-template-columns: minmax(120px, 170px) 1fr auto;
+      gap: 8px;
+      padding: 12px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .chat-input {
+      background: rgba(0,0,0,.35);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font: inherit;
+      font-size: .84rem;
+      min-width: 0;
+      outline: none;
+      padding: 9px 10px;
+    }
+    .chat-input::placeholder { color: var(--text3); }
+    .chat-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+    .chat-send {
+      min-width: 74px;
+      padding: 9px 14px;
+    }
+
     /* ── FLOATING ADMIN BUTTON ────────────────────────── */
     #admin-toggle {
       position: fixed;
@@ -538,6 +654,10 @@
       .league-table .col-wrong,
       .league-table .col-ppg,
       .league-table .col-form { display: none; }
+      .tab-btn { font-size: .7rem; padding: 10px 6px; }
+      .chat-form { grid-template-columns: 1fr; }
+      .chat-send { width: 100%; }
+      .chat-messages { height: 54vh; min-height: 260px; }
     }
   </style>
 </head>
@@ -567,6 +687,7 @@
 <div class="tab-nav">
   <button class="tab-btn active" data-tab="matches"     onclick="showTab('matches')">&#9917; Matches</button>
   <button class="tab-btn"        data-tab="leaderboard" onclick="showTab('leaderboard')">&#127942; Leaderboard</button>
+  <button class="tab-btn"        data-tab="chat"        onclick="showTab('chat')">&#128172; Chat</button>
 </div>
 
 <!-- ── MATCHES TAB ────────────────────────────────── -->
@@ -601,6 +722,29 @@
 </div>
 
 <!-- ── ADMIN TOGGLE ───────────────────────────────── -->
+<!-- CHAT TAB -->
+<div id="tab-chat" class="tab-panel hidden">
+  <div id="main-chat">
+    <div class="chat-shell">
+      <div class="chat-head">
+        <div>
+          <div class="chat-title">Match Chat</div>
+          <div class="chat-status" id="chat-status">Connecting...</div>
+        </div>
+        <button class="btn btn-ghost" type="button" onclick="loadChatMessages()">Refresh</button>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-empty">Loading...</div>
+      </div>
+      <form class="chat-form" onsubmit="sendChatMessage(event)">
+        <input class="chat-input" id="chat-name" maxlength="24" placeholder="Name" autocomplete="nickname">
+        <input class="chat-input" id="chat-text" maxlength="240" placeholder="Message" autocomplete="off">
+        <button class="btn btn-primary chat-send" id="chat-send" type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <button id="admin-toggle" title="Admin Mode" onclick="enterAdmin()">&#9881;</button>
 
 <!-- ── EXPORT MODAL ───────────────────────────────── -->
@@ -622,6 +766,10 @@ let DATA       = null;
 let ADMIN      = false;
 let FILTER     = 'all';
 let ACTIVE_TAB = 'matches';
+const CHAT_DB_URL = 'https://worldcuuuup-9a603-default-rtdb.europe-west1.firebasedatabase.app';
+const CHAT_PATH   = 'chatMessages';
+let CHAT_TIMER    = null;
+let CHAT_SIG      = '';
 
 // ── Scoring ────────────────────────────────────────
 function outcome(score) {
@@ -656,6 +804,18 @@ function byDate() {
   const g = {};
   DATA.matches.forEach(m => { (g[m.date] = g[m.date] || []).push(m); });
   return g;
+}
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[ch]));
+}
+function chatDbEndpoint() {
+  return `${CHAT_DB_URL}/${CHAT_PATH}.json`;
 }
 
 // ── Leaderboard calc ───────────────────────────────
@@ -701,8 +861,12 @@ function showTab(tab) {
   );
   document.getElementById('tab-matches').classList.toggle('hidden', tab !== 'matches');
   document.getElementById('tab-leaderboard').classList.toggle('hidden', tab !== 'leaderboard');
+  document.getElementById('tab-chat').classList.toggle('hidden', tab !== 'chat');
   if (tab === 'leaderboard') {
     renderLeaderboard();
+  }
+  if (tab === 'chat') {
+    startChat();
   }
 }
 
@@ -757,6 +921,124 @@ function renderLeagueTable() {
 function renderLeaderboard() {
   renderStatCards();
   renderLeagueTable();
+}
+
+// Chat
+function setChatStatus(text, isError = false) {
+  const el = document.getElementById('chat-status');
+  if (!el) return;
+  el.textContent = text;
+  el.classList.toggle('error', isError);
+}
+
+function getChatName() {
+  return (document.getElementById('chat-name')?.value || '').trim().slice(0, 24);
+}
+
+function getChatText() {
+  return (document.getElementById('chat-text')?.value || '').trim().slice(0, 240);
+}
+
+function formatChatTime(value) {
+  const time = Number(value) || Date.now();
+  return new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function normalizeChatMessages(payload) {
+  if (!payload || typeof payload !== 'object') return [];
+  return Object.entries(payload)
+    .map(([id, msg]) => ({
+      id,
+      name: String(msg?.name || 'Anonymous').slice(0, 24),
+      text: String(msg?.text || '').slice(0, 240),
+      createdAt: Number(msg?.createdAt) || 0
+    }))
+    .filter(msg => msg.text)
+    .sort((a, b) => a.createdAt - b.createdAt)
+    .slice(-100);
+}
+
+function renderChatMessages(messages) {
+  const box = document.getElementById('chat-messages');
+  if (!box) return;
+  if (!messages.length) {
+    box.innerHTML = '<div class="chat-empty">No messages yet.</div>';
+    return;
+  }
+  box.innerHTML = messages.map(msg => `
+    <div class="chat-message">
+      <div class="chat-msg-meta">
+        <span class="chat-name">${escapeHtml(msg.name)}</span>
+        <span class="chat-time">${formatChatTime(msg.createdAt)}</span>
+      </div>
+      <div class="chat-text">${escapeHtml(msg.text)}</div>
+    </div>
+  `).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+async function loadChatMessages() {
+  setChatStatus('Loading...');
+  try {
+    const res = await fetch(chatDbEndpoint(), { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const messages = normalizeChatMessages(await res.json());
+    const sig = JSON.stringify(messages.map(m => [m.id, m.name, m.text, m.createdAt]));
+    if (sig !== CHAT_SIG) {
+      CHAT_SIG = sig;
+      renderChatMessages(messages);
+    }
+    setChatStatus(`${messages.length} message${messages.length === 1 ? '' : 's'}`);
+  } catch (err) {
+    setChatStatus('Database rules blocked chat or the database is unavailable.', true);
+  }
+}
+
+function startChat() {
+  const nameEl = document.getElementById('chat-name');
+  if (nameEl && !nameEl.value) {
+    nameEl.value = localStorage.getItem('wc-chat-name') || '';
+  }
+  loadChatMessages();
+  if (!CHAT_TIMER) {
+    CHAT_TIMER = setInterval(loadChatMessages, 3000);
+  }
+}
+
+async function sendChatMessage(event) {
+  event.preventDefault();
+  const name = getChatName();
+  const text = getChatText();
+  const nameEl = document.getElementById('chat-name');
+  const textEl = document.getElementById('chat-text');
+  const sendEl = document.getElementById('chat-send');
+  if (!name) {
+    nameEl.focus();
+    return;
+  }
+  if (!text) {
+    textEl.focus();
+    return;
+  }
+
+  localStorage.setItem('wc-chat-name', name);
+  sendEl.disabled = true;
+  setChatStatus('Sending...');
+  try {
+    const res = await fetch(chatDbEndpoint(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, text, createdAt: Date.now() })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    textEl.value = '';
+    await loadChatMessages();
+  } catch (err) {
+    setChatStatus('Could not send. Check Realtime Database rules.', true);
+  } finally {
+    sendEl.disabled = false;
+    textEl.focus();
+  }
 }
 
 // ── Day nav ────────────────────────────────────────
