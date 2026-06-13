@@ -44,7 +44,9 @@
                 "MATEI": "3-1",
                 "SONE": "2-1",
                 "CALIN": "3-0"
-            }
+            },
+            "goals": [],
+            "referee": "Wilton Sampaio (Brazil)"
         },
         {
             "id": 2,
@@ -72,7 +74,9 @@
                 "MATEI": "1-1",
                 "SONE": "1-0",
                 "CALIN": "1-1"
-            }
+            },
+            "goals": [],
+            "referee": "Amin Omar (Egypt)"
         },
         {
             "id": 3,
@@ -100,7 +104,9 @@
                 "MATEI": "2-0",
                 "SONE": "0-1",
                 "CALIN": "0-1"
-            }
+            },
+            "goals": [],
+            "referee": "Facundo Tello (Argentina)"
         },
         {
             "id": 4,
@@ -128,7 +134,9 @@
                 "MATEI": "2-0",
                 "SONE": "2-1",
                 "CALIN": "1-0"
-            }
+            },
+            "goals": [],
+            "referee": "Danny Makkelie (Netherlands)"
         },
         {
             "id": 5,
