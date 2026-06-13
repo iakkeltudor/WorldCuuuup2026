@@ -15,22 +15,24 @@ param(
 )
 
 # ── CONFIGURE PLAYERS HERE ───────────────────────────────────────────────────
+$predictiiPath = "$BasePath\predictii"
+
 $playerFiles = [ordered]@{
-    "IAKKEL" = "$BasePath\predictii IAKKEL.xlsx"
-    "OLO"    = "$BasePath\predictii-OLO.xlsx"
-    "MARC-BORL" = "$BasePath\predictii BORLEANU MARC.xlsx"
-    "BEN" = "$BasePath\predictii BEN.xlsx"
-    "CALIN" = "$BasePath\predictii CALIN.xlsx"
-    "MURI" = "$BasePath\predictii MURI.xlsx"
-    "IOAN" = "$BasePath\predictii IOAN.xlsx"
-    "TUDOR-BORL" = "$BasePath\predictii BORLEANU TUDOR.xlsx"
-    "FLORIN" = "$BasePath\predictii FLORIN.xlsx"
-    "MATEI" = "$BasePath\predictii MATEI.xlsx"
-    "ADRIAN" = "$BasePath\predictii ADRIAN.xlsx"
-    "ARTHUR" = "$BasePath\predictii ARTHUR.xlsx"
-    "MICHALIS" = "$BasePath\predictii MICHALIS.ods"
-    "SONE" = "$BasePath\predictii SONE.xlsx"
-    "MURI TUDOR" = "$BasePath\predictii TUDOR MURESAN.xlsx"
+    "IAKKEL"     = "$predictiiPath\predictii IAKKEL.xlsx"
+    "OLO"        = "$predictiiPath\predictii-OLO.xlsx"
+    "MARC-BORL"  = "$predictiiPath\predictii BORLEANU MARC.xlsx"
+    "BEN"        = "$predictiiPath\predictii BEN.xlsx"
+    "CALIN"      = "$predictiiPath\predictii CALIN.xlsx"
+    "MURI"       = "$predictiiPath\predictii MURI.xlsx"
+    "IOAN"       = "$predictiiPath\predictii IOAN.xlsx"
+    "TUDOR-BORL" = "$predictiiPath\predictii BORLEANU TUDOR.xlsx"
+    "FLORIN"     = "$predictiiPath\predictii Florin.xlsx"
+    "MATEI"      = "$predictiiPath\predictii MATEI.xlsx"
+    "ADRIAN"     = "$predictiiPath\predictii ADRIAN.xlsx"
+    "ARTHUR"     = "$predictiiPath\predictii ARTHUR.xlsx"
+    "MICHALIS"   = "$predictiiPath\predictii MICHALIS.ods"
+    "SONE"       = "$predictiiPath\predictii SONE.xlsx"
+    "MURI TUDOR" = "$predictiiPath\predictii TUDOR MURESAN.xlsx"
 }
 
 # Admin password for the dashboard (change this!)

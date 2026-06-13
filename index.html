@@ -1245,9 +1245,20 @@
     function fmtShort(d) {
       return new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
     }
+    // Games before noon belong to the previous day's viewing session
+    // (e.g. 01:00 and 05:00 games follow the 22:00 game of the night before)
+    function sessionDate(m) {
+      const h = parseInt(m.time.split(':')[0], 10);
+      if (h < 12) {
+        const d = new Date(m.date + 'T12:00:00');
+        d.setDate(d.getDate() - 1);
+        return d.toISOString().slice(0, 10);
+      }
+      return m.date;
+    }
     function byDate() {
       const g = {};
-      DATA.matches.forEach(m => { (g[m.date] = g[m.date] || []).push(m); });
+      DATA.matches.forEach(m => { const k = sessionDate(m); (g[k] = g[k] || []).push(m); });
       return g;
     }
     function escapeHtml(value) {
@@ -1500,7 +1511,7 @@
     function renderNav() {
       const groups = byDate();
       const dates = Object.keys(groups).sort();
-      const withResults = new Set(DATA.matches.filter(m => m.actual_score).map(m => m.date));
+      const withResults = new Set(DATA.matches.filter(m => m.actual_score).map(m => sessionDate(m)));
       document.getElementById('day-nav').innerHTML =
         `<button class="day-btn ${FILTER === 'all' ? 'active' : ''}" onclick="setFilter('all')">All days</button>` +
         dates.map(d =>
@@ -1712,7 +1723,7 @@
       renderMatches();
 
       const today = new Date().toISOString().slice(0, 10);
-      if (DATA.matches.some(m => m.date === today)) setFilter(today);
+      if (DATA.matches.some(m => sessionDate(m) === today)) setFilter(today);
     }
 
     init();
