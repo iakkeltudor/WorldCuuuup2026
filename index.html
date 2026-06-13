@@ -1131,7 +1131,6 @@
     <button class="tab-btn active" data-tab="matches" onclick="showTab('matches')">&#9917; Matches</button>
     <button class="tab-btn" data-tab="leaderboard" onclick="showTab('leaderboard')">&#127942; Leaderboard</button>
     <button class="tab-btn" data-tab="chat" onclick="showTab('chat')">&#128172; Chat</button>
-    <button class="tab-btn" data-tab="chat" onclick="showTab('chat')">&#128172; Chat</button>
   </div>
 
   <!-- ── MATCHES TAB ────────────────────────────────── -->
@@ -1167,29 +1166,7 @@
     </div>
   </div>
 
-  <!-- ── CHAT TAB ───────────────────────────────────── -->
-  <div id="tab-chat" class="tab-panel hidden">
-    <div class="chat-name-bar">
-      Chatting as:
-      <select id="chat-name-select" class="chat-name-select" onchange="setChatName(this.value)">
-        <option value="">— pick your name —</option>
-      </select>
-    </div>
-    <div id="chat-name-bar-err"
-      style="display:none;padding:5px 12px;font-size:.7rem;color:var(--red);background:var(--red-bg);border-bottom:1px solid var(--red)">
-    </div>
-    <div id="chat-msgs" class="chat-msgs">
-      <div class="chat-empty">No messages yet. Say something! 👋</div>
-    </div>
-    <div class="chat-input-row">
-      <input id="chat-input" class="chat-input" type="text" placeholder="Type a message…" maxlength="300"
-        onkeydown="if(event.key==='Enter')sendMsg()">
-      <button class="chat-send-btn" onclick="sendMsg()">Send</button>
-    </div>
-  </div>
-
-  <!-- ── ADMIN TOGGLE ───────────────────────────────── -->
-  <!-- CHAT TAB -->
+  <!-- ── CHAT TAB ─────────────────────────────────── -->
   <div id="tab-chat" class="tab-panel hidden">
     <div id="main-chat">
       <div class="chat-shell">
@@ -1580,12 +1557,12 @@
       const goalHtml = (g) => {
         const suffix = g.detail === 'Penalty' ? ' <span class="goal-type">(P)</span>'
           : g.detail === 'Own Goal' ? ' <span class="goal-type">(OG)</span>' : '';
-        return `<span class="goal-item">⚽ ${esc(g.player)} ${g.minute}'${suffix}</span>`;
+        return `<span class="goal-item">⚽ ${escapeHtml(g.player)} ${g.minute}'${suffix}</span>`;
       };
       const awayHtml = (g) => {
         const suffix = g.detail === 'Penalty' ? '<span class="goal-type">(P) </span>'
           : g.detail === 'Own Goal' ? '<span class="goal-type">(OG) </span>' : '';
-        return `<span class="goal-item">${suffix}${esc(g.player)} ${g.minute}' ⚽</span>`;
+        return `<span class="goal-item">${suffix}${escapeHtml(g.player)} ${g.minute}' ⚽</span>`;
       };
       return `<div class="match-goals">
     <div class="goals-col goals-home">${homeGoals.map(goalHtml).join('')}</div>
@@ -1615,7 +1592,7 @@
 
       const extraHtml = (match.referee || (match.goals && match.goals.length))
         ? `<div class="match-extra">
-        ${match.referee ? `<span class="match-referee-tag">🟡 ${esc(match.referee)}</span>` : ''}
+        ${match.referee ? `<span class="match-referee-tag">🟡 ${escapeHtml(match.referee)}</span>` : ''}
         ${buildGoalsHtml(match)}
       </div>` : '';
 
@@ -1741,160 +1718,14 @@
     init();
   </script>
 
-  <!-- ── FIREBASE CHAT ──────────────────────────────── -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script>
-    firebase.initializeApp({
-      apiKey: "AIzaSyDTtPQvGHeMMDe2txT9UfvOYNFFSqg6yF8",
-      authDomain: "worldcuuuup-9a603.firebaseapp.com",
-      projectId: "worldcuuuup-9a603",
-      storageBucket: "worldcuuuup-9a603.firebasestorage.app",
-      messagingSenderId: "979404614028",
-      appId: "1:979404614028:web:3584e091e1de829e88cea9"
-    });
-    const db = firebase.firestore();
-
-    let CHAT_NAME = localStorage.getItem('chatName') || '';
-    let chatUnsub = null;
-    let chatInited = false;
-
-    const AVATAR_COLORS = [
-      '#e05c5c', '#e07c3a', '#c9a227', '#5aad6e', '#3a9ed4',
-      '#7b6fd4', '#c45cb5', '#4aada8', '#d46b5a', '#7aad3a'
-    ];
-
     function playerColor(name) {
+      const colors = ['#e05c5c','#e07c3a','#c9a227','#5aad6e','#3a9ed4','#7b6fd4','#c45cb5','#4aada8','#d46b5a','#7aad3a'];
       let h = 0;
       for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
-      return AVATAR_COLORS[h % AVATAR_COLORS.length];
+      return colors[h % colors.length];
     }
 
-    function initials(name) {
-      const parts = name.trim().split(/\s+/);
-      return parts.length >= 2
-        ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-        : name.slice(0, 2).toUpperCase();
-    }
-
-    function setChatName(val) {
-      CHAT_NAME = val;
-      if (val) localStorage.setItem('chatName', val);
-    }
-
-    function showChatError(msg) {
-      const bar = document.getElementById('chat-name-bar-err');
-      if (bar) { bar.textContent = msg; bar.style.display = 'block'; }
-    }
-
-    function initChat() {
-      const sel = document.getElementById('chat-name-select');
-      sel.innerHTML = '<option value="">— pick your name —</option>' +
-        (DATA ? DATA.players : []).map(p =>
-          `<option value="${p}"${p === CHAT_NAME ? ' selected' : ''}>${p}</option>`
-        ).join('');
-
-      if (chatInited) return;
-      chatInited = true;
-
-      chatUnsub = db.collection('chat')
-        .orderBy('ts')
-        .limitToLast(200)
-        .onSnapshot(
-          snap => renderChatMsgs(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
-          err => showChatError('Chat unavailable: ' + err.message)
-        );
-    }
-
-    function dayLabel(date) {
-      const today = new Date();
-      const d = new Date(date);
-      const diffDays = Math.floor((today.setHours(0, 0, 0, 0) - d.setHours(0, 0, 0, 0)) / 86400000);
-      if (diffDays === 0) return 'Today';
-      if (diffDays === 1) return 'Yesterday';
-      return new Date(date).toLocaleDateString([], { day: 'numeric', month: 'short' });
-    }
-
-    function renderChatMsgs(msgs) {
-      const el = document.getElementById('chat-msgs');
-      if (!msgs.length) {
-        el.innerHTML = '<div class="chat-empty">No messages yet. Say something! 👋</div>';
-        return;
-      }
-      const wasAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 60;
-
-      let html = '';
-      let lastDay = null;
-
-      for (let i = 0; i < msgs.length; i++) {
-        const m = msgs[i];
-        const isMe = m.name === CHAT_NAME;
-        const side = isMe ? 'me' : 'other';
-        const ts = m.ts ? m.ts.toDate() : null;
-
-        // day separator
-        if (ts) {
-          const dayStr = ts.toDateString();
-          if (dayStr !== lastDay) {
-            lastDay = dayStr;
-            html += `<div class="chat-day-sep">${dayLabel(ts)}</div>`;
-          }
-        }
-
-        const prevSame = i > 0 && msgs[i - 1].name === m.name;
-        const nextSame = i < msgs.length - 1 && msgs[i + 1].name === m.name;
-        const isFirst = !prevSame;
-        const isLast = !nextSame;
-
-        const timeStr = ts ? ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-        const color = playerColor(m.name);
-
-        const avatarHtml = isMe ? '' :
-          `<div class="chat-avatar${isLast ? '' : ' hidden'}" style="background:${color}">${isLast ? initials(m.name) : ''}</div>`;
-
-        const senderHtml = (!isMe && isFirst)
-          ? `<div class="chat-sender" style="color:${color}">${esc(m.name)}</div>`
-          : '';
-
-        const timeHtml = isLast
-          ? `<div class="chat-time">${timeStr}</div>`
-          : '';
-
-        html += `<div class="chat-row ${side}">
-        ${avatarHtml}
-        <div class="chat-bubble-group">
-          ${senderHtml}
-          <div class="chat-bubble${isLast ? ' last' : ''}">${esc(m.text)}</div>
-          ${timeHtml}
-        </div>
-      </div>`;
-      }
-
-      el.innerHTML = html;
-      if (wasAtBottom) el.scrollTop = el.scrollHeight;
-    }
-
-    function esc(s) {
-      return String(s).replace(/[&<>"']/g, c =>
-        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
-      );
-    }
-
-    function sendMsg() {
-      if (!CHAT_NAME) { alert('Pick your name first!'); return; }
-      const input = document.getElementById('chat-input');
-      const text = input.value.trim();
-      if (!text) return;
-      input.value = '';
-      db.collection('chat').add({
-        name: CHAT_NAME,
-        text,
-        ts: firebase.firestore.FieldValue.serverTimestamp()
-      }).catch(err => {
-        input.value = text;
-        showChatError('Could not send — check Firestore is enabled: ' + err.message);
-      });
-    }
   </script>
 </body>
 

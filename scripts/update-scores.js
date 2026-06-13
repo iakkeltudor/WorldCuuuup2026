@@ -99,6 +99,15 @@ async function main() {
 
   let updatedCount = 0;
   let cleanedCount = 0;
+  let goalsUpdatedCount = 0;
+
+  // Build a lookup of finished matches keyed by normalised "home_away"
+  const finishedMap = {};
+  for (const apiMatch of finished) {
+    const h = normalize(TEAM_NAME_MAP[apiMatch.homeTeam.name] ?? apiMatch.homeTeam.name);
+    const a = normalize(TEAM_NAME_MAP[apiMatch.awayTeam.name] ?? apiMatch.awayTeam.name);
+    finishedMap[`${h}_${a}`] = apiMatch;
+  }
 
   for (const match of data.matches) {
     // Clean bad value created by previous script version
@@ -108,48 +117,62 @@ async function main() {
       console.log(`  Match ${match.id}: cleaned invalid score "null-null"`);
     }
 
-    // Keep existing real scores
-    if (match.actual_score !== null) {
+    const ourHome = normalize(stripRanking(match.home));
+    const ourAway = normalize(stripRanking(match.away));
+    const found = finishedMap[`${ourHome}_${ourAway}`];
+
+    if (!found) continue;
+
+    const { home, away } = found.score.fullTime;
+    if (home === null || away === null) {
+      console.log(`  Match ${match.id}: ${match.home} vs ${match.away} — FINISHED but score not yet populated`);
       continue;
     }
 
-    const ourHome = normalize(stripRanking(match.home));
-    const ourAway = normalize(stripRanking(match.away));
-
-    const found = finished.find(apiMatch => {
-      const apiHomeName =
-        TEAM_NAME_MAP[apiMatch.homeTeam.name] ?? apiMatch.homeTeam.name;
-
-      const apiAwayName =
-        TEAM_NAME_MAP[apiMatch.awayTeam.name] ?? apiMatch.awayTeam.name;
-
-      const apiHome = normalize(apiHomeName);
-      const apiAway = normalize(apiAwayName);
-
-      return apiHome === ourHome && apiAway === ourAway;
-    });
-
-    if (found) {
-      const { home, away } = found.score.fullTime;
-      if (home === null || away === null) {
-        console.log(`  Match ${match.id}: ${match.home} vs ${match.away} — status FINISHED but score not yet populated`);
-        continue;
-      }
+    // Update score if not already set
+    if (!match.actual_score) {
       match.actual_score = `${home}-${away}`;
       console.log(`  Match ${match.id}: ${match.home} vs ${match.away} → ${match.actual_score}`);
       updatedCount++;
     }
+
+    // Extract goals + referee from football-data.org if not already set
+    if (!Array.isArray(match.goals)) {
+      match.goals = (found.goals || []).map(g => {
+        const isHome = g.team && found.homeTeam && g.team.id === found.homeTeam.id;
+        const minute = g.injuryTime ? `${g.minute}+${g.injuryTime}` : `${g.minute}`;
+        const detail = g.type === 'OWN_GOAL' ? 'Own Goal'
+                     : g.type === 'PENALTY'   ? 'Penalty'
+                     :                          'Normal Goal';
+        return {
+          player: g.scorer ? g.scorer.name : 'Unknown',
+          minute,
+          team: isHome ? 'home' : 'away',
+          detail,
+        };
+      });
+
+      const mainRef = (found.referees || []).find(r => r.type === 'REFEREE');
+      if (mainRef) {
+        match.referee = mainRef.nationality
+          ? `${mainRef.name} (${mainRef.nationality})`
+          : mainRef.name;
+      } else {
+        match.referee = null;
+      }
+
+      goalsUpdatedCount++;
+      console.log(`  Match ${match.id}: ${match.home} vs ${match.away} — ${match.goals.length} goal(s), referee: ${match.referee || 'N/A'}`);
+    }
   }
 
-  // ── API-Football: fetch goal scorers + referees ───
+  // ── API-Football fallback: for any matches still missing goals ───
   const needsGoals = data.matches.filter(
     m => m.actual_score && !Array.isArray(m.goals)
   );
 
-  let goalsUpdatedCount = 0;
-
   if (afToken && needsGoals.length > 0) {
-    console.log(`\nFetching goal data for ${needsGoals.length} match(es) from API-Football...`);
+    console.log(`\nfootball-data.org had no goals for ${needsGoals.length} match(es) — trying API-Football fallback...`);
 
     let afFixtures;
     try {
@@ -159,70 +182,60 @@ async function main() {
       );
       afFixtures = afResult.response || [];
       console.log(`  API-Football returned ${afFixtures.length} fixtures.`);
+      if (afFixtures.length === 0) {
+        console.log(`  errors: ${JSON.stringify(afResult.errors)}`);
+        console.log(`  results: ${afResult.results}`);
+      }
     } catch (err) {
       console.warn(`  Could not fetch API-Football fixtures: ${err.message}`);
       afFixtures = [];
     }
 
-    // Build lookup: normalised "home_away" → fixture object
     const afMap = {};
     for (const f of afFixtures) {
       const hRaw = AF_TEAM_NAME_MAP[f.teams.home.name] ?? f.teams.home.name;
       const aRaw = AF_TEAM_NAME_MAP[f.teams.away.name] ?? f.teams.away.name;
-      const key  = normalize(hRaw) + '_' + normalize(aRaw);
-      afMap[key] = f;
+      afMap[`${normalize(hRaw)}_${normalize(aRaw)}`] = f;
     }
 
     for (const match of needsGoals) {
       const hName = stripRanking(match.home);
       const aName = stripRanking(match.away);
-      const key   = normalize(hName) + '_' + normalize(aName);
-      const af    = afMap[key];
+      const af    = afMap[`${normalize(hName)}_${normalize(aName)}`];
 
       if (!af) {
         console.log(`  Match ${match.id}: no API-Football fixture found for ${hName} vs ${aName}`);
         continue;
       }
 
-      // Referee (may be null before the match)
       match.referee = af.fixture.referee || null;
 
-      // Fetch goal events for this fixture
       try {
         const evResult = await fetchJson(
           `https://v3.football.api-sports.io/fixtures/events?fixture=${af.fixture.id}`,
           { 'x-apisports-key': afToken }
         );
-
         const events = evResult.response || [];
-
         match.goals = events
           .filter(e => e.type === 'Goal')
           .map(e => {
             const min    = e.time.elapsed;
             const extra  = e.time.extra;
             const minute = extra ? `${min}+${extra}` : `${min}`;
-
             const teamNorm = normalize(AF_TEAM_NAME_MAP[e.team.name] ?? e.team.name);
-            const team = teamNorm === normalize(hName) ? 'home'
-                       : teamNorm === normalize(aName) ? 'away' : 'unknown';
-
             return {
               player: e.player.name,
               minute,
-              team,
-              detail: e.detail, // "Normal Goal", "Penalty", "Own Goal"
+              team: teamNorm === normalize(hName) ? 'home' : teamNorm === normalize(aName) ? 'away' : 'unknown',
+              detail: e.detail,
             };
           });
-
-        console.log(`  Match ${match.id}: ${hName} vs ${aName} — ${match.goals.length} goal(s), referee: ${match.referee || 'N/A'}`);
+        console.log(`  Match ${match.id}: ${hName} vs ${aName} — ${match.goals.length} goal(s) (API-Football), referee: ${match.referee || 'N/A'}`);
         goalsUpdatedCount++;
       } catch (err) {
         console.warn(`  Match ${match.id}: could not fetch events — ${err.message}`);
       }
     }
-  } else if (!afToken && needsGoals.length > 0) {
-    console.log(`\nAPI_FOOTBALL_KEY not set — skipping goal scorer fetch for ${needsGoals.length} match(es).`);
   }
 
   const hasChanges = updatedCount > 0 || cleanedCount > 0 || goalsUpdatedCount > 0;
