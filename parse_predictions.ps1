@@ -15,7 +15,7 @@ param(
 )
 
 # ── CONFIGURE PLAYERS HERE ───────────────────────────────────────────────────
-$predictiiPath = "$BasePath\predictii"
+$predictiiPath = "$BasePath\predictions"
 
 $playerFiles = [ordered]@{
     "IAKKEL"     = "$predictiiPath\predictii IAKKEL.xlsx"

@@ -1,128 +1,129 @@
 # World Cup 2026 — Predictions Dashboard
 
-A static web dashboard for tracking World Cup group stage predictions.
+A static web dashboard for tracking World Cup predictions among a group of friends. Players submit their score predictions via Excel files; the dashboard displays live results, scores each prediction, and ranks players on a leaderboard.
 
 ---
 
-## Files
+## Project structure
 
-| File | Purpose |
+| Path | Purpose |
 |------|---------|
-| `index.html` | The dashboard |
-| `data.json` | All match data, predictions, actual scores — the single source of truth |
-| `parse_predictions.ps1` | Regenerates `data.json` from Excel files |
-| `predictii *.xlsx` | Each player's predictions |
+| `index.html` | The entire frontend — one self-contained file |
+| `data.json` | Single source of truth: matches, predictions, actual scores |
+| `parse_predictions.ps1` | Regenerates `data.json` from the Excel files |
+| `predictions/` | Folder containing one `.xlsx` (or `.ods`) file per player |
+| `scripts/update-scores.js` | Node.js script run by CI to fetch live scores automatically |
+| `.github/workflows/update-scores.yml` | GitHub Actions workflow that runs the score update on a schedule |
 
 ---
 
-## Hosting — Netlify (free, private repo)
+## Prerequisites
 
-The site is deployed via [Netlify](https://netlify.com), connected to a private GitHub repo.
-Every `git push` to `main` triggers an automatic redeploy (~30 seconds).
-
-**Live URL:** `https://worldcuuuup.netlify.app` *(update if you renamed it)*
-
-### One-time setup (already done)
-
-1. Create a private GitHub repo and push the files (see "Pushing to GitHub" below)
-2. Sign in to [app.netlify.com](https://app.netlify.com) with GitHub
-3. "Add new site" → pick the repo → Deploy
-4. Optionally rename: **Site configuration → Site details → Change site name**
+- **Windows** with PowerShell 5.1+ and Microsoft Excel installed (for `parse_predictions.ps1`)
+- **Node.js** 18+ (for running `scripts/update-scores.js` locally)
+- **Git**
+- A **GitHub** account and repository
+- A **Netlify** account (or any static host)
 
 ---
 
-## Common commands
+## Initial setup
 
-All commands assume you're in the project folder. Open a terminal there, or run:
+### 1. Clone the repository
 
-```powershell
-cd "C:\Users\tiakkel\onedrive - endava\desktop\Folderul\Personal Projects\Predictii Mondial"
+```bash
+git clone https://github.com/YOUR-USERNAME/YOUR-REPO.git
+cd YOUR-REPO
 ```
 
-### Regenerate data.json from Excel files
+### 2. Configure players
 
-Run this whenever you add a new player or their Excel file changes:
+Open `parse_predictions.ps1` and edit the `$playerFiles` hashtable near the top. Each entry maps a player display name to their Excel file inside the `predictions/` folder:
+
+```powershell
+$predictiiPath = "$BasePath\predictii"
+
+$playerFiles = [ordered]@{
+    "ALICE"  = "$predictiiPath\predictii ALICE.xlsx"
+    "BOB"    = "$predictiiPath\predictii BOB.xlsx"
+    # add one line per player
+}
+```
+
+Also set the admin password used to unlock score editing on the dashboard:
+
+```powershell
+$adminPassword = "your-password-here"
+```
+
+### 3. Generate data.json
+
+Place each player's `.xlsx` file in the `predictions/` folder, then run:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File ".\parse_predictions.ps1"
 ```
 
-### Push changes to GitHub (triggers Netlify redeploy)
+This reads all Excel files and writes a fresh `data.json`.
 
-After regenerating `data.json` or editing any file:
+### 4. Deploy
 
-```powershell
-git add data.json parse_predictions.ps1
-git commit -m "your message here"
+Push to GitHub and connect the repository to [Netlify](https://netlify.com) (or another static host). Every push to `main` triggers an automatic redeploy.
+
+```bash
+git add .
+git commit -m "Initial setup"
 git push
 ```
 
-First-time push (one-time setup, already done):
+---
 
-```powershell
-git init
-git add index.html data.json parse_predictions.ps1 README.md
-git commit -m "Initial dashboard"
-git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git
-git push -u origin main
-```
+## Automated score updates
 
-### Preview locally before pushing
+Actual scores are fetched automatically via a GitHub Actions workflow that runs hourly during match windows.
 
-```powershell
-py -m http.server 8080
-```
+### Required secrets
 
-Then open http://localhost:8080 — useful for testing score colors and layout.
+Add the following secrets to your GitHub repository (**Settings → Secrets and variables → Actions**):
+
+| Secret | Description |
+|--------|-------------|
+| `FOOTBALL_API_KEY` | API key from [football-data.org](https://www.football-data.org/) |
+| `API_FOOTBALL_KEY` | API key from [api-sports.io](https://www.api-sports.io/) (used for goal scorers; fallback only) |
+
+The workflow is defined in `.github/workflows/update-scores.yml`. It can also be triggered manually from the **Actions** tab in GitHub.
 
 ---
 
-## Adding a new player
+## Adding a new player mid-tournament
 
-1. Save their Excel file in this folder
-2. Open `parse_predictions.ps1` and add them to `$playerFiles` at the top:
-   ```powershell
-   $playerFiles = [ordered]@{
-       "IAKKEL"      = "$BasePath\predictii IAKKEL.xlsx"
-       "OLO"         = "$BasePath\predictii-OLO.xlsx"
-       "MARC BORLEANU" = "$BasePath\predictii BORLEANU MARC.xlsx"
-       "BEN"         = "$BasePath\predictii BEN.xlsx"
-       "NEWPLAYER"   = "$BasePath\predictii-NEWPLAYER.xlsx"  # add here
-   }
-   ```
+1. Add their `.xlsx` file to the `predictions/` folder.
+2. Add an entry for them in `parse_predictions.ps1` under `$playerFiles`.
 3. Regenerate and push:
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File ".\parse_predictions.ps1"
-   git add data.json parse_predictions.ps1
-   git commit -m "Add NEWPLAYER predictions"
-   git push
-   ```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ".\parse_predictions.ps1"
+git add data.json parse_predictions.ps1 predictions/
+git commit -m "Add predictions for NEW-PLAYER"
+git push
+```
 
 ---
 
-## Updating actual scores after a match
+## Updating scores manually
 
-### Option A — Admin Mode on the site (easiest)
+Scores are updated automatically by the CI workflow, but they can also be set manually.
 
-1. Open the live site
-2. Click the **⚙ gear button** (bottom-right) → password: `mondial2026`
-3. Type the actual score on each match card (format: `2-1`)
-4. Click **Export JSON**
-5. Copy the JSON → replace `data.json` in the GitHub repo:
-   - Go to your GitHub repo → click `data.json` → pencil ✏️ edit icon
-   - Select all, paste → **Commit changes**
-6. Netlify redeploys in ~30 seconds ✓
+### Via the admin panel (recommended)
 
-### Option B — Edit data.json directly
+1. Open the live site.
+2. Click the **⚙ gear button** (bottom-right) and enter the admin password.
+3. Type the actual score on each match card (format: `2-1`).
+4. Click **Export JSON**, then replace `data.json` in the repository with the exported content.
 
-Open `data.json`, find the match, change `"actual_score": null` to `"actual_score": "2-1"`, then push:
+### Via direct file edit
 
-```powershell
-git add data.json
-git commit -m "Add scores for June 11"
-git push
-```
+Open `data.json`, find the match, and change `"actual_score": null` to `"actual_score": "2-1"`, then push.
 
 ---
 
@@ -130,8 +131,21 @@ git push
 
 | Result | Points |
 |--------|--------|
-| Exact score (e.g., predicted 2-1, actual 2-1) | **3 points** |
-| Correct outcome (win/draw/loss) but wrong score | **1 point** |
+| Exact score predicted correctly | **3 points** |
+| Correct outcome (win / draw / loss), wrong score | **1 point** |
 | Wrong outcome | **0 points** |
 
-Colors on the dashboard: green = 3 pts, amber = 1 pt, red = 0 pts, gray = not played yet.
+Dashboard colors: **green** = 3 pts · **amber** = 1 pt · **red** = 0 pts · **gray** = match not played yet.
+
+---
+
+## Local preview
+
+To preview the site locally without deploying:
+
+```bash
+# Python (any platform)
+python -m http.server 8080
+```
+
+Then open `http://localhost:8080`. Alternatively, use the **Live Server** extension in VS Code (right-click `index.html` → *Open with Live Server*).
