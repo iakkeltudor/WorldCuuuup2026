@@ -136,43 +136,32 @@ async function main() {
       updatedCount++;
     }
 
-    // Extract goals + referee from football-data.org if not already set
-    if (!Array.isArray(match.goals)) {
-      match.goals = (found.goals || []).map(g => {
-        const isHome = g.team && found.homeTeam && g.team.id === found.homeTeam.id;
-        const minute = g.injuryTime ? `${g.minute}+${g.injuryTime}` : `${g.minute}`;
-        const detail = g.type === 'OWN_GOAL' ? 'Own Goal'
-                     : g.type === 'PENALTY'   ? 'Penalty'
-                     :                          'Normal Goal';
-        return {
-          player: g.scorer ? g.scorer.name : 'Unknown',
-          minute,
-          team: isHome ? 'home' : 'away',
-          detail,
-        };
-      });
-
+    // Extract referee from football-data.org (goals come from API-Football below)
+    if (!match.referee) {
       const mainRef = (found.referees || []).find(r => r.type === 'REFEREE');
       if (mainRef) {
         match.referee = mainRef.nationality
           ? `${mainRef.name} (${mainRef.nationality})`
           : mainRef.name;
-      } else {
-        match.referee = null;
+        goalsUpdatedCount++;
+        console.log(`  Match ${match.id}: ${match.home} vs ${match.away} — referee: ${match.referee}`);
       }
-
-      goalsUpdatedCount++;
-      console.log(`  Match ${match.id}: ${match.home} vs ${match.away} — ${match.goals.length} goal(s), referee: ${match.referee || 'N/A'}`);
     }
   }
 
-  // ── API-Football fallback: for any matches still missing goals ───
-  const needsGoals = data.matches.filter(
-    m => m.actual_score && !Array.isArray(m.goals)
-  );
+  // ── API-Football: fetch goal scorers ───
+  // Retry if goals not set, or if goals is empty but score is non-zero
+  // (football-data.org free tier returns no goal data)
+  const needsGoals = data.matches.filter(m => {
+    if (!m.actual_score) return false;
+    if (!Array.isArray(m.goals)) return true;
+    if (m.goals.length > 0) return false;
+    const [h, a] = m.actual_score.split('-').map(Number);
+    return h > 0 || a > 0; // non-zero score but empty goals array → retry
+  });
 
   if (afToken && needsGoals.length > 0) {
-    console.log(`\nfootball-data.org had no goals for ${needsGoals.length} match(es) — trying API-Football fallback...`);
+    console.log(`\nFetching goal scorers for ${needsGoals.length} match(es) from API-Football...`);
 
     let afFixtures;
     try {
