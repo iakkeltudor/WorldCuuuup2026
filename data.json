@@ -292,7 +292,7 @@
             "home": "Netherlands (7)",
             "away": "Japan (18)",
             "group": "Group F",
-            "actual_score": null,
+            "actual_score": "2-2",
             "predictions": {
                 "MARC-BORL": "2-1",
                 "MURI TUDOR": "3-1",
@@ -309,7 +309,8 @@
                 "MATEI": "3-0",
                 "SONE": "2-2",
                 "CALIN": "1-2"
-            }
+            },
+            "referee": "Ismail Elfath (United States)"
         },
         {
             "id": 11,
