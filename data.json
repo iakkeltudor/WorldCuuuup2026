@@ -263,7 +263,7 @@
             "home": "Germany (10)",
             "away": "Curaçao (83)",
             "group": "Group E",
-            "actual_score": null,
+            "actual_score": "7-1",
             "predictions": {
                 "MARC-BORL": "5-0",
                 "MURI TUDOR": "4-0",
@@ -280,7 +280,8 @@
                 "MATEI": "5-1",
                 "SONE": "7-0",
                 "CALIN": "3-0"
-            }
+            },
+            "referee": "Jalal Jayed (Morocco)"
         },
         {
             "id": 10,
