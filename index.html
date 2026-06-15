@@ -96,13 +96,139 @@
       border-radius: 10px; padding: 5px; min-width: 120px; z-index: 100;
       box-shadow: 0 8px 24px rgba(0,0,0,.4);
     }
-    .profile-chip.open .profile-dropdown { display: block; }
-    .profile-signout {
-      width: 100%; text-align: left; background: none; border: none;
-      color: var(--text2); font-size: .85rem; padding: 8px 12px;
-      border-radius: 6px; cursor: pointer;
+    /* ── PROFILE PANEL ────────────────────────────────── */
+    #profile-overlay {
+      position: fixed; inset: 0; z-index: 1500;
+      background: rgba(0,0,0,.55);
+      display: none; justify-content: flex-end;
     }
-    .profile-signout:hover { background: var(--red-bg); color: var(--red); }
+    #profile-overlay.open { display: flex; }
+    .profile-panel {
+      width: min(460px, 100vw); height: 100vh;
+      background: var(--surface); border-left: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .pp-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .pp-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .pp-avatar-initials {
+      width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 900; color: #fff;
+    }
+    .pp-identity { flex: 1; }
+    .pp-name { font-size: 1.1rem; font-weight: 800; }
+    .pp-name-sub { font-size: .72rem; color: var(--text3); margin-top: 2px; }
+    .pp-close {
+      background: none; border: none; color: var(--text2);
+      font-size: 1.1rem; cursor: pointer; padding: 6px 8px; border-radius: 6px;
+    }
+    .pp-close:hover { background: var(--card2); color: var(--text); }
+    .pp-stats {
+      display: flex; flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .pp-stat {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      padding: 14px 6px; border-right: 1px solid var(--border);
+    }
+    .pp-stat:last-child { border-right: none; }
+    .pp-stat-val { font-size: 1.25rem; font-weight: 800; color: var(--text); }
+    .pp-stat-lbl { font-size: .58rem; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
+    .pp-body { flex: 1; overflow-y: auto; }
+    .pp-day-header {
+      font-size: .68rem; font-weight: 700; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .06em;
+      padding: 10px 16px 6px;
+      position: sticky; top: 0; background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .pp-match {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 16px; border-bottom: 1px solid var(--border); gap: 8px;
+    }
+    .pp-teams { font-size: .8rem; color: var(--text2); flex: 1; min-width: 0; }
+    .pp-vs { color: var(--text3); margin: 0 3px; }
+    .pp-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .pp-pred {
+      font-size: .8rem; font-weight: 700;
+      padding: 2px 8px; border-radius: 6px;
+    }
+    .pp-pred.green { background: var(--green-bg); color: var(--green); }
+    .pp-pred.amber { background: var(--amber-bg); color: var(--amber); }
+    .pp-pred.red { background: var(--red-bg); color: var(--red); }
+    .pp-pred.none { color: var(--text3); font-weight: 400; font-size: .75rem; }
+    .pp-actual { font-size: .75rem; color: var(--text3); }
+    .pp-pts { font-size: .72rem; font-weight: 700; min-width: 22px; text-align: right; }
+    .pp-pts.green { color: var(--green); }
+    .pp-pts.amber { color: var(--amber); }
+    .pp-pts.red { color: var(--red); opacity: .5; }
+    .pp-footer {
+      padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0;
+    }
+    .pp-signout-btn {
+      width: 100%; background: none; border: 1px solid var(--border);
+      color: var(--text2); font-size: .85rem; padding: 9px 16px;
+      border-radius: 8px; cursor: pointer;
+    }
+    .pp-signout-btn:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+
+    /* chart + neighbors shared label */
+    .pp-section-label {
+      font-size: .63rem; font-weight: 700; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px;
+    }
+    /* chart */
+    /* neighbors */
+    .pp-neighbors {
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 5px;
+    }
+    .pp-nbr-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border-radius: 8px; background: var(--card2);
+    }
+    .pp-nbr-me { background: var(--accent-dim); border: 1px solid rgba(245,158,11,.25); }
+    .pp-nbr-rank { font-size: .72rem; font-weight: 700; color: var(--text3); min-width: 22px; }
+    .pp-nbr-name { flex: 1; font-size: .82rem; font-weight: 600; }
+    .pp-nbr-you { font-weight: 400; color: var(--text3); font-size: .75rem; }
+    .pp-nbr-pts { font-size: .82rem; font-weight: 700; color: var(--text); }
+    .pp-nbr-diff {
+      font-size: .7rem; font-weight: 700;
+      padding: 1px 7px; border-radius: 999px;
+    }
+    .pp-nbr-diff.behind { background: var(--red-bg); color: var(--red); }
+    .pp-nbr-diff.ahead  { background: var(--green-bg); color: var(--green); }
+    .pp-nbr-leader, .pp-nbr-last {
+      font-size: .8rem; padding: 8px 10px; text-align: center;
+      background: var(--card2); border-radius: 8px;
+    }
+    .pp-nbr-leader { color: var(--gold); }
+    .pp-nbr-last   { color: var(--text3); }
+
+    /* ── CLICKABLE PLAYER NAME ────────────────────────── */
+    .player-link {
+      cursor: pointer; border-bottom: 1px dashed var(--border2);
+      transition: color .12s, border-color .12s;
+    }
+    .player-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ── OWN PREDICTION HIGHLIGHT ─────────────────────── */
+    .pred-col-mine {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+      position: relative;
+    }
+    .pred-col-mine::after {
+      content: 'YOU';
+      position: absolute; top: 0; right: 0;
+      background: var(--accent); color: #000;
+      font-size: .48rem; font-weight: 900; letter-spacing: .05em;
+      padding: 1px 4px; border-radius: 0 6px 0 4px;
+    }
 
     /* ── HEADER ───────────────────────────────────────── */
     .header {
@@ -1332,6 +1458,17 @@
     </div>
   </div>
 
+  <!-- ── PROFILE PANEL ────────────────────────────── -->
+  <div id="profile-overlay" onclick="closeProfileOnBackdrop(event)">
+    <div class="profile-panel" id="profile-panel">
+      <div class="pp-header" id="pp-header"></div>
+      <div class="pp-body" id="pp-body"></div>
+      <div class="pp-footer" id="pp-footer">
+        <button class="pp-signout-btn" onclick="signOutUser()">Sign out</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ── MAIN APP ───────────────────────────────────── -->
   <div id="app-content" style="display:none">
 
@@ -1340,12 +1477,9 @@
     <div class="header-inner">
       <h1>&#9917; World Cup <em>2026</em> &#8212; Predictions</h1>
       <div class="header-sub">Group Stage &middot; USA &bull; Canada &bull; Mexico</div>
-      <div class="profile-chip" id="profile-chip" onclick="toggleProfileDropdown()">
+      <div class="profile-chip" id="profile-chip" onclick="openProfile()">
         <img class="profile-avatar" id="profile-avatar" src="" alt="">
         <span class="profile-player-name" id="profile-player-name"></span>
-        <div class="profile-dropdown" id="profile-dropdown">
-          <button class="profile-signout" onclick="signOutUser(event)">Sign out</button>
-        </div>
       </div>
       <div class="header-badge">
         <span class="badge-dot"></span>
@@ -1611,7 +1745,7 @@
           : `<span class="rank-num">${rank}</span>`;
         return `<tr class="${posClass}">
       <td class="col-rank">${rankCell}</td>
-      <td class="col-player">${e.player}</td>
+      <td class="col-player"><span class="player-link" onclick="openProfile('${escapeHtml(e.player)}')">${escapeHtml(e.player)}</span></td>
       <td class="val-pts">${e.pts}</td>
       <td class="col-gp">${e.played}</td>
       <td class="val-exact">${e.exact}</td>
@@ -2072,10 +2206,11 @@
         if (!pred) return '';
         const pts = calcPts(pred, match.actual_score);
         const cls = stateClass(pts);
+        const mine = CURRENT_USER?.playerName === player ? ' pred-col-mine' : '';
         const ptsHtml = pts !== null
           ? `<span class="pred-col-pts">${pts > 0 ? '+' : ''}${pts}</span>`
           : '';
-        return `<div class="pred-col ${cls}" title="${player}: ${pred}${pts !== null ? ` (${pts}pts)` : ''}">
+        return `<div class="pred-col ${cls}${mine}" title="${player}: ${pred}${pts !== null ? ` (${pts}pts)` : ''}">
       <span class="pred-col-name">${player}</span>
       <span class="pred-col-score">${pred}</span>
       ${ptsHtml}
@@ -2301,19 +2436,160 @@
       }
     }
 
-    function signOutUser(e) {
-      if (e) e.stopPropagation();
+    function signOutUser() {
+      closeProfile();
       auth.signOut();
     }
 
-    function toggleProfileDropdown() {
-      document.getElementById('profile-chip').classList.toggle('open');
-      setTimeout(() => {
-        document.addEventListener('click', function closeDropdown() {
-          document.getElementById('profile-chip')?.classList.remove('open');
-          document.removeEventListener('click', closeDropdown);
-        });
-      }, 0);
+    function openProfile(targetPlayer) {
+      renderProfile(targetPlayer || CURRENT_USER?.playerName);
+      document.getElementById('profile-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeProfile() {
+      document.getElementById('profile-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function closeProfileOnBackdrop(e) {
+      if (e.target === document.getElementById('profile-overlay')) closeProfile();
+    }
+
+function buildProfileNeighbors(player) {
+      const lb = [...DATA.players]
+        .map(p => ({ p, pts: DATA.matches.reduce((s, m) => {
+          if (!m.actual_score || !m.predictions[p]) return s;
+          return s + (calcPts(m.predictions[p], m.actual_score) || 0);
+        }, 0) }))
+        .sort((a, b) => b.pts - a.pts);
+
+      const idx  = lb.findIndex(x => x.p === player);
+      const mine = lb[idx];
+      const above = idx > 0 ? lb[idx - 1] : null;
+      const below = idx < lb.length - 1 ? lb[idx + 1] : null;
+
+      const isViewerRow = p => p === CURRENT_USER?.playerName;
+      const row = (entry, rankNum, isSubject, diff, dir) => `
+        <div class="pp-nbr-row${isSubject ? ' pp-nbr-me' : ''}">
+          <span class="pp-nbr-rank">#${rankNum}</span>
+          <span class="pp-nbr-name">${escapeHtml(entry.p)}${isViewerRow(entry.p) ? ' <span class="pp-nbr-you">(you)</span>' : ''}</span>
+          <span class="pp-nbr-pts">${entry.pts}</span>
+          ${diff !== null ? `<span class="pp-nbr-diff ${dir}">${dir === 'behind' ? '+' : '-'}${diff} pts</span>` : ''}
+        </div>`;
+
+      const aboveHtml = above
+        ? row(above, idx, false, above.pts - mine.pts, 'behind')
+        : `<div class="pp-nbr-leader">&#127942; Leading the pack</div>`;
+      const belowHtml = below
+        ? row(below, idx + 2, false, mine.pts - below.pts, 'ahead')
+        : `<div class="pp-nbr-last">Last place — only way is up &#128640;</div>`;
+
+      return `<div class="pp-neighbors">
+        <div class="pp-section-label">Leaderboard</div>
+        ${aboveHtml}
+        ${row(mine, idx + 1, true, null, null)}
+        ${belowHtml}
+      </div>`;
+    }
+
+    function renderProfile(player) {
+      if (!player) return;
+      const isOwnProfile = player === CURRENT_USER?.playerName;
+
+      // Header: avatar + name
+      const ppHeader = document.getElementById('pp-header');
+      if (ppHeader) {
+        const avatarHtml = isOwnProfile && CURRENT_USER.photoURL
+          ? `<img class="pp-avatar" src="${escapeHtml(CURRENT_USER.photoURL)}" alt="">`
+          : `<div class="pp-avatar-initials" style="background:${playerColor(player)}">${escapeHtml(player[0])}</div>`;
+        const subHtml = isOwnProfile ? '' : `<div class="pp-name-sub">Viewing profile</div>`;
+        ppHeader.innerHTML = `
+          ${avatarHtml}
+          <div class="pp-identity">
+            <div class="pp-name">${escapeHtml(player)}</div>
+            ${subHtml}
+          </div>
+          <button class="pp-close" onclick="closeProfile()">&#x2715;</button>`;
+      }
+
+      // Footer: sign out only for own profile
+      const ppFooter = document.getElementById('pp-footer');
+      if (ppFooter) {
+        ppFooter.innerHTML = isOwnProfile
+          ? `<button class="pp-signout-btn" onclick="signOutUser()">Sign out</button>`
+          : '';
+        ppFooter.style.display = isOwnProfile ? '' : 'none';
+      }
+
+      const played = DATA.matches.filter(m => m.actual_score);
+      const sortedPlayed = [...played].sort((a, b) =>
+        (a.date + a.time) < (b.date + b.time) ? -1 : 1
+      );
+
+      let totalPts = 0, exact = 0, correct = 0, cur = 0, best = 0;
+      for (const m of sortedPlayed) {
+        const pred = m.predictions[player];
+        if (!pred) continue;
+        const pts = calcPts(pred, m.actual_score);
+        totalPts += pts || 0;
+        if (pts === 3) exact++;
+        if (pts >= 1) { correct++; cur++; if (cur > best) best = cur; }
+        else cur = 0;
+      }
+
+      const lb = [...DATA.players]
+        .map(p => ({ p, pts: DATA.matches.reduce((s, m) => {
+          if (!m.actual_score || !m.predictions[p]) return s;
+          return s + (calcPts(m.predictions[p], m.actual_score) || 0);
+        }, 0) }))
+        .sort((a, b) => b.pts - a.pts);
+      const rank = lb.findIndex(x => x.p === player) + 1;
+
+      const statsHtml = `<div class="pp-stats">
+        <div class="pp-stat"><span class="pp-stat-val">#${rank}</span><span class="pp-stat-lbl">Rank</span></div>
+        <div class="pp-stat"><span class="pp-stat-val">${totalPts}</span><span class="pp-stat-lbl">Points</span></div>
+        <div class="pp-stat"><span class="pp-stat-val">${exact}</span><span class="pp-stat-lbl">Exact</span></div>
+        <div class="pp-stat"><span class="pp-stat-val">${correct}</span><span class="pp-stat-lbl">Correct</span></div>
+        <div class="pp-stat"><span class="pp-stat-val">${best}</span><span class="pp-stat-lbl">Best streak</span></div>
+      </div>`;
+
+      // All day groups for predictions list
+      const allSorted = [...DATA.matches].sort((a, b) =>
+        (a.date + a.time) < (b.date + b.time) ? -1 : 1
+      );
+      const dayGroups = {};
+      for (const m of allSorted) {
+        const d = sessionDate(m);
+        (dayGroups[d] = dayGroups[d] || []).push(m);
+      }
+
+      const daysHtml = Object.entries(dayGroups).map(([date, matches]) => {
+        const rows = matches.map(m => {
+          const pred = m.predictions[player];
+          const pts  = pred && m.actual_score ? calcPts(pred, m.actual_score) : null;
+          const cls  = pts === 3 ? 'green' : pts === 1 ? 'amber' : pts === 0 ? 'red' : '';
+          const predHtml   = pred
+            ? `<span class="pp-pred ${cls}">${escapeHtml(pred)}</span>`
+            : `<span class="pp-pred none">—</span>`;
+          const actualHtml = m.actual_score
+            ? `<span class="pp-actual">${escapeHtml(m.actual_score)}</span>`
+            : `<span class="pp-actual">—</span>`;
+          const ptsHtml = pts !== null
+            ? `<span class="pp-pts ${cls}">${pts > 0 ? '+' : ''}${pts}</span>`
+            : `<span class="pp-pts"></span>`;
+          return `<div class="pp-match">
+            <span class="pp-teams">${escapeHtml(m.home)}<span class="pp-vs"> vs </span>${escapeHtml(m.away)}</span>
+            <div class="pp-right">${predHtml}${actualHtml}${ptsHtml}</div>
+          </div>`;
+        }).join('');
+        return `<div class="pp-day-header">${fmtLong(date)}</div>${rows}`;
+      }).join('');
+
+      document.getElementById('pp-body').innerHTML =
+        statsHtml +
+        buildProfileNeighbors(player) +
+        daysHtml;
     }
 
     function showApp(playerName, displayName, photoURL) {
