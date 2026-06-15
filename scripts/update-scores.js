@@ -17,8 +17,8 @@ const TEAM_NAME_MAP = {
   'Bosnia Herzegovina': 'Bosnia and Herzegovina',
   'Bosnia & Herzegovina': 'Bosnia and Herzegovina',
   'Congo DR': 'DR Congo',
-  'Cape Verde Islands': 'Cabo Verde',
-  'Cape Verde': 'Cabo Verde',
+  'Cape Verde Islands': 'Cape Verde',
+  'Cabo Verde': 'Cape Verde',
 };
 
 // API-Football name  ->  name used in data.json after ranking is stripped
