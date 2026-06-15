@@ -379,7 +379,7 @@
             "home": "Spain (2)",
             "away": "Cape Verde (68)",
             "group": "Group H",
-            "actual_score": null,
+            "actual_score": "0-0",
             "predictions": {
                 "MARC-BORL": "5-1",
                 "MURI TUDOR": "3-0",
@@ -396,7 +396,8 @@
                 "MATEI": "5-0",
                 "SONE": "3-1",
                 "CALIN": "4-0"
-            }
+            },
+            "referee": "Adham Makhadmeh (Jordan)"
         },
         {
             "id": 14,
