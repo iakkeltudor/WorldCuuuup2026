@@ -350,7 +350,7 @@
             "home": "Sweden (38)",
             "away": "Tunisia (45)",
             "group": "Group F",
-            "actual_score": null,
+            "actual_score": "5-1",
             "predictions": {
                 "MARC-BORL": "1-0",
                 "MURI TUDOR": "2-0",
@@ -367,7 +367,8 @@
                 "MATEI": "0-0",
                 "SONE": "1-0",
                 "CALIN": "3-1"
-            }
+            },
+            "referee": "Yael Falcón (Argentina)"
         },
         {
             "id": 13,
