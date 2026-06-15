@@ -506,6 +506,56 @@
       color: var(--red);
     }
 
+    /* ── STATS TAB ───────────────────────────────────── */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding: 20px;
+    }
+    @media (max-width: 750px) {
+      .insights-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .insights-grid { grid-template-columns: 1fr; }
+    }
+    .insight-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .insight-icon { font-size: 2rem; line-height: 1; flex-shrink: 0; padding-top: 2px; }
+    .insight-body { flex: 1; min-width: 0; }
+    .insight-title {
+      font-size: .68rem;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 4px;
+    }
+    .insight-value {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+    .insight-names { display: flex; flex-wrap: wrap; gap: 4px; }
+    .insight-name {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: .68rem;
+      font-weight: 600;
+    }
+    .insight-sub { font-size: .65rem; color: var(--text3); margin-top: 5px; }
+    .insights-empty { padding: 48px 16px; text-align: center; color: var(--text3); font-size: .9rem; }
+
     /* ── MATCH EXTRA (referee + goals) ───────────────── */
     .match-extra {
       border-top: 1px solid var(--border);
@@ -877,6 +927,90 @@
       white-space: pre-wrap;
     }
 
+    .msg-reactions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 6px;
+      align-items: center;
+    }
+    .reaction-chip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 2px 8px 2px 5px;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: background .12s, border-color .12s;
+      line-height: 1.3;
+    }
+    .reaction-chip:hover { background: var(--border); }
+    .reaction-chip.mine {
+      background: rgba(37,99,235,.12);
+      border-color: var(--accent);
+    }
+    .reaction-count {
+      font-size: .68rem;
+      font-weight: 700;
+      color: var(--text2);
+    }
+    .reaction-chip.mine .reaction-count { color: var(--accent); }
+    .reaction-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e1e2e;
+      color: #fff;
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-size: .63rem;
+      white-space: nowrap;
+      z-index: 50;
+      pointer-events: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,.35);
+    }
+    .reaction-chip:hover .reaction-tooltip { display: block; }
+    .reaction-add-btn {
+      background: none;
+      border: 1px dashed var(--border);
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: .75rem;
+      cursor: pointer;
+      color: var(--text3);
+      line-height: 1.4;
+      transition: background .12s, border-color .12s, color .12s;
+    }
+    .reaction-add-btn:hover { background: var(--surface); border-color: var(--text3); color: var(--text); }
+    .reaction-picker {
+      display: none;
+      gap: 2px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 5px 7px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.2);
+      flex-basis: 100%;
+    }
+    .reaction-picker.open { display: flex; }
+    .reaction-picker-btn {
+      background: none;
+      border: none;
+      font-size: 1.15rem;
+      cursor: pointer;
+      padding: 3px 5px;
+      border-radius: 6px;
+      line-height: 1;
+      transition: background .1s, transform .1s;
+    }
+    .reaction-picker-btn:hover { background: var(--border); transform: scale(1.2); }
+
     .chat-form {
       display: grid;
       grid-template-columns: minmax(120px, 170px) 1fr auto;
@@ -1130,6 +1264,7 @@
   <div class="tab-nav">
     <button class="tab-btn active" data-tab="matches" onclick="showTab('matches')">&#9917; Matches</button>
     <button class="tab-btn" data-tab="leaderboard" onclick="showTab('leaderboard')">&#127942; Leaderboard</button>
+    <button class="tab-btn" data-tab="stats" onclick="showTab('stats')">&#128202; Stats</button>
     <button class="tab-btn" data-tab="chat" onclick="showTab('chat')">&#128172; Chat</button>
   </div>
 
@@ -1164,6 +1299,11 @@
         </table>
       </div>
     </div>
+  </div>
+
+  <!-- ── STATS TAB ────────────────────────────────── -->
+  <div id="tab-stats" class="tab-panel hidden">
+    <div id="main-stats"></div>
   </div>
 
   <!-- ── CHAT TAB ─────────────────────────────────── -->
@@ -1317,13 +1457,11 @@
       );
       document.getElementById('tab-matches').classList.toggle('hidden', tab !== 'matches');
       document.getElementById('tab-leaderboard').classList.toggle('hidden', tab !== 'leaderboard');
+      document.getElementById('tab-stats').classList.toggle('hidden', tab !== 'stats');
       document.getElementById('tab-chat').classList.toggle('hidden', tab !== 'chat');
-      if (tab === 'leaderboard') {
-        renderLeaderboard();
-      }
-      if (tab === 'chat') {
-        startChat();
-      }
+      if (tab === 'leaderboard') renderLeaderboard();
+      if (tab === 'stats') renderStats();
+      if (tab === 'chat') startChat();
     }
 
     // ── Render leaderboard tab ─────────────────────────
@@ -1389,7 +1527,210 @@
       renderLeagueTable();
     }
 
-    // Chat
+    // ── Stats tab ──────────────────────────────────────
+    function computeStats() {
+      const players = DATA.players;
+      const played = DATA.matches.filter(m => m.actual_score);
+
+      const sorted = [...played].sort((a, b) =>
+        (a.date + a.time) < (b.date + b.time) ? -1 : 1
+      );
+
+      const st = {};
+      players.forEach(p => {
+        st[p] = { exact: 0, outcomes: 0, streak: 0, currentStreak: 0,
+                  coldStreak: 0, upsets: 0, loneWolf: 0, perfectDays: 0 };
+      });
+
+      // Hot streak + cold streak pass
+      for (const p of players) {
+        let cur = 0, longest = 0, cold = 0;
+        for (const m of sorted) {
+          const pred = m.predictions[p];
+          if (!pred) continue;
+          const pts = calcPts(pred, m.actual_score);
+          if (pts >= 1) { cur++; cold = 0; if (cur > longest) longest = cur; }
+          else { cold++; cur = 0; }
+        }
+        st[p].streak = longest;
+        st[p].currentStreak = cur;
+        st[p].coldStreak = cold;
+      }
+
+      // Group matches by session date for perfect-day + biggest-matchday
+      const dayGroups = {};
+      for (const m of sorted) {
+        const d = sessionDate(m);
+        (dayGroups[d] = dayGroups[d] || []).push(m);
+      }
+
+      // Perfect days
+      for (const p of players) {
+        let perfect = 0;
+        for (const matches of Object.values(dayGroups)) {
+          const hasPred = matches.some(m => m.predictions[p]);
+          if (!hasPred) continue;
+          const allRight = matches.every(m => {
+            const pred = m.predictions[p];
+            return pred && calcPts(pred, m.actual_score) >= 1;
+          });
+          if (allRight) perfect++;
+        }
+        st[p].perfectDays = perfect;
+      }
+
+      // Biggest matchday (global — not per player)
+      let biggestMatchday = null;
+      for (const [d, matches] of Object.entries(dayGroups)) {
+        let totalPts = 0;
+        for (const m of matches) {
+          for (const p of players) {
+            const pred = m.predictions[p];
+            if (pred) totalPts += calcPts(pred, m.actual_score) || 0;
+          }
+        }
+        if (!biggestMatchday || totalPts > biggestMatchday.totalPts) {
+          biggestMatchday = { date: d, totalPts };
+        }
+      }
+
+      // Per-match pass: upsets + lone wolf + basic counters
+      for (const m of played) {
+        const actual = m.actual_score;
+        const actualOut = outcome(actual);
+
+        // majority outcome
+        const counts = { H: 0, D: 0, A: 0 };
+        let total = 0;
+        for (const p of players) {
+          const pred = m.predictions[p];
+          if (!pred) continue;
+          counts[outcome(pred.trim())]++;
+          total++;
+        }
+        const majorOut = ['H', 'D', 'A'].reduce((a, b) => counts[a] >= counts[b] ? a : b);
+        const isUpset = total > 0 && majorOut !== actualOut;
+
+        // lone wolf: exactly one player predicted the correct outcome
+        const correctCallers = players.filter(p => {
+          const pred = m.predictions[p];
+          return pred && calcPts(pred, actual) >= 1;
+        });
+        const isLoneWolf = correctCallers.length === 1;
+
+        for (const p of players) {
+          const pred = m.predictions[p];
+          if (!pred) continue;
+          const pts = calcPts(pred, actual);
+          if (pts === 3) st[p].exact++;
+          if (pts >= 1) st[p].outcomes++;
+          if (isUpset && outcome(pred.trim()) === actualOut) st[p].upsets++;
+          if (isLoneWolf && correctCallers[0] === p) st[p].loneWolf++;
+        }
+      }
+
+      return { st, biggestMatchday };
+    }
+
+    function renderStats() {
+      const played = DATA.matches.filter(m => m.actual_score).length;
+      if (played === 0) {
+        document.getElementById('main-stats').innerHTML =
+          '<div class="insights-empty">No matches played yet — check back once the tournament starts.</div>';
+        return;
+      }
+
+      const { st, biggestMatchday } = computeStats();
+      const players = DATA.players;
+
+      function leaders(key, minVal) {
+        const max = Math.max(...players.map(p => st[p][key]));
+        if (minVal !== undefined && max < minVal) return null;
+        return { value: max, names: players.filter(p => st[p][key] === max) };
+      }
+
+      function nameChips(names) {
+        return names.map(n => `<span class="insight-name">${escapeHtml(n)}</span>`).join('');
+      }
+
+      function card(icon, title, value, names, sub) {
+        return `<div class="insight-card">
+          <div class="insight-icon">${icon}</div>
+          <div class="insight-body">
+            <div class="insight-title">${title}</div>
+            <div class="insight-value">${value}</div>
+            ${names ? `<div class="insight-names">${nameChips(names)}</div>` : ''}
+            ${sub ? `<div class="insight-sub">${sub}</div>` : ''}
+          </div>
+        </div>`;
+      }
+
+      const streak     = leaders('streak');
+      const exact      = leaders('exact');
+      const outcomes   = leaders('outcomes');
+      const upsets     = leaders('upsets', 1);
+      const hotStreak  = leaders('currentStreak', 3);
+      const coldStreak = leaders('coldStreak', 2);
+      const loneWolf   = leaders('loneWolf', 1);
+      const perfectDay = leaders('perfectDays', 1);
+
+      // Biggest matchday card (global stat — no player names)
+      const bigDayCard = biggestMatchday && biggestMatchday.totalPts > 0
+        ? card('📅', 'Biggest matchday',
+            biggestMatchday.totalPts + ' pts scored',
+            null,
+            fmtLong(biggestMatchday.date) + ' · all players combined')
+        : '';
+
+      const html = `<div class="insights-grid">
+        ${card('🔥', 'Longest streak without a wrong answer',
+          streak.value + (streak.value === 1 ? ' match' : ' matches'),
+          streak.names)}
+        ${card('🎯', 'Most exact scores predicted',
+          exact.value + (exact.value === 1 ? ' exact hit' : ' exact hits'),
+          exact.names)}
+        ${card('✅', 'Most correct outcomes',
+          outcomes.value + ' correct',
+          outcomes.names,
+          `out of ${played} match${played === 1 ? '' : 'es'} played`)}
+        ${upsets ? card('🦁', 'Biggest upset caller',
+          upsets.value + (upsets.value === 1 ? ' upset' : ' upsets') + ' called',
+          upsets.names,
+          'predicted correctly when the majority got it wrong') : ''}
+        ${hotStreak ? card('⚡', 'Currently on fire',
+          hotStreak.value + ' in a row',
+          hotStreak.names,
+          'active streak right now') : ''}
+        ${loneWolf ? card('🐺', 'Lone wolf',
+          loneWolf.value + (loneWolf.value === 1 ? ' lone call' : ' lone calls'),
+          loneWolf.names,
+          'only person to predict the correct outcome') : ''}
+        ${bigDayCard}
+        ${perfectDay ? card('🌟', 'Perfect matchday',
+          perfectDay.value + (perfectDay.value === 1 ? ' perfect day' : ' perfect days'),
+          perfectDay.names,
+          'got every outcome right in a single day') : ''}
+        ${coldStreak ? card('🧊', 'Cold streak',
+          coldStreak.value + ' wrong in a row',
+          coldStreak.names,
+          'current active losing streak') : ''}
+      </div>`;
+
+      document.getElementById('main-stats').innerHTML = html;
+    }
+
+    // ── Chat ───────────────────────────────────────────
+    const REACTIONS = [
+      { key: 'heart',   emoji: '❤️'  },
+      { key: 'like',    emoji: '👍'  },
+      { key: 'laugh',   emoji: '😂'  },
+      { key: 'cry',     emoji: '😢'  },
+      { key: 'angry',   emoji: '😡'  },
+      { key: 'hundred', emoji: '💯'  },
+    ];
+
+    let CHAT_MESSAGES = [];
+
     function setChatStatus(text, isError = false) {
       const el = document.getElementById('chat-status');
       if (!el) return;
@@ -1417,11 +1758,39 @@
           id,
           name: String(msg?.name || 'Anonymous').slice(0, 24),
           text: String(msg?.text || '').slice(0, 240),
-          createdAt: Number(msg?.createdAt) || 0
+          createdAt: Number(msg?.createdAt) || 0,
+          reactions: (msg?.reactions && typeof msg.reactions === 'object') ? msg.reactions : {}
         }))
         .filter(msg => msg.text)
         .sort((a, b) => a.createdAt - b.createdAt)
         .slice(-100);
+    }
+
+    function buildReactionsHtml(msg) {
+      const myName = getChatName();
+      const chips = REACTIONS.map(({ key, emoji }) => {
+        const reactors = msg.reactions[key] ? Object.keys(msg.reactions[key]) : [];
+        if (!reactors.length) return '';
+        const mine = myName && reactors.includes(myName);
+        return `<button class="reaction-chip${mine ? ' mine' : ''}"
+            onclick="toggleReaction('${msg.id}','${key}')"
+            type="button">
+          ${emoji}<span class="reaction-count">${reactors.length}</span>
+          <span class="reaction-tooltip">${escapeHtml(reactors.join(', '))}</span>
+        </button>`;
+      }).join('');
+
+      const pickerBtns = REACTIONS.map(({ key, emoji }) =>
+        `<button class="reaction-picker-btn" type="button"
+            onclick="toggleReaction('${msg.id}','${key}')">${emoji}</button>`
+      ).join('');
+
+      return `<div class="msg-reactions">
+        ${chips}
+        <button class="reaction-add-btn" type="button"
+            onclick="togglePicker('${msg.id}')">+ 😊</button>
+        <div class="reaction-picker" id="picker-${msg.id}">${pickerBtns}</div>
+      </div>`;
     }
 
     function renderChatMessages(messages) {
@@ -1431,6 +1800,7 @@
         box.innerHTML = '<div class="chat-empty">No messages yet.</div>';
         return;
       }
+      const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
       box.innerHTML = messages.map(msg => `
     <div class="chat-message">
       <div class="chat-msg-meta">
@@ -1438,9 +1808,53 @@
         <span class="chat-time">${formatChatTime(msg.createdAt)}</span>
       </div>
       <div class="chat-text">${escapeHtml(msg.text)}</div>
-    </div>
-  `).join('');
-      box.scrollTop = box.scrollHeight;
+      ${buildReactionsHtml(msg)}
+    </div>`).join('');
+      if (atBottom) box.scrollTop = box.scrollHeight;
+    }
+
+    function togglePicker(msgId) {
+      const picker = document.getElementById(`picker-${msgId}`);
+      if (!picker) return;
+      const opening = !picker.classList.contains('open');
+      document.querySelectorAll('.reaction-picker').forEach(p => p.classList.remove('open'));
+      if (opening) {
+        picker.classList.add('open');
+        setTimeout(() => {
+          document.addEventListener('click', function outsideClick(e) {
+            if (!picker.contains(e.target) && !e.target.closest('.reaction-add-btn')) {
+              picker.classList.remove('open');
+              document.removeEventListener('click', outsideClick);
+            }
+          });
+        }, 0);
+      }
+    }
+
+    async function toggleReaction(msgId, emojiKey) {
+      const name = getChatName();
+      if (!name) { document.getElementById('chat-name')?.focus(); return; }
+      document.getElementById(`picker-${msgId}`)?.classList.remove('open');
+
+      const msg = CHAT_MESSAGES.find(m => m.id === msgId);
+      const reactors = msg?.reactions?.[emojiKey] ? Object.keys(msg.reactions[emojiKey]) : [];
+      const alreadyReacted = reactors.includes(name);
+
+      const endpoint = `${CHAT_DB_URL}/${CHAT_PATH}/${msgId}/reactions/${emojiKey}/${encodeURIComponent(name)}.json`;
+      try {
+        if (alreadyReacted) {
+          await fetch(endpoint, { method: 'DELETE' });
+        } else {
+          await fetch(endpoint, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: 'true'
+          });
+        }
+        await loadChatMessages();
+      } catch (err) {
+        console.warn('Reaction failed:', err.message);
+      }
     }
 
     async function loadChatMessages() {
@@ -1449,9 +1863,10 @@
         const res = await fetch(chatDbEndpoint(), { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const messages = normalizeChatMessages(await res.json());
-        const sig = JSON.stringify(messages.map(m => [m.id, m.name, m.text, m.createdAt]));
+        const sig = JSON.stringify(messages.map(m => [m.id, m.name, m.text, m.createdAt, m.reactions]));
         if (sig !== CHAT_SIG) {
           CHAT_SIG = sig;
+          CHAT_MESSAGES = messages;
           renderChatMessages(messages);
         }
         setChatStatus(`${messages.length} message${messages.length === 1 ? '' : 's'}`);
