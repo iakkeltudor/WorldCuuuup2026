@@ -46,6 +46,64 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* ── LOGIN SCREEN ─────────────────────────────────── */
+    #login-screen {
+      position: fixed; inset: 0; z-index: 2000;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-box {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 14px; padding: 48px 36px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; max-width: 380px; width: 90%;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,.5);
+    }
+    .login-ball { font-size: 3.5rem; line-height: 1; }
+    .login-title { font-size: 1.7rem; font-weight: 900; letter-spacing: -.03em; }
+    .login-title em { font-style: normal; color: var(--accent); }
+    .login-sub { color: var(--text2); font-size: .9rem; margin-top: -6px; }
+    .btn-google {
+      display: flex; align-items: center; gap: 10px;
+      background: #fff; color: #3c4043;
+      border: 1px solid #dadce0; border-radius: 10px;
+      padding: 11px 22px; font-size: .95rem; font-weight: 500;
+      cursor: pointer; margin-top: 10px;
+      transition: box-shadow .15s, opacity .15s;
+    }
+    .btn-google:hover { box-shadow: 0 2px 10px rgba(0,0,0,.35); }
+    .btn-google:disabled { opacity: .55; cursor: wait; }
+    .login-error { color: var(--red); font-size: .8rem; min-height: 1.1em; }
+
+    /* ── PROFILE CHIP ─────────────────────────────────── */
+    .profile-chip {
+      position: absolute; top: 16px; right: 16px; z-index: 10;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.06); border: 1px solid var(--border);
+      border-radius: 999px; padding: 4px 12px 4px 4px;
+      cursor: pointer; user-select: none;
+      transition: background .15s;
+    }
+    .profile-chip:hover { background: rgba(255,255,255,.1); }
+    .profile-avatar {
+      width: 26px; height: 26px; border-radius: 50%; object-fit: cover;
+    }
+    .profile-player-name { font-size: .8rem; font-weight: 700; color: var(--text); }
+    .profile-dropdown {
+      display: none; position: absolute; top: calc(100% + 8px); right: 0;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 5px; min-width: 120px; z-index: 100;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    }
+    .profile-chip.open .profile-dropdown { display: block; }
+    .profile-signout {
+      width: 100%; text-align: left; background: none; border: none;
+      color: var(--text2); font-size: .85rem; padding: 8px 12px;
+      border-radius: 6px; cursor: pointer;
+    }
+    .profile-signout:hover { background: var(--red-bg); color: var(--red); }
+
     /* ── HEADER ───────────────────────────────────────── */
     .header {
       position: relative;
@@ -1249,15 +1307,46 @@
       }
     }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
 
 <body>
+
+  <!-- ── LOGIN SCREEN ──────────────────────────────── -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-ball">&#9917;</div>
+      <h1 class="login-title">World Cup <em>2026</em></h1>
+      <p class="login-sub">Predictions Dashboard</p>
+      <button class="btn-google" id="btn-google-signin" onclick="signInWithGoogle()">
+        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        Sign in with Google
+      </button>
+      <p class="login-error" id="login-error"></p>
+    </div>
+  </div>
+
+  <!-- ── MAIN APP ───────────────────────────────────── -->
+  <div id="app-content" style="display:none">
 
   <!-- ── HEADER ─────────────────────────────────────── -->
   <div class="header">
     <div class="header-inner">
       <h1>&#9917; World Cup <em>2026</em> &#8212; Predictions</h1>
       <div class="header-sub">Group Stage &middot; USA &bull; Canada &bull; Mexico</div>
+      <div class="profile-chip" id="profile-chip" onclick="toggleProfileDropdown()">
+        <img class="profile-avatar" id="profile-avatar" src="" alt="">
+        <span class="profile-player-name" id="profile-player-name"></span>
+        <div class="profile-dropdown" id="profile-dropdown">
+          <button class="profile-signout" onclick="signOutUser(event)">Sign out</button>
+        </div>
+      </div>
       <div class="header-badge">
         <span class="badge-dot"></span>
         <span id="hdr-progress">Loading&hellip;</span>
@@ -1334,7 +1423,6 @@
           <div class="chat-empty">Loading...</div>
         </div>
         <form class="chat-form" onsubmit="sendChatMessage(event)">
-          <input class="chat-input" id="chat-name" maxlength="24" placeholder="Name" autocomplete="nickname">
           <input class="chat-input" id="chat-text" maxlength="240" placeholder="Message" autocomplete="off">
           <button class="btn btn-primary chat-send" id="chat-send" type="submit">Send</button>
         </form>
@@ -1773,7 +1861,7 @@
     }
 
     function getChatName() {
-      return (document.getElementById('chat-name')?.value || '').trim().slice(0, 24);
+      return CURRENT_USER?.playerName || '';
     }
 
     function getChatText() {
@@ -1867,7 +1955,7 @@
 
     async function toggleReaction(msgId, emojiKey) {
       const name = getChatName();
-      if (!name) { document.getElementById('chat-name')?.focus(); return; }
+      if (!name) return;
       document.getElementById(`picker-${msgId}`)?.classList.remove('open');
 
       const msg = CHAT_MESSAGES.find(m => m.id === msgId);
@@ -1910,10 +1998,6 @@
     }
 
     function startChat() {
-      const nameEl = document.getElementById('chat-name');
-      if (nameEl && !nameEl.value) {
-        nameEl.value = localStorage.getItem('wc-chat-name') || '';
-      }
       loadChatMessages();
       if (!CHAT_TIMER) {
         CHAT_TIMER = setInterval(loadChatMessages, 3000);
@@ -1924,19 +2008,9 @@
       event.preventDefault();
       const name = getChatName();
       const text = getChatText();
-      const nameEl = document.getElementById('chat-name');
       const textEl = document.getElementById('chat-text');
       const sendEl = document.getElementById('chat-send');
-      if (!name) {
-        nameEl.focus();
-        return;
-      }
-      if (!text) {
-        textEl.focus();
-        return;
-      }
-
-      localStorage.setItem('wc-chat-name', name);
+      if (!name || !text) { textEl.focus(); return; }
       sendEl.disabled = true;
       setChatStatus('Sending...');
       try {
@@ -2175,8 +2249,120 @@
       if (DATA.matches.some(m => sessionDate(m) === today)) setFilter(today);
     }
 
-    init();
+    // ── Auth is initialized first; init() is called from onAuthStateChanged ──
+
   </script>
+
+  <script>
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyDTtPQvGHeMMDe2txT9UfvOYNFFSqg6yF8",
+      authDomain: "worldcuuuup-9a603.firebaseapp.com",
+      databaseURL: "https://worldcuuuup-9a603-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "worldcuuuup-9a603",
+      storageBucket: "worldcuuuup-9a603.firebasestorage.app",
+      messagingSenderId: "979404614028",
+      appId: "1:979404614028:web:3584e091e1de829e88cea9"
+    };
+
+    firebase.initializeApp(FIREBASE_CONFIG);
+    const auth = firebase.auth();
+
+    let CURRENT_USER = null; // { uid, email, playerName, displayName, photoURL }
+
+    const PLAYER_MAP_URL = `${CHAT_DB_URL}/playerMap.json`;
+
+    async function lookupPlayer(email) {
+      const key = email.replace(/\./g, ',');
+      try {
+        const res = await fetch(`${CHAT_DB_URL}/playerMap/${encodeURIComponent(key)}.json`);
+        if (!res.ok) return null;
+        const val = await res.json();
+        return typeof val === 'string' ? val : null;
+      } catch { return null; }
+    }
+
+    function setLoginError(msg) {
+      const el = document.getElementById('login-error');
+      if (el) el.textContent = msg;
+    }
+
+    async function signInWithGoogle() {
+      const btn = document.getElementById('btn-google-signin');
+      btn.disabled = true;
+      setLoginError('');
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        await auth.signInWithPopup(provider);
+      } catch (err) {
+        btn.disabled = false;
+        if (err.code !== 'auth/popup-closed-by-user') {
+          setLoginError('Sign-in failed. Please try again.');
+        }
+      }
+    }
+
+    function signOutUser(e) {
+      if (e) e.stopPropagation();
+      auth.signOut();
+    }
+
+    function toggleProfileDropdown() {
+      document.getElementById('profile-chip').classList.toggle('open');
+      setTimeout(() => {
+        document.addEventListener('click', function closeDropdown() {
+          document.getElementById('profile-chip')?.classList.remove('open');
+          document.removeEventListener('click', closeDropdown);
+        });
+      }, 0);
+    }
+
+    function showApp(playerName, displayName, photoURL) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app-content').style.display = '';
+
+      const avatarEl = document.getElementById('profile-avatar');
+      const nameEl   = document.getElementById('profile-player-name');
+      if (avatarEl) avatarEl.src = photoURL || '';
+      if (nameEl)   nameEl.textContent = playerName;
+
+      init();
+    }
+
+    function showLoginScreen(errorMsg) {
+      document.getElementById('app-content').style.display = 'none';
+      document.getElementById('login-screen').style.display = '';
+      const btn = document.getElementById('btn-google-signin');
+      if (btn) btn.disabled = false;
+      if (errorMsg) setLoginError(errorMsg);
+    }
+
+    auth.onAuthStateChanged(async user => {
+      if (!user) {
+        CURRENT_USER = null;
+        showLoginScreen();
+        return;
+      }
+
+      const playerName = await lookupPlayer(user.email);
+      if (!playerName) {
+        await auth.signOut();
+        showLoginScreen("Your account isn't registered. Contact Tudor to be added.");
+        return;
+      }
+
+      CURRENT_USER = {
+        uid: user.uid,
+        email: user.email,
+        playerName,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+      };
+
+      showApp(playerName, user.displayName, user.photoURL);
+    });
+  </script>
+
+  </div> <!-- /#app-content -->
 
   <script>
     function playerColor(name) {
