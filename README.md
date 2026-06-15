@@ -32,8 +32,8 @@ A static web dashboard for tracking World Cup predictions among a group of frien
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/YOUR-REPO.git
-cd YOUR-REPO
+git clone https://github.com/iakkeltudor/WorldCuuuup2026.git
+cd WorldCuuuup2026
 ```
 
 ### 2. Configure players

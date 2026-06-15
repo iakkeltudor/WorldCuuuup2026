@@ -2,8 +2,8 @@ name: Update Match Scores
 
 on:
   schedule:
-    # 19:00-04:00 UTC = 22:00-07:00 UTC+3, covers all match windows
-    - cron: '0 19,20,21,22,23,0,1,2,3,4 * * *'
+    # 19:15-06:15 UTC = 22:15-09:15 UTC+3, covers all match windows
+    - cron: '15 19,20,21,22,23,0,1,2,3,4,5,6 * * *'
   workflow_dispatch: # lets you trigger it manually from the GitHub Actions UI
 
 concurrency:
