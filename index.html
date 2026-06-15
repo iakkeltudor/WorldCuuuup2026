@@ -26,6 +26,7 @@
       --text2: #94a3b8;
       --text3: #4b5e75;
       --gold: #fbbf24;
+      --bk-head: 28px;
       --silver: #9ca3af;
       --bronze: #c8854a;
     }
@@ -350,6 +351,80 @@
       border-bottom-color: var(--accent);
     }
 
+    /* ── BRACKET ─────────────────────────────────────── */
+    .bracket-wrapper { overflow-x: auto; padding: 20px 12px 32px; -webkit-overflow-scrolling: touch; }
+    .bk-outer { display: flex; align-items: stretch; width: max-content; margin: 0 auto; }
+    .bk-half { display: flex; align-items: stretch; flex-shrink: 0; }
+    /* Round column */
+    .bk-col { display: flex; flex-direction: column; width: 148px; flex-shrink: 0; }
+    .bk-col-head {
+      height: var(--bk-head); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .59rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+    }
+    .bk-col-slots { flex: 1; display: flex; flex-direction: column; justify-content: space-around; }
+    /* Bracket connectors between rounds */
+    .bk-conn { display: flex; flex-direction: column; width: 14px; flex-shrink: 0; }
+    .bk-conn-head { height: var(--bk-head); flex-shrink: 0; }
+    .bk-conn-segs { flex: 1; display: flex; flex-direction: column; justify-content: space-around; }
+    .bk-seg { flex: 1; position: relative; }
+    .bk-conn-rgt .bk-seg::before {
+      content: ''; position: absolute;
+      top: 25%; bottom: 25%; left: 0; right: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-radius: 0 3px 3px 0;
+    }
+    .bk-conn-lft .bk-seg::before {
+      content: ''; position: absolute;
+      top: 25%; bottom: 25%; left: 0; right: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+      border-radius: 3px 0 0 3px;
+    }
+    /* SF → Final horizontal connector */
+    .bk-sf-conn { display: flex; flex-direction: column; width: 16px; flex-shrink: 0; }
+    .bk-sf-conn-head { height: var(--bk-head); flex-shrink: 0; }
+    .bk-sf-conn-segs { flex: 1; }
+    .bk-sf-seg { height: 100%; position: relative; }
+    .bk-sf-seg::before {
+      content: ''; position: absolute;
+      top: 50%; left: 0; right: 0;
+      border-top: 1px solid var(--border);
+    }
+    /* Center column (Final + 3rd) */
+    .bk-center-col { display: flex; flex-direction: column; width: 180px; flex-shrink: 0; }
+    .bk-center-head {
+      height: var(--bk-head); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #10b981;
+    }
+    .bk-center-slots {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: stretch; justify-content: center; gap: 20px; padding: 0 4px;
+    }
+    .bk-3rd-label {
+      text-align: center; font-size: .59rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .07em; color: var(--text3); margin-bottom: 6px;
+    }
+    /* Match card */
+    .bk-match {
+      background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    }
+    .bk-match-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 2px 7px; background: rgba(128,128,128,.08); font-size: .54rem; color: var(--text3);
+    }
+    .bk-team {
+      display: flex; align-items: center; gap: 5px;
+      padding: 4px 8px; font-size: .75rem; color: var(--text); min-height: 26px;
+    }
+    .bk-team.tbd { color: var(--text3); font-style: italic; }
+    .bk-team.winner { font-weight: 700; color: var(--accent); }
+    .bk-score { margin-left: auto; font-size: .68rem; font-weight: 700; color: var(--text2); }
+    .bk-divider { height: 1px; background: var(--border); }
     /* ── DAY NAV ──────────────────────────────────────── */
     .day-nav {
       background: var(--surface);
@@ -1415,8 +1490,8 @@
       }
 
       .tab-btn {
-        font-size: .7rem;
-        padding: 10px 6px;
+        font-size: .65rem;
+        padding: 10px 4px;
       }
 
       .chat-form {
@@ -1501,6 +1576,7 @@
     <button class="tab-btn active" data-tab="matches" onclick="showTab('matches')">&#9917; Matches</button>
     <button class="tab-btn" data-tab="leaderboard" onclick="showTab('leaderboard')">&#127942; Leaderboard</button>
     <button class="tab-btn" data-tab="stats" onclick="showTab('stats')">&#128202; Stats</button>
+    <button class="tab-btn" data-tab="bracket" onclick="showTab('bracket')">&#127942;&#65039; Bracket</button>
     <button class="tab-btn" data-tab="chat" onclick="showTab('chat')">&#128172; Chat</button>
   </div>
 
@@ -1540,6 +1616,13 @@
   <!-- ── STATS TAB ────────────────────────────────── -->
   <div id="tab-stats" class="tab-panel hidden">
     <div id="main-stats"></div>
+  </div>
+
+  <!-- ── BRACKET TAB ──────────────────────────────── -->
+  <div id="tab-bracket" class="tab-panel hidden">
+    <div class="bracket-wrapper">
+      <div id="bracket-inner"></div>
+    </div>
   </div>
 
   <!-- ── CHAT TAB ─────────────────────────────────── -->
@@ -1693,9 +1776,11 @@
       document.getElementById('tab-matches').classList.toggle('hidden', tab !== 'matches');
       document.getElementById('tab-leaderboard').classList.toggle('hidden', tab !== 'leaderboard');
       document.getElementById('tab-stats').classList.toggle('hidden', tab !== 'stats');
+      document.getElementById('tab-bracket').classList.toggle('hidden', tab !== 'bracket');
       document.getElementById('tab-chat').classList.toggle('hidden', tab !== 'chat');
       if (tab === 'leaderboard') renderLeaderboard();
       if (tab === 'stats') renderStats();
+      if (tab === 'bracket') renderBracket();
       if (tab === 'chat') startChat();
     }
 
@@ -1755,6 +1840,122 @@
       <td class="col-form">${renderFormDots(getForm(e.player))}</td>
     </tr>`;
       }).join('');
+    }
+
+    // ── Knockout bracket ──────────────────────────────────
+    // Group stage = M1–M72 (72 games). KO stage starts at M73.
+    // Left half:  R32 M73-M80, R16 M89-M92, QF M97-M98, SF M101
+    // Right half: SF M102, QF M99-M100, R16 M93-M96, R32 M81-M88
+    const KO_BRACKET = {
+      left: [
+        { name: 'Round of 32', color: '#3b82f6', matches: [
+          {num:73,date:'2026-06-29'}, {num:74,date:'2026-06-29'},
+          {num:75,date:'2026-06-30'}, {num:76,date:'2026-06-30'},
+          {num:77,date:'2026-07-01'}, {num:78,date:'2026-07-01'},
+          {num:79,date:'2026-07-02'}, {num:80,date:'2026-07-02'},
+        ]},
+        { name: 'Round of 16', color: '#8b5cf6', matches: [
+          {num:89,date:'2026-07-05'}, {num:90,date:'2026-07-05'},
+          {num:91,date:'2026-07-06'}, {num:92,date:'2026-07-06'},
+        ]},
+        { name: 'Quarter-finals', color: '#ec4899', matches: [
+          {num:97,date:'2026-07-11'}, {num:98,date:'2026-07-11'},
+        ]},
+        { name: 'Semi-finals', color: '#f59e0b', matches: [
+          {num:101,date:'2026-07-15'},
+        ]},
+      ],
+      right: [
+        { name: 'Semi-finals', color: '#f59e0b', matches: [
+          {num:102,date:'2026-07-16'},
+        ]},
+        { name: 'Quarter-finals', color: '#ec4899', matches: [
+          {num:99,date:'2026-07-12'}, {num:100,date:'2026-07-12'},
+        ]},
+        { name: 'Round of 16', color: '#8b5cf6', matches: [
+          {num:93,date:'2026-07-07'}, {num:94,date:'2026-07-07'},
+          {num:95,date:'2026-07-08'}, {num:96,date:'2026-07-08'},
+        ]},
+        { name: 'Round of 32', color: '#3b82f6', matches: [
+          {num:81,date:'2026-07-03'}, {num:82,date:'2026-07-03'},
+          {num:83,date:'2026-07-03'}, {num:84,date:'2026-07-03'},
+          {num:85,date:'2026-07-04'}, {num:86,date:'2026-07-04'},
+          {num:87,date:'2026-07-04'}, {num:88,date:'2026-07-04'},
+        ]},
+      ],
+      final: {num:104, date:'2026-07-19'},
+      third: {num:103, date:'2026-07-18'},
+    };
+
+    function bkMatchHtml(m, data) {
+      const home = data?.home || m.homeLabel || null;
+      const away = data?.away || m.awayLabel || null;
+      const score = data?.actual_score || null;
+      let homeWon = false, awayWon = false;
+      if (score) {
+        const parts = score.split('-');
+        if (parts.length === 2) { homeWon = +parts[0] > +parts[1]; awayWon = +parts[1] > +parts[0]; }
+      }
+      const dateStr = m.date
+        ? new Date(m.date + 'T12:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'short'})
+        : '';
+      const hs = score ? score.split('-')[0] : '';
+      const as = score ? score.split('-')[1] : '';
+      return `<div class="bk-match">
+        <div class="bk-match-meta"><span>M${m.num}</span><span>${dateStr}</span></div>
+        <div class="bk-team${home ? '' : ' tbd'}${homeWon ? ' winner' : ''}">
+          <span>${home ? escapeHtml(home) : 'TBD'}</span>
+          ${hs ? `<span class="bk-score">${escapeHtml(hs)}</span>` : ''}
+        </div>
+        <div class="bk-divider"></div>
+        <div class="bk-team${away ? '' : ' tbd'}${awayWon ? ' winner' : ''}">
+          <span>${away ? escapeHtml(away) : 'TBD'}</span>
+          ${as ? `<span class="bk-score">${escapeHtml(as)}</span>` : ''}
+        </div>
+      </div>`;
+    }
+
+    function renderBracket() {
+      const matchById = {};
+      if (DATA?.matches) DATA.matches.forEach(m => { matchById[m.id] = m; });
+
+      const el = document.getElementById('bracket-inner');
+      if (!el) return;
+
+      function halfHtml(rounds, isRight) {
+        const cols = [];
+        rounds.forEach((round, ri) => {
+          const slotsHtml = round.matches.map(m => bkMatchHtml(m, matchById[m.num])).join('');
+          cols.push(`<div class="bk-col">
+            <div class="bk-col-head" style="color:${round.color}">${round.name}</div>
+            <div class="bk-col-slots">${slotsHtml}</div>
+          </div>`);
+          if (ri < rounds.length - 1) {
+            const pairs = round.matches.length / 2;
+            const segs = Array.from({length: pairs}, () => '<div class="bk-seg"></div>').join('');
+            const dir = isRight ? 'bk-conn-lft' : 'bk-conn-rgt';
+            cols.push(`<div class="bk-conn ${dir}"><div class="bk-conn-head"></div><div class="bk-conn-segs">${segs}</div></div>`);
+          }
+        });
+        return cols.join('');
+      }
+
+      const sfConn = `<div class="bk-sf-conn"><div class="bk-sf-conn-head"></div><div class="bk-sf-conn-segs"><div class="bk-sf-seg"></div></div></div>`;
+
+      el.innerHTML = `<div class="bk-outer">
+        <div class="bk-half bk-lft">${halfHtml(KO_BRACKET.left, false)}${sfConn}</div>
+        <div class="bk-center-col">
+          <div class="bk-center-head">&#9917; Final</div>
+          <div class="bk-center-slots">
+            <div>${bkMatchHtml(KO_BRACKET.final, matchById[KO_BRACKET.final.num])}</div>
+            <div>
+              <div class="bk-3rd-label">&#129352; 3rd Place</div>
+              ${bkMatchHtml(KO_BRACKET.third, matchById[KO_BRACKET.third.num])}
+            </div>
+          </div>
+        </div>
+        <div class="bk-half bk-rgt">${sfConn}${halfHtml(KO_BRACKET.right, true)}</div>
+      </div>`;
     }
 
     function renderLeaderboard() {
