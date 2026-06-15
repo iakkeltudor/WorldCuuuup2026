@@ -321,7 +321,7 @@
             "home": "Ivory Coast (34)",
             "away": "Ecuador (24)",
             "group": "Group E",
-            "actual_score": null,
+            "actual_score": "1-0",
             "predictions": {
                 "MARC-BORL": "1-1",
                 "MURI TUDOR": "1-2",
@@ -338,7 +338,8 @@
                 "MATEI": "2-1",
                 "SONE": "0-1",
                 "CALIN": "0-1"
-            }
+            },
+            "referee": "François Letexier (France)"
         },
         {
             "id": 12,
