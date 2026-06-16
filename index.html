@@ -356,34 +356,49 @@
     .bracket-wrapper { overflow-x: auto; padding: 20px 12px 32px; -webkit-overflow-scrolling: touch; }
     .bk-outer { display: flex; align-items: stretch; width: max-content; margin: 0 auto; }
     .bk-half { display: flex; align-items: stretch; flex-shrink: 0; }
-    /* Round column */
-    .bk-col { display: flex; flex-direction: column; width: 148px; flex-shrink: 0; }
+    /* Round column — width set below alongside badge styles */
+    .bk-col { display: flex; flex-direction: column; flex-shrink: 0; }
     .bk-col-head {
       height: var(--bk-head); flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
       font-size: .59rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
     }
-    .bk-col-slots { flex: 1; display: flex; flex-direction: column; justify-content: space-around; }
+    .bk-col-slots { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 5px 0; }
+    .bk-pair { display: flex; flex-direction: column; flex: 1; justify-content: space-around; }
     /* Bracket connectors between rounds */
-    .bk-conn { display: flex; flex-direction: column; width: 14px; flex-shrink: 0; }
+    .bk-conn { display: flex; flex-direction: column; width: 20px; flex-shrink: 0; }
     .bk-conn-head { height: var(--bk-head); flex-shrink: 0; }
-    .bk-conn-segs { flex: 1; display: flex; flex-direction: column; justify-content: space-around; }
+    .bk-conn-segs { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 5px 0; }
     .bk-seg { flex: 1; position: relative; }
+    /* Left half: two input arms merge at vertical (right-facing bracket) */
     .bk-conn-rgt .bk-seg::before {
       content: ''; position: absolute;
-      top: 25%; bottom: 25%; left: 0; right: 0;
+      top: 25%; bottom: 25%; left: 0; right: 50%;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       border-right: 1px solid var(--border);
       border-radius: 0 3px 3px 0;
     }
+    /* Right half: perpendicular output line from midpoint to next round */
+    .bk-conn-rgt .bk-seg::after {
+      content: ''; position: absolute;
+      top: 50%; left: 50%; right: 0;
+      border-top: 1px solid var(--border);
+    }
+    /* Right half: two input arms merge at vertical (left-facing bracket) */
     .bk-conn-lft .bk-seg::before {
       content: ''; position: absolute;
-      top: 25%; bottom: 25%; left: 0; right: 0;
+      top: 25%; bottom: 25%; left: 50%; right: 0;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       border-left: 1px solid var(--border);
       border-radius: 3px 0 0 3px;
+    }
+    /* Left half: perpendicular output line from midpoint to next round */
+    .bk-conn-lft .bk-seg::after {
+      content: ''; position: absolute;
+      top: 50%; left: 0; right: 50%;
+      border-top: 1px solid var(--border);
     }
     /* SF → Final horizontal connector */
     .bk-sf-conn { display: flex; flex-direction: column; width: 16px; flex-shrink: 0; }
@@ -426,6 +441,157 @@
     .bk-team.winner { font-weight: 700; color: var(--accent); }
     .bk-score { margin-left: auto; font-size: .68rem; font-weight: 700; color: var(--text2); }
     .bk-divider { height: 1px; background: var(--border); }
+    .bk-col { display: flex; flex-direction: column; width: 168px; flex-shrink: 0; }
+    .bk-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bk-score-slot { width: 22px; text-align: center; flex-shrink: 0; font-size: .68rem; font-weight: 700; color: var(--text2); }
+    .bk-match { cursor: pointer; }
+    .bk-match:hover { border-color: rgba(255,255,255,.18); }
+    .bk-match.bk-final { border-color: rgba(251,191,36,.6); box-shadow: 0 0 14px rgba(251,191,36,.18); }
+    .bk-match.bk-final .bk-match-meta { background: rgba(251,191,36,.1); color: var(--gold); }
+    .bk-match.bk-third { border-color: rgba(200,133,74,.55); box-shadow: 0 0 10px rgba(200,133,74,.14); }
+    .bk-match.bk-third .bk-match-meta { background: rgba(200,133,74,.09); color: #c8854a; }
+    .bk-flag { width: 17px; height: auto; flex-shrink: 0; border-radius: 2px; display: block; }
+    .bk-team.st-confirmed { box-shadow: inset 3px 0 0 var(--green); }
+    .bk-team.st-predicted { box-shadow: inset 3px 0 0 #f59e0b; }
+    .bk-legend { display: flex; align-items: center; gap: 16px; justify-content: center; padding: 8px 0 4px; }
+    .bk-legend-item { display: flex; align-items: center; gap: 6px; font-size: .72rem; color: var(--text2); font-weight: 500; }
+    .bk-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .bk-legend-conf { background: var(--green); }
+    .bk-legend-pred { background: #f59e0b; }
+    /* ── Match modal ─────────────────────────────────── */
+    .m-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 900; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); padding: 16px; }
+    .m-overlay.hidden { display: none; }
+    .m-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px 22px; max-width: 400px; width: 100%; max-height: 82vh; overflow-y: auto; position: relative; }
+    .m-close { position: absolute; top: 12px; right: 14px; background: none; border: none; color: var(--text3); font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 2px 6px; border-radius: 6px; }
+    .m-close:hover { background: rgba(255,255,255,.07); color: var(--text); }
+    .m-id { font-size: .58rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+    .m-vs { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .m-date { font-size: .65rem; color: var(--text3); margin-bottom: 14px; }
+    .m-score-block { text-align: center; padding: 10px 0 16px; }
+    .m-score-big { font-size: 2rem; font-weight: 900; letter-spacing: .05em; color: var(--accent); }
+    .m-score-label { font-size: .6rem; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; margin-top: 2px; }
+    .m-no-score { font-size: .75rem; color: var(--text3); font-style: italic; text-align: center; padding: 10px 0 16px; }
+    .m-preds-head { font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--text2); margin-bottom: 8px; border-top: 1px solid var(--border); padding-top: 14px; }
+    .m-tbl { width: 100%; border-collapse: collapse; }
+    .m-tbl th { font-size: .55rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); padding: 4px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+    .m-tbl th:last-child { text-align: right; }
+    .m-tbl td { font-size: .75rem; padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.04); }
+    .m-tbl td:last-child { text-align: right; font-weight: 700; }
+    .m-tbl tr:last-child td { border-bottom: none; }
+    .m-tbl .no-pred { color: var(--text3); font-style: italic; }
+    .m-pts-exact { color: var(--green); }
+    .m-pts-outcome { color: var(--amber); }
+    .m-pts-wrong { color: var(--red); }
+
+    /* ── GROUPS TAB ─────────────────────────────────────── */
+    #main-groups { max-width: 1100px; margin: 0 auto; padding: 20px 14px 70px; }
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 14px;
+    }
+    .group-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .group-card-head {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 14px; border-bottom: 1px solid var(--border);
+      background: rgba(245,158,11,.05);
+    }
+    .group-card-name {
+      font-size: .72rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--accent); flex: 1;
+    }
+    .group-card-progress { font-size: .62rem; color: var(--text3); }
+    .group-tbl { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .group-tbl th:nth-child(1)    { width: 24px; }
+    .group-tbl th:nth-child(n+3)  { width: 26px; }
+    .group-tbl th:nth-child(10)   { width: 30px; }
+    .group-tbl th {
+      padding: 5px 7px; font-size: .56rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em; color: var(--text3);
+      text-align: center; border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,.12);
+    }
+    .group-tbl th.gt-team { text-align: left; padding-left: 10px; }
+    .group-tbl th.gt-pts  { color: var(--accent); }
+    .group-tbl td {
+      padding: 8px 7px; text-align: center; font-size: .77rem; white-space: nowrap;
+    }
+    .group-tbl td.gt-pos  { font-size: .65rem; font-weight: 700; color: var(--text3); min-width: 22px; }
+    .group-tbl td.gt-team {
+      text-align: left; padding-left: 10px;
+      font-weight: 600; font-size: .8rem;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .group-tbl td.gt-pts  { font-weight: 900; font-size: .95rem; color: var(--accent); }
+    .group-tbl td.gt-gd-pos { color: var(--green); font-weight: 700; }
+    .group-tbl td.gt-gd-neg { color: var(--red); }
+    .group-tbl tbody tr {
+      border-bottom: 1px solid var(--border); transition: background .1s;
+    }
+    .group-tbl tbody tr:last-child { border-bottom: none; }
+    .group-tbl tbody tr:hover { background: rgba(255,255,255,.025); }
+    .group-tbl tbody tr.gt-qual { background: rgba(16,185,129,.04); }
+    .group-tbl tbody tr.gt-qual td.gt-pos { color: var(--green); font-weight: 900; }
+    .group-tbl tbody tr.gt-qual-line td { border-bottom: 2px solid rgba(16,185,129,.35); }
+
+    /* ── 3RD PLACE STANDINGS ────────────────────────────── */
+    .third-section { margin-top: 28px; }
+    .third-section-head {
+      display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+    }
+    .third-section-title {
+      font-size: .78rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--text2);
+    }
+    .third-section-sub { font-size: .65rem; color: var(--text3); }
+    .third-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .third-tbl { width: 100%; border-collapse: collapse; }
+    .third-tbl th {
+      padding: 5px 7px; font-size: .56rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em; color: var(--text3);
+      text-align: center; border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,.12);
+    }
+    .third-tbl th.tt-team { text-align: left; padding-left: 12px; }
+    .third-tbl th.tt-pts  { color: var(--accent); }
+    .third-tbl th.tt-status { min-width: 54px; }
+    .third-tbl td {
+      padding: 9px 7px; text-align: center; font-size: .77rem; white-space: nowrap;
+    }
+    .third-tbl td.tt-rank { font-size: .68rem; font-weight: 700; color: var(--text3); min-width: 28px; }
+    .third-tbl td.tt-team { text-align: left; padding-left: 12px; font-weight: 600; font-size: .82rem; }
+    .third-tbl td.tt-grp  {
+      font-size: .68rem; font-weight: 700; color: var(--text3);
+      background: rgba(255,255,255,.03);
+    }
+    .third-tbl td.tt-pts  { font-weight: 900; font-size: .95rem; color: var(--accent); }
+    .third-tbl td.tt-gd-pos { color: var(--green); font-weight: 700; }
+    .third-tbl td.tt-gd-neg { color: var(--red); }
+    .third-tbl td.tt-status { padding-right: 10px; }
+    .tt-adv-badge {
+      display: inline-block; font-size: .58rem; font-weight: 800; letter-spacing: .06em;
+      background: var(--green-bg); color: var(--green);
+      border: 1px solid rgba(16,185,129,.3); border-radius: 4px; padding: 2px 7px;
+    }
+    .tt-out-badge {
+      display: inline-block; font-size: .58rem; font-weight: 700; letter-spacing: .04em;
+      color: var(--text3); background: rgba(255,255,255,.04);
+      border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px;
+    }
+    .third-tbl tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+    .third-tbl tbody tr:last-child { border-bottom: none; }
+    .third-tbl tbody tr:hover { background: rgba(255,255,255,.025); }
+    .third-tbl tbody tr.tt-adv { background: rgba(16,185,129,.04); }
+    .third-tbl tbody tr.tt-adv td.tt-rank { color: var(--green); font-weight: 900; }
+    .third-tbl tbody tr.tt-cutoff td { border-bottom: 2px solid rgba(16,185,129,.35); }
+    .third-tbl tbody tr.tt-out td:not(.tt-status) { opacity: .45; }
+
     /* ── DAY NAV ──────────────────────────────────────── */
     .day-nav {
       background: var(--surface);
@@ -1245,6 +1411,11 @@
       background: rgba(156, 163, 175, .03);
     }
 
+    .league-table tbody tr.is-me {
+      background: rgba(59, 130, 246, .07);
+    }
+    .lb-you { font-size: .58rem; font-weight: 600; letter-spacing: .03em; color: #3b82f6; background: rgba(59,130,246,.12); border: 1px solid rgba(59,130,246,.25); border-radius: 20px; padding: 1px 6px; margin-left: 5px; vertical-align: middle; }
+
     /* Form dots */
     .form-row {
       display: flex;
@@ -1770,6 +1941,7 @@
     <button class="tab-btn active" data-tab="matches" onclick="showTab('matches')">&#9917; Matches</button>
     <button class="tab-btn" data-tab="leaderboard" onclick="showTab('leaderboard')">&#127942; Leaderboard</button>
     <button class="tab-btn" data-tab="stats" onclick="showTab('stats')">&#128202; Stats</button>
+    <button class="tab-btn" data-tab="groups" onclick="showTab('groups')">&#128203; Groups</button>
     <button class="tab-btn" data-tab="bracket" onclick="showTab('bracket')">&#127942;&#65039; Bracket</button>
     <button class="tab-btn" data-tab="chat" onclick="showTab('chat')">&#128172; Chat</button>
   </div>
@@ -1812,8 +1984,20 @@
     <div id="main-stats"></div>
   </div>
 
+  <!-- ── GROUPS TAB ───────────────────────────────── -->
+  <div id="tab-groups" class="tab-panel hidden">
+    <div id="main-groups">
+      <div class="groups-grid" id="groups-grid"></div>
+      <div id="third-place-section"></div>
+    </div>
+  </div>
+
   <!-- ── BRACKET TAB ──────────────────────────────── -->
   <div id="tab-bracket" class="tab-panel hidden">
+    <div class="bk-legend">
+      <span class="bk-legend-item"><span class="bk-legend-dot bk-legend-conf"></span>Confirmed</span>
+      <span class="bk-legend-item"><span class="bk-legend-dot bk-legend-pred"></span>Predicted</span>
+    </div>
     <div class="bracket-wrapper">
       <div id="bracket-inner"></div>
     </div>
@@ -1838,6 +2022,21 @@
           <button class="btn btn-primary chat-send" id="chat-send" type="submit">Send</button>
         </form>
       </div>
+    </div>
+  </div>
+
+  <!-- ── STAT DETAIL MODAL ────────────────────────── -->
+  <div class="stat-modal-bg" id="stat-modal" onclick="if(event.target===this)closeStatModal()">
+    <div class="stat-modal-sheet">
+      <div class="stat-modal-header">
+        <div class="stat-modal-icon" id="stat-modal-icon"></div>
+        <div style="flex:1;min-width:0">
+          <div class="stat-modal-label" id="stat-modal-label"></div>
+          <div class="stat-modal-title" id="stat-modal-title"></div>
+        </div>
+        <button class="stat-modal-close" onclick="closeStatModal()">&#10005;</button>
+      </div>
+      <div class="stat-modal-list" id="stat-modal-list"></div>
     </div>
   </div>
 
@@ -1970,10 +2169,12 @@
       document.getElementById('tab-matches').classList.toggle('hidden', tab !== 'matches');
       document.getElementById('tab-leaderboard').classList.toggle('hidden', tab !== 'leaderboard');
       document.getElementById('tab-stats').classList.toggle('hidden', tab !== 'stats');
+      document.getElementById('tab-groups').classList.toggle('hidden', tab !== 'groups');
       document.getElementById('tab-bracket').classList.toggle('hidden', tab !== 'bracket');
       document.getElementById('tab-chat').classList.toggle('hidden', tab !== 'chat');
       if (tab === 'leaderboard') renderLeaderboard();
       if (tab === 'stats') renderStats();
+      if (tab === 'groups') renderGroups();
       if (tab === 'bracket') renderBracket();
       if (tab === 'chat') startChat();
     }
@@ -2015,16 +2216,22 @@
         const prev = lb[i - 1];
         ranks.push((lb[i].pts === prev.pts && lb[i].exact === prev.exact) ? ranks[i - 1] : i + 1);
       }
+      const lastRank = ranks[ranks.length - 1];
 
       document.getElementById('lb-tbody').innerHTML = lb.map((e, i) => {
         const rank = ranks[i];
+        const isLast = lb.length > 3 && rank === lastRank;
+        const isMe = e.player === CURRENT_USER?.playerName;
         const posClass = rank <= 3 ? `pos-${rank}` : '';
         const rankCell = medals[rank]
           ? `<span class="rank-medal">${medals[rank]}</span>`
+          : isLast
+          ? `<span class="rank-medal">🤡</span>`
           : `<span class="rank-num">${rank}</span>`;
-        return `<tr class="${posClass}">
+        const youChip = isMe ? `<span class="lb-you">you</span>` : '';
+        return `<tr class="${posClass}${isMe ? ' is-me' : ''}">
       <td class="col-rank">${rankCell}</td>
-      <td class="col-player"><span class="player-link" onclick="openProfile('${escapeHtml(e.player)}')">${escapeHtml(e.player)}</span></td>
+      <td class="col-player"><span class="player-link" onclick="openProfile('${escapeHtml(e.player)}')">${escapeHtml(e.player)}</span>${youChip}</td>
       <td class="val-pts">${e.pts}</td>
       <td class="col-gp">${e.played}</td>
       <td class="val-exact">${e.exact}</td>
@@ -2043,10 +2250,14 @@
     const KO_BRACKET = {
       left: [
         { name: 'Round of 32', color: '#3b82f6', matches: [
-          {num:73,date:'2026-06-29'}, {num:74,date:'2026-06-29'},
-          {num:75,date:'2026-06-30'}, {num:76,date:'2026-06-30'},
-          {num:77,date:'2026-07-01'}, {num:78,date:'2026-07-01'},
-          {num:79,date:'2026-07-02'}, {num:80,date:'2026-07-02'},
+          {num:73,date:'2026-06-29', hs:{r:2,g:'A'}, as:{r:2,g:'B'}},
+          {num:74,date:'2026-06-29', hs:{r:1,g:'E'}, as:{r:3,gs:['A','B','C','D','F']}},
+          {num:75,date:'2026-06-30', hs:{r:1,g:'F'}, as:{r:2,g:'C'}},
+          {num:76,date:'2026-06-30', hs:{r:1,g:'C'}, as:{r:2,g:'F'}},
+          {num:77,date:'2026-07-01', hs:{r:1,g:'I'}, as:{r:3,gs:['C','D','F','G','H']}},
+          {num:78,date:'2026-07-01', hs:{r:2,g:'E'}, as:{r:2,g:'I'}},
+          {num:79,date:'2026-07-02', hs:{r:1,g:'A'}, as:{r:3,gs:['C','E','F','H','I']}},
+          {num:80,date:'2026-07-02', hs:{r:1,g:'L'}, as:{r:3,gs:['E','H','I','J','K']}},
         ]},
         { name: 'Round of 16', color: '#8b5cf6', matches: [
           {num:89,date:'2026-07-05'}, {num:90,date:'2026-07-05'},
@@ -2071,47 +2282,131 @@
           {num:95,date:'2026-07-08'}, {num:96,date:'2026-07-08'},
         ]},
         { name: 'Round of 32', color: '#3b82f6', matches: [
-          {num:81,date:'2026-07-03'}, {num:82,date:'2026-07-03'},
-          {num:83,date:'2026-07-03'}, {num:84,date:'2026-07-03'},
-          {num:85,date:'2026-07-04'}, {num:86,date:'2026-07-04'},
-          {num:87,date:'2026-07-04'}, {num:88,date:'2026-07-04'},
+          {num:81,date:'2026-07-03', hs:{r:1,g:'D'}, as:{r:3,gs:['B','E','F','I','J']}},
+          {num:82,date:'2026-07-03', hs:{r:1,g:'G'}, as:{r:3,gs:['A','E','H','I','J']}},
+          {num:83,date:'2026-07-03', hs:{r:2,g:'K'}, as:{r:2,g:'L'}},
+          {num:84,date:'2026-07-03', hs:{r:1,g:'H'}, as:{r:2,g:'J'}},
+          {num:85,date:'2026-07-04', hs:{r:1,g:'B'}, as:{r:3,gs:['E','F','G','I','J']}},
+          {num:86,date:'2026-07-04', hs:{r:1,g:'J'}, as:{r:2,g:'H'}},
+          {num:87,date:'2026-07-04', hs:{r:1,g:'K'}, as:{r:3,gs:['D','E','I','J','L']}},
+          {num:88,date:'2026-07-04', hs:{r:2,g:'D'}, as:{r:2,g:'G'}},
         ]},
       ],
-      final: {num:104, date:'2026-07-19'},
-      third: {num:103, date:'2026-07-18'},
+      final: {num:104, date:'2026-07-19', cls:'bk-final'},
+      third: {num:103, date:'2026-07-18', cls:'bk-third'},
     };
 
-    function bkMatchHtml(m, data) {
-      const home = data?.home || m.homeLabel || null;
-      const away = data?.away || m.awayLabel || null;
+    // ISO 3166-1 alpha-2 codes → flagcdn.com images (emoji flags don't render on Windows)
+    const FLAGS = {
+      'Mexico':'mx','South Africa':'za','South Korea':'kr',
+      'Canada':'ca','Qatar':'qa','Switzerland':'ch',
+      'Brazil':'br','Morocco':'ma','Haiti':'ht','Scotland':'gb-sct',
+      'United States':'us','Paraguay':'py','Australia':'au',
+      'Germany':'de','Curaçao':'cw','Curacao':'cw',
+      'Ivory Coast':'ci',"Côte d'Ivoire":'ci',
+      'Ecuador':'ec','Netherlands':'nl','Japan':'jp','Tunisia':'tn',
+      'Belgium':'be','Egypt':'eg','Iran':'ir','New Zealand':'nz',
+      'Spain':'es','Cape Verde':'cv','Saudi Arabia':'sa','Uruguay':'uy',
+      'France':'fr','Senegal':'sn','Norway':'no',
+      'Argentina':'ar','Algeria':'dz','Austria':'at','Jordan':'jo',
+      'Portugal':'pt','Uzbekistan':'uz','Colombia':'co',
+      'England':'gb-eng','Croatia':'hr','Ghana':'gh','Panama':'pa',
+      'Sweden':'se','Bosnia and Herzegovina':'ba',
+    };
+
+    // info = { name, status: 'confirmed'|'predicted'|'tbd'|'result', label, score }
+    function bkTeamRow(info, won) {
+      const name = info?.name;
+      const status = info?.status || 'tbd';
+      const scoreSlot = `<span class="bk-score-slot">${info?.score ? escapeHtml(info.score) : ''}</span>`;
+      if (!name || status === 'tbd') {
+        return `<div class="bk-team tbd"><span class="bk-name">${escapeHtml(info?.label || 'TBD')}</span>${scoreSlot}</div>`;
+      }
+      const stClass = status === 'confirmed' ? ' st-confirmed' : status === 'predicted' ? ' st-predicted' : '';
+      const flag = FLAGS[name] ? `<img class="bk-flag" src="https://flagcdn.com/w20/${FLAGS[name]}.png" alt="" loading="lazy">` : '';
+      return `<div class="bk-team${won ? ' winner' : ''}${stClass}">${flag}<span class="bk-name">${escapeHtml(name)}</span>${scoreSlot}</div>`;
+    }
+
+    function bkMatchHtml(m, data, homeInfo, awayInfo) {
       const score = data?.actual_score || null;
       let homeWon = false, awayWon = false;
       if (score) {
-        const parts = score.split('-');
-        if (parts.length === 2) { homeWon = +parts[0] > +parts[1]; awayWon = +parts[1] > +parts[0]; }
+        const parts = score.split('-').map(Number);
+        if (parts.length === 2) { homeWon = parts[0] > parts[1]; awayWon = parts[1] > parts[0]; }
       }
       const dateStr = m.date
         ? new Date(m.date + 'T12:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'short'})
         : '';
-      const hs = score ? score.split('-')[0] : '';
-      const as = score ? score.split('-')[1] : '';
-      return `<div class="bk-match">
+
+      let hInfo, aInfo;
+      if (score) {
+        // Game played — use actual names from Firebase data, strip rank suffix
+        const hn = data?.home ? parseTeam(data.home).name : homeInfo?.name;
+        const an = data?.away ? parseTeam(data.away).name : awayInfo?.name;
+        const [hs, as] = score.split('-');
+        hInfo = { name: hn, status: 'result', score: hs };
+        aInfo = { name: an, status: 'result', score: as };
+      } else {
+        // No result yet — use computed slot info (or nothing for R16+)
+        hInfo = homeInfo || (data?.home ? { name: parseTeam(data.home).name, status: 'result' } : null);
+        aInfo = awayInfo || (data?.away ? { name: parseTeam(data.away).name, status: 'result' } : null);
+      }
+
+      return `<div class="bk-match${m.cls ? ' ' + m.cls : ''}" onclick="showMatchModal(${m.num})">
         <div class="bk-match-meta"><span>M${m.num}</span><span>${dateStr}</span></div>
-        <div class="bk-team${home ? '' : ' tbd'}${homeWon ? ' winner' : ''}">
-          <span>${home ? escapeHtml(home) : 'TBD'}</span>
-          ${hs ? `<span class="bk-score">${escapeHtml(hs)}</span>` : ''}
-        </div>
+        ${bkTeamRow(hInfo, homeWon)}
         <div class="bk-divider"></div>
-        <div class="bk-team${away ? '' : ' tbd'}${awayWon ? ' winner' : ''}">
-          <span>${away ? escapeHtml(away) : 'TBD'}</span>
-          ${as ? `<span class="bk-score">${escapeHtml(as)}</span>` : ''}
-        </div>
+        ${bkTeamRow(aInfo, awayWon)}
       </div>`;
     }
+
+    let _bkCache = {}; // matchNum → { hInfo, aInfo, data, m }
 
     function renderBracket() {
       const matchById = {};
       if (DATA?.matches) DATA.matches.forEach(m => { matchById[m.id] = m; });
+      _bkCache = {};
+
+      // Compute group standings for R32 slot predictions
+      const standings = DATA?.matches ? computeGroupStandings() : {};
+
+      // Resolve a slot definition { r, g } or { r, gs } into display info
+      function getSlotInfo(slot) {
+        if (!slot) return null;
+        // Third-place slot — show eligible groups as label until fully determined
+        if (slot.r === 3) {
+          return { name: null, status: 'tbd', label: '3rd ' + slot.gs.join('/') };
+        }
+        const grpKey = 'Group ' + slot.g;
+        const teams = standings[grpKey];
+        const rankLabel = slot.r === 1 ? '1' : '2';
+        const fallback = { name: null, status: 'tbd', label: rankLabel + slot.g };
+        if (!teams || teams.length < slot.r) return fallback;
+        const team = teams[slot.r - 1];
+        if (!team || team.p === 0) return fallback;
+
+        // Mathematical confirmation check
+        const maxPoss = t => t.pts + (3 - t.p) * 3;
+        const groupDone = teams.every(t => t.p >= 3);
+        let confirmed = groupDone;
+        if (!confirmed) {
+          if (slot.r === 1) {
+            confirmed = teams.slice(1).every(t => maxPoss(t) < team.pts);
+          } else if (slot.r === 2) {
+            confirmed = teams.slice(2).every(t => maxPoss(t) < team.pts);
+          }
+        }
+        return { name: team.name, status: confirmed ? 'confirmed' : 'predicted', label: rankLabel + slot.g };
+      }
+
+      // Build match HTML, injecting slot info for R32 matches
+      function matchHtml(m) {
+        const data = matchById[m.num];
+        const hInfo = m.hs ? getSlotInfo(m.hs) : null;
+        const aInfo = m.as ? getSlotInfo(m.as) : null;
+        _bkCache[m.num] = { hInfo, aInfo, data, m };
+        return bkMatchHtml(m, data, hInfo, aInfo);
+      }
 
       const el = document.getElementById('bracket-inner');
       if (!el) return;
@@ -2119,14 +2414,24 @@
       function halfHtml(rounds, isRight) {
         const cols = [];
         rounds.forEach((round, ri) => {
-          const slotsHtml = round.matches.map(m => bkMatchHtml(m, matchById[m.num])).join('');
+          const pairs = [];
+          for (let i = 0; i < round.matches.length; i += 2) {
+            const m1 = matchHtml(round.matches[i]);
+            const m2 = i + 1 < round.matches.length ? matchHtml(round.matches[i + 1]) : '';
+            pairs.push(`<div class="bk-pair">${m1}${m2}</div>`);
+          }
+          const slotsHtml = pairs.join('');
           cols.push(`<div class="bk-col">
             <div class="bk-col-head" style="color:${round.color}">${round.name}</div>
             <div class="bk-col-slots">${slotsHtml}</div>
           </div>`);
           if (ri < rounds.length - 1) {
-            const pairs = round.matches.length / 2;
-            const segs = Array.from({length: pairs}, () => '<div class="bk-seg"></div>').join('');
+            // On the right half the rounds are ordered center→edge (SF→QF→R16→R32),
+            // so the connector segments come from the NEXT round (which has more matches).
+            const segCount = isRight
+              ? rounds[ri + 1].matches.length / 2
+              : round.matches.length / 2;
+            const segs = Array.from({length: segCount}, () => '<div class="bk-seg"></div>').join('');
             const dir = isRight ? 'bk-conn-lft' : 'bk-conn-rgt';
             cols.push(`<div class="bk-conn ${dir}"><div class="bk-conn-head"></div><div class="bk-conn-segs">${segs}</div></div>`);
           }
@@ -2141,14 +2446,294 @@
         <div class="bk-center-col">
           <div class="bk-center-head">&#9917; Final</div>
           <div class="bk-center-slots">
-            <div>${bkMatchHtml(KO_BRACKET.final, matchById[KO_BRACKET.final.num])}</div>
+            <div>${(() => { const md = matchById[KO_BRACKET.final.num]; _bkCache[KO_BRACKET.final.num] = {hInfo:null,aInfo:null,data:md,m:KO_BRACKET.final}; return bkMatchHtml(KO_BRACKET.final, md, null, null); })()}</div>
             <div>
-              <div class="bk-3rd-label">&#129352; 3rd Place</div>
-              ${bkMatchHtml(KO_BRACKET.third, matchById[KO_BRACKET.third.num])}
+              <div class="bk-3rd-label">&#129353; 3rd Place</div>
+              ${(() => { const md = matchById[KO_BRACKET.third.num]; _bkCache[KO_BRACKET.third.num] = {hInfo:null,aInfo:null,data:md,m:KO_BRACKET.third}; return bkMatchHtml(KO_BRACKET.third, md, null, null); })()}
             </div>
           </div>
         </div>
         <div class="bk-half bk-rgt">${sfConn}${halfHtml(KO_BRACKET.right, true)}</div>
+      </div>`;
+    }
+
+    // ── Match modal ────────────────────────────────────
+    function showMatchModal(matchNum) {
+      const cached = _bkCache[matchNum];
+      const data   = cached?.data;
+      const m      = cached?.m;
+      const hInfo  = cached?.hInfo;
+      const aInfo  = cached?.aInfo;
+
+      const homeName = hInfo?.name || (data?.home ? parseTeam(data.home).name : hInfo?.label || 'TBD');
+      const awayName = aInfo?.name || (data?.away ? parseTeam(data.away).name : aInfo?.label || 'TBD');
+      const score    = data?.actual_score || null;
+      const preds    = data?.predictions  || {};
+      const players  = DATA?.players      || [];
+      const dateStr  = m?.date
+        ? new Date(m.date + 'T12:00:00').toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'})
+        : '';
+
+      const scoreBlock = score
+        ? `<div class="m-score-block">
+            <div class="m-score-big">${escapeHtml(score)}</div>
+            <div class="m-score-label">Final score</div>
+           </div>`
+        : `<div class="m-no-score">Not played yet</div>`;
+
+      let rows = '';
+      players.forEach(p => {
+        const pred = preds[p] || null;
+        let ptsHtml = '';
+        if (score && pred) {
+          const pts = calcPts(pred, score);
+          const cls = pts === 3 ? 'm-pts-exact' : pts === 1 ? 'm-pts-outcome' : 'm-pts-wrong';
+          ptsHtml = `<td class="${cls}">${pts} pt${pts !== 1 ? 's' : ''}</td>`;
+        } else {
+          ptsHtml = `<td class="no-pred">—</td>`;
+        }
+        rows += `<tr>
+          <td>${escapeHtml(p)}</td>
+          <td>${pred ? escapeHtml(pred) : '<span class="no-pred">—</span>'}</td>
+          ${ptsHtml}
+        </tr>`;
+      });
+
+      document.getElementById('modal-content').innerHTML = `
+        <div class="m-id">Match ${matchNum}</div>
+        <div class="m-vs">${escapeHtml(homeName)} <span style="color:var(--text3);font-weight:400">vs</span> ${escapeHtml(awayName)}</div>
+        <div class="m-date">${escapeHtml(dateStr)}</div>
+        ${scoreBlock}
+        <div class="m-preds-head">Predictions</div>
+        <table class="m-tbl">
+          <thead><tr><th>Player</th><th>Prediction</th><th>Points</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+      document.getElementById('match-modal').classList.remove('hidden');
+    }
+
+    function closeMatchModal(e) {
+      if (!e || e.target === document.getElementById('match-modal')) {
+        document.getElementById('match-modal').classList.add('hidden');
+      }
+    }
+
+    // ── Group standings (with FIFA tiebreakers) ────────
+    function computeGroupStandings() {
+      // Pass 1: accumulate overall stats + store raw match results per group
+      const groups = {};
+      DATA.matches.forEach(m => {
+        if (m.id > 72) return;
+        const ht = parseTeam(m.home);
+        const at = parseTeam(m.away);
+        const grp = m.group;
+        if (!groups[grp]) groups[grp] = { teams: {}, matches: [] };
+        const g = groups[grp];
+        if (!g.teams[ht.name]) g.teams[ht.name] = { p:0, w:0, d:0, l:0, gf:0, ga:0 };
+        if (!g.teams[at.name]) g.teams[at.name] = { p:0, w:0, d:0, l:0, gf:0, ga:0 };
+        if (!m.actual_score) return;
+        const [hg, ag] = m.actual_score.split('-').map(Number);
+        const hs = g.teams[ht.name], as2 = g.teams[at.name];
+        hs.p++; as2.p++;
+        hs.gf += hg; hs.ga += ag;
+        as2.gf += ag; as2.ga += hg;
+        if (hg > ag) { hs.w++; as2.l++; }
+        else if (hg < ag) { hs.l++; as2.w++; }
+        else { hs.d++; as2.d++; }
+        g.matches.push({ home: ht.name, away: at.name, hg, ag });
+      });
+
+      // Calculate head-to-head stats among a subset of team names
+      function h2hStats(names, matches) {
+        const s = {};
+        names.forEach(n => { s[n] = { pts: 0, gf: 0, ga: 0 }; });
+        matches.forEach(({ home, away, hg, ag }) => {
+          if (!s[home] || !s[away]) return;
+          s[home].pts += hg > ag ? 3 : hg === ag ? 1 : 0;
+          s[away].pts += ag > hg ? 3 : hg === ag ? 1 : 0;
+          s[home].gf += hg; s[home].ga += ag;
+          s[away].gf += ag; s[away].ga += hg;
+        });
+        return s;
+      }
+
+      // Apply h2h tiebreaker to a group of teams already equal on points.
+      // Recurses when only SOME of the tied sub-group are separated.
+      function applyH2H(tied, matches) {
+        if (tied.length <= 1) return tied;
+        const h2h = h2hStats(tied.map(t => t.name), matches);
+        const ranked = tied.map(t => ({
+          ...t,
+          h2hPts: h2h[t.name].pts,
+          h2hGd:  h2h[t.name].gf - h2h[t.name].ga,
+          h2hGf:  h2h[t.name].gf
+        })).sort((a, b) =>
+          b.h2hPts - a.h2hPts || b.h2hGd - a.h2hGd || b.h2hGf - a.h2hGf ||
+          b.gd     - a.gd     || b.gf    - a.gf     || a.name.localeCompare(b.name)
+        );
+
+        // Find sub-groups that are STILL tied on every criterion used above
+        const result = [];
+        let i = 0;
+        while (i < ranked.length) {
+          let j = i + 1;
+          while (j < ranked.length &&
+            ranked[j].h2hPts === ranked[i].h2hPts &&
+            ranked[j].h2hGd  === ranked[i].h2hGd  &&
+            ranked[j].h2hGf  === ranked[i].h2hGf  &&
+            ranked[j].gd     === ranked[i].gd      &&
+            ranked[j].gf     === ranked[i].gf) j++;
+          const sub = ranked.slice(i, j);
+          // Only recurse if we made SOME progress (sub is smaller than the whole tied group)
+          if (sub.length > 1 && sub.length < tied.length) {
+            result.push(...applyH2H(sub, matches));
+          } else {
+            result.push(...sub);
+          }
+          i = j;
+        }
+        return result;
+      }
+
+      // Sort a group's team list using: pts → h2h tiebreakers → overall gd → overall gf
+      function sortGroup(teams, matches) {
+        const base = [...teams].sort((a, b) =>
+          b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.name.localeCompare(b.name)
+        );
+        const result = [];
+        let i = 0;
+        while (i < base.length) {
+          let j = i + 1;
+          while (j < base.length && base[j].pts === base[i].pts) j++;
+          const tied = base.slice(i, j);
+          result.push(...(tied.length > 1 ? applyH2H(tied, matches) : tied));
+          i = j;
+        }
+        return result;
+      }
+
+      const ORDER = ['Group A','Group B','Group C','Group D','Group E','Group F',
+                     'Group G','Group H','Group I','Group J','Group K','Group L'];
+      const result = {};
+      ORDER.forEach(grp => {
+        if (!groups[grp]) return;
+        const { teams, matches } = groups[grp];
+        const teamList = Object.entries(teams).map(([name, s]) => ({
+          name, ...s, pts: s.w * 3 + s.d, gd: s.gf - s.ga
+        }));
+        result[grp] = sortGroup(teamList, matches);
+      });
+      return result;
+    }
+
+    function renderGroups() {
+      if (!DATA) return;
+      const standings = computeGroupStandings();
+      const el = document.getElementById('groups-grid');
+      if (!el) return;
+      const gdFmt = n => n > 0 ? `+${n}` : String(n);
+      const gdCls = n => n > 0 ? 'gt-gd-pos' : n < 0 ? 'gt-gd-neg' : '';
+
+      el.innerHTML = Object.entries(standings).map(([grp, teams]) => {
+        const playedMatches = teams.reduce((s, t) => s + t.p, 0) / 2;
+        const rows = teams.map((t, i) => {
+          const pos = i + 1;
+          const isQual = pos <= 2;
+          const rowClass = [isQual ? 'gt-qual' : '', pos === 2 ? 'gt-qual-line' : ''].filter(Boolean).join(' ');
+          return `<tr class="${rowClass}">
+            <td class="gt-pos">${pos}</td>
+            <td class="gt-team" title="${escapeHtml(t.name)}">${escapeHtml(t.name)}</td>
+            <td>${t.p}</td>
+            <td>${t.w}</td>
+            <td>${t.d}</td>
+            <td>${t.l}</td>
+            <td>${t.gf}</td>
+            <td>${t.ga}</td>
+            <td class="${gdCls(t.gd)}">${gdFmt(t.gd)}</td>
+            <td class="gt-pts">${t.pts}</td>
+          </tr>`;
+        }).join('');
+        return `<div class="group-card">
+          <div class="group-card-head">
+            <span class="group-card-name">${escapeHtml(grp)}</span>
+            <span class="group-card-progress">${playedMatches}/6 played</span>
+          </div>
+          <table class="group-tbl">
+            <thead><tr>
+              <th class="gt-pos">#</th>
+              <th class="gt-team">Team</th>
+              <th title="Played">P</th>
+              <th title="Won">W</th>
+              <th title="Drawn">D</th>
+              <th title="Lost">L</th>
+              <th title="Goals For">GF</th>
+              <th title="Goals Against">GA</th>
+              <th title="Goal Difference">GD</th>
+              <th class="gt-pts" title="Points">Pts</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+      }).join('');
+
+      // ── 3rd place standings ──────────────────────────
+      const thirdEl = document.getElementById('third-place-section');
+      if (!thirdEl) return;
+
+      const thirds = Object.entries(standings)
+        .filter(([, teams]) => teams.length >= 3)
+        .map(([grp, teams]) => ({ ...teams[2], group: grp.replace('Group ', '') }))
+        .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.name.localeCompare(b.name));
+
+      if (!thirds.length) { thirdEl.innerHTML = ''; return; }
+
+      const thirdRows = thirds.map((t, i) => {
+        const rank = i + 1;
+        const adv = rank <= 8;
+        const rowClass = [adv ? 'tt-adv' : 'tt-out', rank === 8 ? 'tt-cutoff' : ''].filter(Boolean).join(' ');
+        const badge = adv
+          ? `<span class="tt-adv-badge">Advances</span>`
+          : `<span class="tt-out-badge">Eliminated</span>`;
+        return `<tr class="${rowClass}">
+          <td class="tt-rank">${rank}</td>
+          <td class="tt-team">${escapeHtml(t.name)}</td>
+          <td class="tt-grp">${escapeHtml(t.group)}</td>
+          <td>${t.p}</td>
+          <td>${t.w}</td>
+          <td>${t.d}</td>
+          <td>${t.l}</td>
+          <td>${t.gf}</td>
+          <td>${t.ga}</td>
+          <td class="${gdCls(t.gd)}">${gdFmt(t.gd)}</td>
+          <td class="tt-pts">${t.pts}</td>
+          <td class="tt-status">${badge}</td>
+        </tr>`;
+      }).join('');
+
+      thirdEl.innerHTML = `<div class="third-section">
+        <div class="third-section-head">
+          <span class="third-section-title">&#129353; 3rd Place Standings</span>
+          <span class="third-section-sub">Best 8 of 12 advance to the Round of 32</span>
+        </div>
+        <div class="third-card">
+          <table class="third-tbl">
+            <thead><tr>
+              <th class="tt-rank">#</th>
+              <th class="tt-team">Team</th>
+              <th class="tt-grp" title="Group">Grp</th>
+              <th title="Played">P</th>
+              <th title="Won">W</th>
+              <th title="Drawn">D</th>
+              <th title="Lost">L</th>
+              <th title="Goals For">GF</th>
+              <th title="Goals Against">GA</th>
+              <th title="Goal Difference">GD</th>
+              <th class="tt-pts" title="Points">Pts</th>
+              <th class="tt-status">Status</th>
+            </tr></thead>
+            <tbody>${thirdRows}</tbody>
+          </table>
+        </div>
       </div>`;
     }
 
@@ -2169,7 +2754,7 @@
       const st = {};
       players.forEach(p => {
         st[p] = { exact: 0, outcomes: 0, streak: 0, currentStreak: 0,
-                  coldStreak: 0, upsets: 0, loneWolf: 0, perfectDays: 0 };
+                  coldStreak: 0, upsets: 0, loneWolf: 0, perfectDays: 0, closeCall: 0 };
       });
 
       // Hot streak + cold streak pass
@@ -2262,6 +2847,11 @@
           if (pts >= 1) st[p].outcomes++;
           if (isUpset && outcome(pred.trim()) === actualOut) st[p].upsets++;
           if (isLoneWolf && correctCallers[0] === p) st[p].loneWolf++;
+          if (pts === 0) {
+            const [ph, pa] = pred.trim().split('-').map(Number);
+            const [ah, aa] = actual.split('-').map(Number);
+            if (Math.abs(ph - ah) + Math.abs(pa - aa) === 1) st[p].closeCall++;
+          }
         }
       }
 
@@ -2312,6 +2902,7 @@
       const coldStreak = leaders('coldStreak', 2);
       const loneWolf   = leaders('loneWolf', 1);
       const perfectDay = leaders('perfectDays', 1);
+      const closeCall  = leaders('closeCall', 1);
 
       // Biggest matchday card (global stat — no player names)
       const bigDayCard = biggestMatchday && biggestMatchday.totalPts > 0
@@ -2353,6 +2944,10 @@
           coldStreak.value + ' wrong in a row',
           coldStreak.names,
           'current active losing streak', 'coldStreak') : ''}
+        ${closeCall ? card('😭', 'King of Nothing',
+          closeCall.value + (closeCall.value === 1 ? ' close call' : ' close calls'),
+          closeCall.names,
+          '1 goal away from an exact score, 0 points earned', 'closeCall') : ''}
         ${teamkills.length > 0 ? `<div class="insight-card clickable-card" onclick="openTeamkillModal()">
           <div class="insight-icon">💀</div>
           <div class="insight-body">
@@ -2430,6 +3025,15 @@
             if (calcPts(m.predictions[player], m.actual_score) < 1) return false;
             const correct = players.filter(p => m.predictions[p] && calcPts(m.predictions[p], m.actual_score) >= 1);
             return correct.length === 1;
+          });
+
+        case 'closeCall':
+          return sorted.filter(m => {
+            const pred = m.predictions[player];
+            if (!pred || calcPts(pred, m.actual_score) !== 0) return false;
+            const [ph, pa] = pred.trim().split('-').map(Number);
+            const [ah, aa] = m.actual_score.split('-').map(Number);
+            return Math.abs(ph - ah) + Math.abs(pa - aa) === 1;
           });
 
         case 'perfectDays': {
@@ -3030,7 +3634,7 @@ function buildProfileNeighbors(player) {
         : `<div class="pp-nbr-leader">&#127942; Leading the pack</div>`;
       const belowHtml = below
         ? row(below, idx + 2, false, mine.pts - below.pts, 'ahead')
-        : `<div class="pp-nbr-last">Last place — only way is up &#128640;</div>`;
+        : `<div class="pp-nbr-last">Suffering from skill issue &#128128;</div>`;
 
       return `<div class="pp-neighbors">
         <div class="pp-section-label">Leaderboard</div>
@@ -3196,6 +3800,15 @@ function buildProfileNeighbors(player) {
     }
 
   </script>
+
+  <!-- ── Match prediction modal ───────────────────── -->
+  <div id="match-modal" class="m-overlay hidden" onclick="closeMatchModal(event)">
+    <div class="m-box">
+      <button class="m-close" onclick="closeMatchModal()">&#215;</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
 </body>
 
 </html>
