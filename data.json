@@ -408,7 +408,7 @@
             "home": "Belgium (9)",
             "away": "Egypt (28)",
             "group": "Group G",
-            "actual_score": null,
+            "actual_score": "1-1",
             "predictions": {
                 "MARC-BORL": "2-1",
                 "MURI TUDOR": "2-2",
@@ -425,7 +425,8 @@
                 "MATEI": "1-3",
                 "SONE": "2-0",
                 "CALIN": "3-1"
-            }
+            },
+            "referee": "Ramon Abatti Abel (Brazil)"
         },
         {
             "id": 15,
