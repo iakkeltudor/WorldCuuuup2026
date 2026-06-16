@@ -495,7 +495,7 @@
             "home": "France (1)",
             "away": "Senegal (14)",
             "group": "Group I",
-            "actual_score": null,
+            "actual_score": "3-1",
             "predictions": {
                 "MARC-BORL": "3-1",
                 "MURI TUDOR": "3-2",
@@ -512,7 +512,8 @@
                 "MATEI": "3-0",
                 "SONE": "2-2",
                 "CALIN": "3-1"
-            }
+            },
+            "referee": "Alireza Faghani (Iran)"
         },
         {
             "id": 18,
