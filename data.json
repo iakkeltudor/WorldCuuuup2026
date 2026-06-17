@@ -611,7 +611,7 @@
             "home": "Portugal (5)",
             "away": "DR Congo (46)",
             "group": "Group K",
-            "actual_score": null,
+            "actual_score": "1-1",
             "predictions": {
                 "MARC-BORL": "3-0",
                 "MURI TUDOR": "4-0",
@@ -628,7 +628,8 @@
                 "MATEI": "3-1",
                 "SONE": "3-1",
                 "CALIN": "5-0"
-            }
+            },
+            "referee": "Abdulrahman Al Jassim (Qatar)"
         },
         {
             "id": 22,
