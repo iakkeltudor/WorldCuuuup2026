@@ -984,6 +984,20 @@
     }
     .insight-sub { font-size: .65rem; color: var(--text3); margin-top: 5px; }
     .insights-empty { padding: 48px 16px; text-align: center; color: var(--text3); font-size: .9rem; }
+
+    /* ── ENTROPY CARD ─────────────────────────────────── */
+    .entropy-bar {
+      display: flex; height: 5px; border-radius: 3px;
+      overflow: hidden; margin: 7px 0 4px; gap: 1px;
+    }
+    .entropy-seg { height: 100%; border-radius: 2px; min-width: 2px; }
+    .entropy-seg.home { background: var(--green); }
+    .entropy-seg.draw { background: var(--text3); opacity: .6; }
+    .entropy-seg.away { background: var(--red); }
+    .entropy-bar-labels { font-size: .58rem; color: var(--text3); }
+    .entropy-bar-labels b { color: var(--text2); font-weight: 700; }
+
+
     .teamkill-matches { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
     .teamkill-match {
       display: flex; align-items: center; gap: 6px;
@@ -2905,6 +2919,94 @@
       return { st, biggestMatchday, teamkills };
     }
 
+    function getTop5ByEntropy() {
+      const played = DATA.matches.filter(m => m.actual_score && m.id <= 72);
+      const sorted = [...played].sort((a, b) =>
+        (a.date + a.time) < (b.date + b.time) ? -1 : 1
+      );
+
+      return sorted
+        .map(game => {
+          const predictions = Object.values(game.predictions);
+          let wins = 0, draws = 0, losses = 0;
+          for (const pred of predictions) {
+            const [home, away] = pred.split('-').map(Number);
+            if (home > away) wins++;
+            else if (home === away) draws++;
+            else losses++;
+          }
+          const total = wins + draws + losses;
+          if (total === 0) return null;
+
+          const entropy = [wins, draws, losses]
+            .filter(count => count > 0)
+            .reduce((sum, count) => {
+              const p = count / total;
+              return sum - p * Math.log2(p);
+            }, 0);
+
+          return { ...game, _entropy: entropy, _counts: { wins, draws, losses, total } };
+        })
+        .filter(Boolean)
+        .sort((a, b) => b._entropy - a._entropy)
+        .slice(0, 5);
+    }
+
+    function splitBar(counts) {
+      const { wins, draws, losses, total } = counts;
+      const pct = v => Math.round(v / total * 100);
+      const wp = pct(wins), dp = pct(draws), lp = pct(losses);
+      return {
+        bar: `<div class="entropy-bar">
+          <div class="entropy-seg home" style="width:${wp}%"></div>
+          <div class="entropy-seg draw" style="width:${dp}%"></div>
+          <div class="entropy-seg away" style="width:${lp}%"></div>
+        </div>`,
+        labels: `<div class="entropy-bar-labels"><b>${wp}%</b> Home &middot; <b>${dp}%</b> Draw &middot; <b>${lp}%</b> Away</div>`,
+      };
+    }
+
+    function renderEntropyCard() {
+      const top5 = getTop5ByEntropy();
+      if (top5.length === 0) return '';
+      const g = top5[0];
+      const homeName = parseTeam(g.home).name;
+      const awayName = parseTeam(g.away).name;
+      const { bar, labels } = splitBar(g._counts);
+      return `<div class="insight-card clickable-card" onclick="openEntropyModal()">
+        <div class="insight-icon">⚖️</div>
+        <div class="insight-body">
+          <div class="insight-title">Most divided predictions</div>
+          <div class="insight-value">${escapeHtml(homeName)} vs ${escapeHtml(awayName)}</div>
+          ${bar}${labels}
+          <div class="insight-card-cta">Tap to see top 5 →</div>
+        </div>
+      </div>`;
+    }
+
+    function openEntropyModal() {
+      const top5 = getTop5ByEntropy();
+      document.getElementById('stat-modal-icon').textContent = '⚖️';
+      document.getElementById('stat-modal-label').textContent = 'Group stage';
+      document.getElementById('stat-modal-title').textContent = 'Most divided predictions';
+      document.getElementById('stat-modal-list').innerHTML = top5.map((g, i) => {
+        const homeName = parseTeam(g.home).name;
+        const awayName = parseTeam(g.away).name;
+        const { bar, labels } = splitBar(g._counts);
+        return `<div class="stat-match-item" onclick="goToMatch(${g.id})">
+          <span class="stat-match-home">${escapeHtml(homeName)}</span>
+          <div class="stat-match-score-col"><span class="stat-match-score">${escapeHtml(g.actual_score)}</span></div>
+          <span class="stat-match-away">${escapeHtml(awayName)}</span>
+          <div class="stat-match-meta">
+            <span class="stat-match-date">#${i + 1} &middot; ${fmtShort(g.date)}</span>
+            <span class="stat-match-nav">View match →</span>
+          </div>
+          <div style="grid-column:1/-1;padding-bottom:2px">${bar}${labels}</div>
+        </div>`;
+      }).join('');
+      document.getElementById('stat-modal').classList.add('on');
+    }
+
     function renderStats() {
       const played = DATA.matches.filter(m => m.actual_score).length;
       if (played === 0) {
@@ -2995,6 +3097,7 @@
           closeCall.value + (closeCall.value === 1 ? ' close call' : ' close calls'),
           closeCall.names,
           '1 goal away from an exact score, 0 points earned', 'closeCall') : ''}
+        ${renderEntropyCard()}
         ${teamkills.length > 0 ? `<div class="insight-card clickable-card" onclick="openTeamkillModal()">
           <div class="insight-icon">💀</div>
           <div class="insight-body">
