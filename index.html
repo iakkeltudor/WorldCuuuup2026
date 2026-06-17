@@ -2920,7 +2920,7 @@
     }
 
     function getTop5ByEntropy() {
-      const played = DATA.matches.filter(m => m.actual_score && m.id <= 72);
+      const played = DATA.matches.filter(m => m.id <= 72);
       const sorted = [...played].sort((a, b) =>
         (a.date + a.time) < (b.date + b.time) ? -1 : 1
       );
@@ -2995,7 +2995,7 @@
         const { bar, labels } = splitBar(g._counts);
         return `<div class="stat-match-item" onclick="goToMatch(${g.id})">
           <span class="stat-match-home">${escapeHtml(homeName)}</span>
-          <div class="stat-match-score-col"><span class="stat-match-score">${escapeHtml(g.actual_score)}</span></div>
+          <div class="stat-match-score-col"><span class="stat-match-score">${g.actual_score ? escapeHtml(g.actual_score) : 'vs'}</span></div>
           <span class="stat-match-away">${escapeHtml(awayName)}</span>
           <div class="stat-match-meta">
             <span class="stat-match-date">#${i + 1} &middot; ${fmtShort(g.date)}</span>
