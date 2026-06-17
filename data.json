@@ -640,7 +640,7 @@
             "home": "England (4)",
             "away": "Croatia (11)",
             "group": "Group L",
-            "actual_score": null,
+            "actual_score": "4-2",
             "predictions": {
                 "MARC-BORL": "2-1",
                 "MURI TUDOR": "2-2",
@@ -657,7 +657,8 @@
                 "MATEI": "0-0",
                 "SONE": "1-0",
                 "CALIN": "1-1"
-            }
+            },
+            "referee": "Clément Turpin (France)"
         },
         {
             "id": 23,
