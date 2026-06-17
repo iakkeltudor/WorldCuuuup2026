@@ -524,7 +524,7 @@
             "home": "Iraq (57)",
             "away": "Norway (31)",
             "group": "Group I",
-            "actual_score": null,
+            "actual_score": "1-4",
             "predictions": {
                 "MARC-BORL": "0-3",
                 "MURI TUDOR": "0-4",
@@ -541,7 +541,8 @@
                 "MATEI": "0-1",
                 "SONE": "0-2",
                 "CALIN": "1-4"
-            }
+            },
+            "referee": "Pierre Atcho (Gabon)"
         },
         {
             "id": 19,
@@ -552,7 +553,7 @@
             "home": "Argentina (3)",
             "away": "Algeria (29)",
             "group": "Group J",
-            "actual_score": null,
+            "actual_score": "3-0",
             "predictions": {
                 "MARC-BORL": "2-0",
                 "MURI TUDOR": "1-0",
@@ -569,7 +570,8 @@
                 "MATEI": "3-1",
                 "SONE": "2-1",
                 "CALIN": "3-1"
-            }
+            },
+            "referee": "Szymon Marciniak (Poland)"
         },
         {
             "id": 20,
