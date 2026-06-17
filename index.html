@@ -177,6 +177,23 @@
       border-radius: 8px; cursor: pointer;
     }
     .pp-signout-btn:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+    .pp-nick-row { display: flex; gap: 6px; margin-bottom: 6px; }
+    .pp-nick-input {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); font-size: .85rem; padding: 8px 10px;
+      border-radius: 8px; font-family: inherit; outline: none;
+    }
+    .pp-nick-input:focus { border-color: var(--accent); }
+    .pp-nick-save {
+      background: var(--accent); color: #000; border: none;
+      font-size: .8rem; font-weight: 700; padding: 8px 14px;
+      border-radius: 8px; cursor: pointer; font-family: inherit;
+      white-space: nowrap;
+    }
+    .pp-nick-save:disabled { opacity: .5; cursor: wait; }
+    .pp-nick-msg { font-size: .7rem; min-height: 1.1em; margin-bottom: 8px; }
+    .pp-nick-msg.ok  { color: var(--green); }
+    .pp-nick-msg.err { color: var(--red); }
 
     /* chart + neighbors shared label */
     .pp-section-label {
@@ -1198,6 +1215,17 @@
     .stat-match-pred-badge.na      { background: rgba(255,255,255,.05); color: var(--text3); }
     .stat-match-nav { font-size: .62rem; color: var(--accent); font-weight: 600; margin-left: auto; }
 
+    /* ── GROUP PREDICTIONS MODAL ──────────────────────── */
+    .gp-match { border-bottom: 1px solid var(--border); padding: 10px 14px; }
+    .gp-match:last-child { border-bottom: none; }
+    .gp-match-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 7px;
+    }
+    .gp-match-teams { font-size: .82rem; font-weight: 700; color: var(--text); }
+    .gp-match-meta { font-size: .62rem; color: var(--text3); display: flex; gap: 8px; align-items: center; }
+    .gp-match-score { font-weight: 700; color: var(--text2); }
+
     @keyframes matchPulse {
       0%   { box-shadow: 0 0 0 0   rgba(245,158,11,.5); border-color: var(--border); }
       30%  { box-shadow: 0 0 0 8px rgba(245,158,11,.2); border-color: var(--accent); }
@@ -1580,6 +1608,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+    .chat-name:hover { opacity: .75; }
 
     .chat-time {
       color: var(--text3);
@@ -1934,9 +1963,7 @@
     <div class="profile-panel" id="profile-panel">
       <div class="pp-header" id="pp-header"></div>
       <div class="pp-body" id="pp-body"></div>
-      <div class="pp-footer" id="pp-footer">
-        <button class="pp-signout-btn" onclick="signOutUser()">Sign out</button>
-      </div>
+      <div class="pp-footer" id="pp-footer"></div>
     </div>
   </div>
 
@@ -2231,7 +2258,7 @@
       <div class="stat-lbl">Most Exact Scores</div>
     </div>
     <div class="stat-card">
-      <div class="stat-val" style="font-size:1rem;font-weight:800;color:var(--text)">${leader ? leader.player : '—'}</div>
+      <div class="stat-val" style="font-size:1rem;font-weight:800;color:var(--text)">${leader ? dn(leader.player) : '—'}</div>
       <div class="stat-lbl">Current Leader</div>
     </div>`;
     }
@@ -2262,7 +2289,7 @@
         const youChip = isMe ? `<span class="lb-you">you</span>` : '';
         return `<tr class="${posClass}${isMe ? ' is-me' : ''}">
       <td class="col-rank">${rankCell}</td>
-      <td class="col-player"><span class="player-link" onclick="openProfile('${escapeHtml(e.player)}')">${escapeHtml(e.player)}</span>${youChip}</td>
+      <td class="col-player"><span class="player-link" onclick="openProfile('${escapeHtml(e.player)}')">${escapeHtml(dn(e.player))}</span>${youChip}</td>
       <td class="val-pts">${e.pts}</td>
       <td class="col-gp">${e.played}</td>
       <td class="val-exact">${e.exact}</td>
@@ -2687,6 +2714,34 @@
       return result;
     }
 
+    function openGroupPredictions(grpName) {
+      const matches = DATA.matches
+        .filter(m => m.group === grpName && m.id <= 72)
+        .sort((a, b) => (a.date + a.time) < (b.date + b.time) ? -1 : 1);
+
+      document.getElementById('stat-modal-icon').textContent = '🏟️';
+      document.getElementById('stat-modal-label').textContent = grpName;
+      document.getElementById('stat-modal-title').textContent = 'Predictions';
+      document.getElementById('stat-modal-list').innerHTML = matches.map(m => {
+        const ht = parseTeam(m.home).name;
+        const at = parseTeam(m.away).name;
+        const score = m.actual_score
+          ? `<span class="gp-match-score">${escapeHtml(m.actual_score)}</span>`
+          : `<span class="gp-match-score" style="color:var(--text3)">vs</span>`;
+        const n = DATA.players.filter(p => m.predictions[p]).length;
+        const cols = bestCols(n);
+        const colsSm = bestCols(n, 4);
+        return `<div class="gp-match">
+          <div class="gp-match-header">
+            <span class="gp-match-teams">${escapeHtml(ht)} vs ${escapeHtml(at)}</span>
+            <div class="gp-match-meta">${score}<span>${fmtShort(m.date)}</span></div>
+          </div>
+          <div class="pred-grid" style="--pred-cols:${cols};--pred-cols-sm:${colsSm}">${buildPredCols(m)}</div>
+        </div>`;
+      }).join('');
+      document.getElementById('stat-modal').classList.add('on');
+    }
+
     function renderGroups() {
       if (!DATA) return;
       const standings = computeGroupStandings();
@@ -2715,9 +2770,9 @@
           </tr>`;
         }).join('');
         return `<div class="group-card">
-          <div class="group-card-head">
+          <div class="group-card-head" style="cursor:pointer" onclick="openGroupPredictions('${escapeHtml(grp)}')">
             <span class="group-card-name">${escapeHtml(grp)}</span>
-            <span class="group-card-progress">${playedMatches}/6 played</span>
+            <span class="group-card-progress">${playedMatches}/6 · Tap to see predictions</span>
           </div>
           <table class="group-tbl">
             <thead><tr>
@@ -3027,7 +3082,7 @@
       function nameChips(names, statKey, title, icon) {
         return names.map(n => {
           const d = JSON.stringify({ player: n, statKey: statKey || '', title, icon }).replace(/"/g, '&quot;');
-          return `<button class="insight-name-btn" data-stat="${d}" onclick="openPlayerStatModal(this)" type="button">${escapeHtml(n)}</button>`;
+          return `<button class="insight-name-btn" data-stat="${d}" onclick="openPlayerStatModal(this)" type="button">${escapeHtml(dn(n))}</button>`;
         }).join('');
       }
 
@@ -3361,7 +3416,7 @@
       box.innerHTML = messages.map(msg => `
     <div class="chat-message">
       <div class="chat-msg-meta">
-        <span class="chat-name">${escapeHtml(msg.name)}</span>
+        <span class="chat-name" onclick="openProfile('${escapeHtml(msg.name)}')" style="cursor:pointer">${escapeHtml(dn(msg.name))}</span>
         <span class="chat-time">${formatChatTime(msg.createdAt)}</span>
       </div>
       <div class="chat-text">${escapeHtml(msg.text)}</div>
@@ -3511,8 +3566,8 @@
         const ptsHtml = pts !== null
           ? `<span class="pred-col-pts">${pts > 0 ? '+' : ''}${pts}</span>`
           : '';
-        return `<div class="pred-col ${cls}${mine}" title="${player}: ${pred}${pts !== null ? ` (${pts}pts)` : ''}">
-      <span class="pred-col-name">${player}</span>
+        return `<div class="pred-col ${cls}${mine}" title="${dn(player)}: ${pred}${pts !== null ? ` (${pts}pts)` : ''}">
+      <span class="pred-col-name">${dn(player)}</span>
       <span class="pred-col-score">${pred}</span>
       ${ptsHtml}
     </div>`;
@@ -3677,6 +3732,7 @@
         return;
       }
 
+      await loadNicknames();
       updateProgress();
       renderNav();
       renderMatches();
@@ -3704,6 +3760,18 @@
     const auth = firebase.auth();
 
     let CURRENT_USER = null; // { uid, email, playerName, displayName, photoURL }
+    let NICKNAMES = {}; // { playerName: nickname }
+
+    async function loadNicknames() {
+      try {
+        const res = await fetch(`${CHAT_DB_URL}/nicknames.json`);
+        if (res.ok) NICKNAMES = (await res.json()) || {};
+      } catch {}
+    }
+
+    function dn(playerName) {
+      return NICKNAMES[playerName] || playerName;
+    }
 
     const PLAYER_MAP_URL = `${CHAT_DB_URL}/playerMap.json`;
 
@@ -3742,6 +3810,46 @@
       auth.signOut();
     }
 
+    async function saveNickname() {
+      const pn = CURRENT_USER.playerName;
+      const val = document.getElementById('pp-nick-input').value.trim().slice(0, 20);
+      const msgEl = document.getElementById('pp-nick-msg');
+      const btn = document.querySelector('.pp-nick-save');
+      if (btn) btn.disabled = true;
+
+      const url = `${CHAT_DB_URL}/nicknames/${encodeURIComponent(pn)}.json`;
+
+      if (!val || val === pn) {
+        await fetch(url, { method: 'DELETE' });
+        delete NICKNAMES[pn];
+      } else {
+        // Uniqueness check
+        try {
+          const res = await fetch(`${CHAT_DB_URL}/nicknames.json`);
+          const all = res.ok ? ((await res.json()) || {}) : {};
+          const taken = Object.entries(all).some(([k, v]) => k !== pn && v === val);
+          if (taken) {
+            if (msgEl) { msgEl.textContent = 'Already taken — choose a different one.'; msgEl.className = 'pp-nick-msg err'; }
+            if (btn) btn.disabled = false;
+            return;
+          }
+        } catch {}
+        await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(val) });
+        NICKNAMES[pn] = val;
+      }
+
+      if (btn) btn.disabled = false;
+      if (msgEl) { msgEl.textContent = 'Saved!'; msgEl.className = 'pp-nick-msg ok'; setTimeout(() => { msgEl.textContent = ''; }, 2000); }
+
+      // Re-render everywhere
+      const nameEl = document.getElementById('profile-player-name');
+      if (nameEl) nameEl.textContent = dn(pn);
+      renderProfile(pn);
+      if (ACTIVE_TAB === 'leaderboard') renderLeaderboard();
+      if (ACTIVE_TAB === 'stats') renderStats();
+      if (ACTIVE_TAB === 'matches') renderMatches();
+    }
+
     function openProfile(targetPlayer) {
       renderProfile(targetPlayer || CURRENT_USER?.playerName);
       document.getElementById('profile-overlay').classList.add('open');
@@ -3766,6 +3874,7 @@ function buildProfileNeighbors(player) {
         .sort((a, b) => b.pts - a.pts);
 
       const idx  = lb.findIndex(x => x.p === player);
+      if (idx === -1) return '';
       const mine = lb[idx];
       const above = idx > 0 ? lb[idx - 1] : null;
       const below = idx < lb.length - 1 ? lb[idx + 1] : null;
@@ -3774,7 +3883,7 @@ function buildProfileNeighbors(player) {
       const row = (entry, rankNum, isSubject, diff, dir) => `
         <div class="pp-nbr-row${isSubject ? ' pp-nbr-me' : ''}">
           <span class="pp-nbr-rank">#${rankNum}</span>
-          <span class="pp-nbr-name">${escapeHtml(entry.p)}${isViewerRow(entry.p) ? ' <span class="pp-nbr-you">(you)</span>' : ''}</span>
+          <span class="pp-nbr-name">${escapeHtml(dn(entry.p))}${isViewerRow(entry.p) ? ' <span class="pp-nbr-you">(you)</span>' : ''}</span>
           <span class="pp-nbr-pts">${entry.pts}</span>
           ${diff !== null ? `<span class="pp-nbr-diff ${dir}">${dir === 'behind' ? '+' : '-'}${diff} pts</span>` : ''}
         </div>`;
@@ -3804,11 +3913,14 @@ function buildProfileNeighbors(player) {
         const avatarHtml = isOwnProfile && CURRENT_USER.photoURL
           ? `<img class="pp-avatar" src="${escapeHtml(CURRENT_USER.photoURL)}" alt="">`
           : `<div class="pp-avatar-initials" style="background:${playerColor(player)}">${escapeHtml(player[0])}</div>`;
-        const subHtml = isOwnProfile ? '' : `<div class="pp-name-sub">Viewing profile</div>`;
+        const hasNick = dn(player) !== player;
+        const subHtml = isOwnProfile
+          ? (hasNick ? `<div class="pp-name-sub">${escapeHtml(player)}</div>` : '')
+          : `<div class="pp-name-sub">${hasNick ? escapeHtml(player) + ' · ' : ''}Viewing profile</div>`;
         ppHeader.innerHTML = `
           ${avatarHtml}
           <div class="pp-identity">
-            <div class="pp-name">${escapeHtml(player)}</div>
+            <div class="pp-name">${escapeHtml(dn(player))}</div>
             ${subHtml}
           </div>
           <button class="pp-close" onclick="closeProfile()">&#x2715;</button>`;
@@ -3818,7 +3930,14 @@ function buildProfileNeighbors(player) {
       const ppFooter = document.getElementById('pp-footer');
       if (ppFooter) {
         ppFooter.innerHTML = isOwnProfile
-          ? `<button class="pp-signout-btn" onclick="signOutUser()">Sign out</button>`
+          ? `<div class="pp-nick-row">
+              <input id="pp-nick-input" class="pp-nick-input" type="text" maxlength="20"
+                placeholder="Set a nickname…"
+                value="${escapeHtml(dn(CURRENT_USER.playerName) !== CURRENT_USER.playerName ? dn(CURRENT_USER.playerName) : '')}">
+              <button class="pp-nick-save" onclick="saveNickname()">Save</button>
+            </div>
+            <div class="pp-nick-msg" id="pp-nick-msg"></div>
+            <button class="pp-signout-btn" onclick="signOutUser()">Sign out</button>`
           : '';
         ppFooter.style.display = isOwnProfile ? '' : 'none';
       }
@@ -3900,7 +4019,7 @@ function buildProfileNeighbors(player) {
       const avatarEl = document.getElementById('profile-avatar');
       const nameEl   = document.getElementById('profile-player-name');
       if (avatarEl) avatarEl.src = photoURL || '';
-      if (nameEl)   nameEl.textContent = playerName;
+      if (nameEl)   nameEl.textContent = dn(playerName);
 
       init();
     }
