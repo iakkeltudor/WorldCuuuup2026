@@ -582,7 +582,7 @@
             "home": "Austria (23)",
             "away": "Jordan (63)",
             "group": "Group J",
-            "actual_score": null,
+            "actual_score": "3-1",
             "predictions": {
                 "MARC-BORL": "2-0",
                 "MURI TUDOR": "3-1",
@@ -599,7 +599,8 @@
                 "MATEI": "2-0",
                 "SONE": "2-0",
                 "CALIN": "4-0"
-            }
+            },
+            "referee": "Dahane Beida (Mauritania)"
         },
         {
             "id": 21,
