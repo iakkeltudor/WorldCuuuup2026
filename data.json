@@ -727,7 +727,7 @@
             "home": "Czech Republic (41)",
             "away": "South Africa (60)",
             "group": "Group A",
-            "actual_score": null,
+            "actual_score": "1-1",
             "predictions": {
                 "MARC-BORL": "1-1",
                 "MURI TUDOR": "1-0",
@@ -744,7 +744,8 @@
                 "MATEI": "1-0",
                 "SONE": "1-1",
                 "CALIN": "2-1"
-            }
+            },
+            "referee": "Tori Penso (USA)"
         },
         {
             "id": 26,
