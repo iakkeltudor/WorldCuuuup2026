@@ -2258,7 +2258,7 @@
       <div class="stat-lbl">Most Exact Scores</div>
     </div>
     <div class="stat-card">
-      <div class="stat-val" style="font-size:1rem;font-weight:800;color:var(--text)">${leader ? dn(leader.player) : '—'}</div>
+      <div class="stat-val" style="font-size:1rem;font-weight:800;color:var(--text)">${leader ? leader.player : '—'}</div>
       <div class="stat-lbl">Current Leader</div>
     </div>`;
     }
@@ -2289,7 +2289,7 @@
         const youChip = isMe ? `<span class="lb-you">you</span>` : '';
         return `<tr class="${posClass}${isMe ? ' is-me' : ''}">
       <td class="col-rank">${rankCell}</td>
-      <td class="col-player"><span class="player-link" onclick="openProfile('${escapeHtml(e.player)}')">${escapeHtml(dn(e.player))}</span>${youChip}</td>
+      <td class="col-player"><span class="player-link" onclick="openProfile('${escapeHtml(e.player)}')">${escapeHtml(e.player)}</span>${youChip}</td>
       <td class="val-pts">${e.pts}</td>
       <td class="col-gp">${e.played}</td>
       <td class="val-exact">${e.exact}</td>
@@ -2370,6 +2370,7 @@
       'Portugal':'pt','Uzbekistan':'uz','Colombia':'co',
       'England':'gb-eng','Croatia':'hr','Ghana':'gh','Panama':'pa',
       'Sweden':'se','Bosnia and Herzegovina':'ba',
+      'DR Congo':'cd','Czech Republic':'cz','Turkey':'tr','Iraq':'iq',
     };
 
     // info = { name, status: 'confirmed'|'predicted'|'tbd'|'result', label, score }
@@ -3082,7 +3083,7 @@
       function nameChips(names, statKey, title, icon) {
         return names.map(n => {
           const d = JSON.stringify({ player: n, statKey: statKey || '', title, icon }).replace(/"/g, '&quot;');
-          return `<button class="insight-name-btn" data-stat="${d}" onclick="openPlayerStatModal(this)" type="button">${escapeHtml(dn(n))}</button>`;
+          return `<button class="insight-name-btn" data-stat="${d}" onclick="openPlayerStatModal(this)" type="button">${escapeHtml(n)}</button>`;
         }).join('');
       }
 
@@ -3566,8 +3567,8 @@
         const ptsHtml = pts !== null
           ? `<span class="pred-col-pts">${pts > 0 ? '+' : ''}${pts}</span>`
           : '';
-        return `<div class="pred-col ${cls}${mine}" title="${dn(player)}: ${pred}${pts !== null ? ` (${pts}pts)` : ''}">
-      <span class="pred-col-name">${dn(player)}</span>
+        return `<div class="pred-col ${cls}${mine}" title="${player}: ${pred}${pts !== null ? ` (${pts}pts)` : ''}">
+      <span class="pred-col-name">${player}</span>
       <span class="pred-col-score">${pred}</span>
       ${ptsHtml}
     </div>`;
@@ -3843,7 +3844,7 @@
 
       // Re-render everywhere
       const nameEl = document.getElementById('profile-player-name');
-      if (nameEl) nameEl.textContent = dn(pn);
+      if (nameEl) nameEl.textContent = pn;
       renderProfile(pn);
       if (ACTIVE_TAB === 'leaderboard') renderLeaderboard();
       if (ACTIVE_TAB === 'stats') renderStats();
@@ -3883,7 +3884,7 @@ function buildProfileNeighbors(player) {
       const row = (entry, rankNum, isSubject, diff, dir) => `
         <div class="pp-nbr-row${isSubject ? ' pp-nbr-me' : ''}">
           <span class="pp-nbr-rank">#${rankNum}</span>
-          <span class="pp-nbr-name">${escapeHtml(dn(entry.p))}${isViewerRow(entry.p) ? ' <span class="pp-nbr-you">(you)</span>' : ''}</span>
+          <span class="pp-nbr-name">${escapeHtml(entry.p)}${isViewerRow(entry.p) ? ' <span class="pp-nbr-you">(you)</span>' : ''}</span>
           <span class="pp-nbr-pts">${entry.pts}</span>
           ${diff !== null ? `<span class="pp-nbr-diff ${dir}">${dir === 'behind' ? '+' : '-'}${diff} pts</span>` : ''}
         </div>`;
@@ -3913,14 +3914,11 @@ function buildProfileNeighbors(player) {
         const avatarHtml = isOwnProfile && CURRENT_USER.photoURL
           ? `<img class="pp-avatar" src="${escapeHtml(CURRENT_USER.photoURL)}" alt="">`
           : `<div class="pp-avatar-initials" style="background:${playerColor(player)}">${escapeHtml(player[0])}</div>`;
-        const hasNick = dn(player) !== player;
-        const subHtml = isOwnProfile
-          ? (hasNick ? `<div class="pp-name-sub">${escapeHtml(player)}</div>` : '')
-          : `<div class="pp-name-sub">${hasNick ? escapeHtml(player) + ' · ' : ''}Viewing profile</div>`;
+        const subHtml = isOwnProfile ? '' : `<div class="pp-name-sub">Viewing profile</div>`;
         ppHeader.innerHTML = `
           ${avatarHtml}
           <div class="pp-identity">
-            <div class="pp-name">${escapeHtml(dn(player))}</div>
+            <div class="pp-name">${escapeHtml(player)}</div>
             ${subHtml}
           </div>
           <button class="pp-close" onclick="closeProfile()">&#x2715;</button>`;
@@ -4019,7 +4017,7 @@ function buildProfileNeighbors(player) {
       const avatarEl = document.getElementById('profile-avatar');
       const nameEl   = document.getElementById('profile-player-name');
       if (avatarEl) avatarEl.src = photoURL || '';
-      if (nameEl)   nameEl.textContent = dn(playerName);
+      if (nameEl)   nameEl.textContent = playerName;
 
       init();
     }
