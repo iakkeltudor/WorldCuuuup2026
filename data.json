@@ -756,7 +756,7 @@
             "home": "Switzerland (19)",
             "away": "Bosnia and Herzegovina (65)",
             "group": "Group B",
-            "actual_score": null,
+            "actual_score": "4-1",
             "predictions": {
                 "MARC-BORL": "2-1",
                 "MURI TUDOR": "2-2",
@@ -773,7 +773,8 @@
                 "MATEI": "0-1",
                 "SONE": "1-0",
                 "CALIN": "0-0"
-            }
+            },
+            "referee": "João Pinheiro (Portugal)"
         },
         {
             "id": 27,
