@@ -1743,6 +1743,56 @@
       padding: 9px 14px;
     }
 
+    /* ── CHAT REPLY ───────────────────────────────────── */
+    .chat-reply-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--text3); font-size: .8rem; padding: 2px 5px;
+      border-radius: 4px; margin-left: auto; flex-shrink: 0;
+      opacity: 0; transition: opacity .12s;
+      line-height: 1; font-family: inherit;
+    }
+    .chat-message:hover .chat-reply-btn { opacity: 1; }
+    .chat-reply-btn:hover { color: var(--accent); background: var(--card2); }
+
+    .chat-reply-bar {
+      display: none; align-items: center; gap: 8px;
+      padding: 6px 12px; background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .chat-reply-bar.visible { display: flex; }
+    .chat-reply-bar-icon { font-size: .9rem; color: var(--accent); flex-shrink: 0; }
+    .chat-reply-bar-body { flex: 1; min-width: 0; }
+    .chat-reply-bar-name { font-size: .68rem; font-weight: 700; color: var(--accent); }
+    .chat-reply-bar-text {
+      font-size: .72rem; color: var(--text3);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;
+    }
+    .chat-reply-bar-cancel {
+      background: none; border: none; cursor: pointer;
+      color: var(--text3); font-size: .9rem; padding: 4px 6px;
+      border-radius: 4px; flex-shrink: 0; font-family: inherit;
+    }
+    .chat-reply-bar-cancel:hover { color: var(--text); background: var(--card2); }
+
+    .chat-reply-quote {
+      border-left: 3px solid var(--accent);
+      padding: 4px 8px; margin-bottom: 6px;
+      background: rgba(255,255,255,.04);
+      border-radius: 0 5px 5px 0; cursor: pointer;
+    }
+    .chat-reply-quote:hover { background: rgba(255,255,255,.08); }
+    .chat-reply-quote-name { font-size: .65rem; font-weight: 700; color: var(--accent); display: block; margin-bottom: 1px; }
+    .chat-reply-quote-text {
+      font-size: .73rem; color: var(--text3);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;
+    }
+
+    @keyframes chatHighlight {
+      0%   { background: rgba(245,158,11,.22); border-color: var(--accent); }
+      100% { background: rgba(255,255,255,.03); border-color: var(--border); }
+    }
+    .chat-message.chat-hl { animation: chatHighlight 1.2s ease-out forwards; }
+
     /* ── FLOATING ADMIN BUTTON ────────────────────────── */
     #admin-toggle {
       position: fixed;
@@ -2074,6 +2124,14 @@
         </div>
         <div class="chat-messages" id="chat-messages">
           <div class="chat-empty">Loading...</div>
+        </div>
+        <div class="chat-reply-bar" id="chat-reply-bar">
+          <span class="chat-reply-bar-icon">↩</span>
+          <div class="chat-reply-bar-body">
+            <span class="chat-reply-bar-name" id="chat-reply-bar-name"></span>
+            <span class="chat-reply-bar-text" id="chat-reply-bar-text"></span>
+          </div>
+          <button class="chat-reply-bar-cancel" onclick="cancelReply()" type="button">✕</button>
         </div>
         <form class="chat-form" onsubmit="sendChatMessage(event)">
           <input class="chat-input" id="chat-text" maxlength="240" placeholder="Message" autocomplete="off">
@@ -3343,6 +3401,7 @@
     ];
 
     let CHAT_MESSAGES = [];
+    let REPLY_TO = null; // { id, name, text }
 
     function setChatStatus(text, isError = false) {
       const el = document.getElementById('chat-status');
@@ -3372,7 +3431,12 @@
           name: String(msg?.name || 'Anonymous').slice(0, 24),
           text: String(msg?.text || '').slice(0, 240),
           createdAt: Number(msg?.createdAt) || 0,
-          reactions: (msg?.reactions && typeof msg.reactions === 'object') ? msg.reactions : {}
+          reactions: (msg?.reactions && typeof msg.reactions === 'object') ? msg.reactions : {},
+          replyTo: (msg?.replyTo && typeof msg.replyTo === 'object') ? {
+            id: String(msg.replyTo.id || ''),
+            name: String(msg.replyTo.name || '').slice(0, 24),
+            text: String(msg.replyTo.text || '').slice(0, 100),
+          } : null
         }))
         .filter(msg => msg.text)
         .sort((a, b) => a.createdAt - b.createdAt)
@@ -3414,15 +3478,23 @@
         return;
       }
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-      box.innerHTML = messages.map(msg => `
-    <div class="chat-message">
+      box.innerHTML = messages.map(msg => {
+        const quoteBlock = msg.replyTo
+          ? `<div class="chat-reply-quote" onclick="scrollToMessage('${escapeHtml(msg.replyTo.id)}')">
+              <span class="chat-reply-quote-name">${escapeHtml(dn(msg.replyTo.name))}</span>
+              <span class="chat-reply-quote-text">${escapeHtml(msg.replyTo.text)}</span>
+            </div>`
+          : '';
+        return `<div class="chat-message" data-id="${escapeHtml(msg.id)}">
       <div class="chat-msg-meta">
         <span class="chat-name" onclick="openProfile('${escapeHtml(msg.name)}')" style="cursor:pointer">${escapeHtml(dn(msg.name))}</span>
         <span class="chat-time">${formatChatTime(msg.createdAt)}</span>
+        <button class="chat-reply-btn" onclick="setReply('${escapeHtml(msg.id)}')" title="Reply">↩</button>
       </div>
-      <div class="chat-text">${escapeHtml(msg.text)}</div>
+      ${quoteBlock}<div class="chat-text">${escapeHtml(msg.text)}</div>
       ${buildReactionsHtml(msg)}
-    </div>`).join('');
+    </div>`;
+      }).join('');
       if (atBottom) box.scrollTop = box.scrollHeight;
     }
 
@@ -3476,7 +3548,7 @@
         const res = await fetch(chatDbEndpoint(), { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const messages = normalizeChatMessages(await res.json());
-        const sig = JSON.stringify(messages.map(m => [m.id, m.name, m.text, m.createdAt, m.reactions]));
+        const sig = JSON.stringify(messages.map(m => [m.id, m.name, m.text, m.createdAt, m.reactions, m.replyTo?.id]));
         if (sig !== CHAT_SIG) {
           CHAT_SIG = sig;
           CHAT_MESSAGES = messages;
@@ -3495,6 +3567,30 @@
       }
     }
 
+    function setReply(msgId) {
+      const msg = CHAT_MESSAGES.find(m => m.id === msgId);
+      if (!msg) return;
+      REPLY_TO = { id: msg.id, name: msg.name, text: msg.text };
+      document.getElementById('chat-reply-bar-name').textContent = dn(msg.name);
+      document.getElementById('chat-reply-bar-text').textContent = msg.text;
+      document.getElementById('chat-reply-bar').classList.add('visible');
+      document.getElementById('chat-text').focus();
+    }
+
+    function cancelReply() {
+      REPLY_TO = null;
+      document.getElementById('chat-reply-bar').classList.remove('visible');
+    }
+
+    function scrollToMessage(msgId) {
+      const el = document.querySelector(`.chat-message[data-id="${CSS.escape(msgId)}"]`);
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.remove('chat-hl');
+      void el.offsetWidth;
+      el.classList.add('chat-hl');
+    }
+
     async function sendChatMessage(event) {
       event.preventDefault();
       const name = getChatName();
@@ -3505,13 +3601,16 @@
       sendEl.disabled = true;
       setChatStatus('Sending...');
       try {
+        const payload = { name, text, createdAt: Date.now() };
+        if (REPLY_TO) payload.replyTo = { id: REPLY_TO.id, name: REPLY_TO.name, text: REPLY_TO.text.slice(0, 100) };
         const res = await fetch(chatDbEndpoint(), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, text, createdAt: Date.now() })
+          body: JSON.stringify(payload)
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         textEl.value = '';
+        cancelReply();
         await loadChatMessages();
       } catch (err) {
         setChatStatus('Could not send. Check Realtime Database rules.', true);
