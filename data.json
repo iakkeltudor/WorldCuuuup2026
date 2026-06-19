@@ -785,7 +785,7 @@
             "home": "Canada (30)",
             "away": "Qatar (55)",
             "group": "Group B",
-            "actual_score": null,
+            "actual_score": "6-0",
             "predictions": {
                 "MARC-BORL": "1-0",
                 "MURI TUDOR": "1-0",
@@ -802,7 +802,8 @@
                 "MATEI": "2-0",
                 "SONE": "2-0",
                 "CALIN": "0-1"
-            }
+            },
+            "referee": "Cristián Garay (Chile)"
         },
         {
             "id": 28,
