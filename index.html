@@ -543,8 +543,8 @@
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .group-tbl td.gt-pts  { font-weight: 900; font-size: .95rem; color: var(--accent); }
-    .group-tbl td.gt-gd-pos { color: var(--green); font-weight: 700; }
-    .group-tbl td.gt-gd-neg { color: var(--red); }
+    .group-tbl td.gt-gd-pos, .third-tbl td.gt-gd-pos { color: var(--green); font-weight: 700; }
+    .group-tbl td.gt-gd-neg, .third-tbl td.gt-gd-neg { color: var(--red); }
     .group-tbl tbody tr {
       border-bottom: 1px solid var(--border); transition: background .1s;
     }
@@ -662,6 +662,90 @@
       height: 5px;
       border-radius: 50%;
       background: var(--green);
+    }
+
+    /* ── GROUPS PLAYER NAV ────────────────────────────── */
+    .grp-player-nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 14px;
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0;
+    }
+    .grp-player-nav::-webkit-scrollbar { display: none; }
+    .grp-player-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: .7rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      white-space: nowrap;
+      transition: all .12s;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .grp-player-btn:hover { border-color: var(--border2); color: var(--text); }
+    .grp-player-btn.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .grp-mode-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .grp-mode-bar.hidden { display: none; }
+    .grp-mode-label {
+      font-size: .62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--text3);
+      margin-right: 2px;
+    }
+    .grp-mode-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: .68rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      white-space: nowrap;
+      transition: all .12s;
+      line-height: 1;
+    }
+    .grp-mode-btn:hover { border-color: var(--border2); color: var(--text); }
+    .grp-mode-btn.active {
+      background: rgba(99,102,241,.15);
+      border-color: #6366f1;
+      color: #a5b4fc;
+    }
+    .grp-view-banner {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(99,102,241,.08);
+      border: 1px solid rgba(99,102,241,.25);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: .72rem;
+    }
+    .grp-view-banner-name { font-weight: 700; color: #a5b4fc; }
+    .grp-view-banner-mode { color: var(--text3); }
+    .grp-view-banner-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #6366f1; flex-shrink: 0;
     }
 
     /* ── TAB PANELS ───────────────────────────────────── */
@@ -2094,6 +2178,12 @@
 
   <!-- ── GROUPS TAB ───────────────────────────────── -->
   <div id="tab-groups" class="tab-panel hidden">
+    <div class="grp-player-nav" id="grp-player-nav"></div>
+    <div class="grp-mode-bar hidden" id="grp-mode-bar">
+      <span class="grp-mode-label">View</span>
+      <button class="grp-mode-btn active" data-mode="pure" onclick="setGroupsMode('pure')">Pure Predictions</button>
+      <button class="grp-mode-btn" data-mode="mixed" onclick="setGroupsMode('mixed')">With Actuals</button>
+    </div>
     <div id="main-groups">
       <div class="groups-grid" id="groups-grid"></div>
       <div id="third-place-section"></div>
@@ -2178,6 +2268,8 @@
     let ADMIN = false;
     let FILTER = 'all';
     let ACTIVE_TAB = 'matches';
+    let GROUPS_PLAYER = null;
+    let GROUPS_MODE = 'pure';
     const CHAT_DB_URL = 'https://worldcuuuup-9a603-default-rtdb.europe-west1.firebasedatabase.app';
     const CHAT_PATH = 'chatMessages';
     let CHAT_TIMER = null;
@@ -2731,7 +2823,11 @@
       let i = 0;
       while (i < base.length) {
         let j = i + 1;
-        while (j < base.length && base[j].pts === base[i].pts) j++;
+        // H2H only for teams equal on pts AND overall GD AND overall GF (FIFA 2026 criteria order)
+        while (j < base.length &&
+               base[j].pts === base[i].pts &&
+               base[j].gd  === base[i].gd  &&
+               base[j].gf  === base[i].gf) j++;
         const tied = base.slice(i, j);
         result.push(...(tied.length > 1 ? _applyH2H(tied, matches) : tied));
         i = j;
@@ -2860,16 +2956,100 @@
       document.getElementById('stat-modal').classList.add('on');
     }
 
+    function computePredictedStandings(playerName, mode) {
+      const groups = {};
+      DATA.matches.forEach(m => {
+        if (m.id > 72) return;
+        const ht = parseTeam(m.home);
+        const at = parseTeam(m.away);
+        const grp = m.group;
+        if (!groups[grp]) groups[grp] = { teams: {}, matches: [] };
+        const g = groups[grp];
+        if (!g.teams[ht.name]) g.teams[ht.name] = { p:0, w:0, d:0, l:0, gf:0, ga:0 };
+        if (!g.teams[at.name]) g.teams[at.name] = { p:0, w:0, d:0, l:0, gf:0, ga:0 };
+        let scoreStr = null;
+        if (mode === 'mixed' && m.actual_score) {
+          scoreStr = m.actual_score;
+        } else if (m.predictions[playerName]) {
+          scoreStr = m.predictions[playerName];
+        }
+        if (!scoreStr) return;
+        const parts = scoreStr.split('-').map(Number);
+        if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) return;
+        const [hg, ag] = parts;
+        const hs = g.teams[ht.name], as2 = g.teams[at.name];
+        hs.p++; as2.p++;
+        hs.gf += hg; hs.ga += ag;
+        as2.gf += ag; as2.ga += hg;
+        if (hg > ag) { hs.w++; as2.l++; }
+        else if (hg < ag) { hs.l++; as2.w++; }
+        else { hs.d++; as2.d++; }
+        g.matches.push({ home: ht.name, away: at.name, hg, ag });
+      });
+      const ORDER = ['Group A','Group B','Group C','Group D','Group E','Group F',
+                     'Group G','Group H','Group I','Group J','Group K','Group L'];
+      const result = {};
+      ORDER.forEach(grp => {
+        if (!groups[grp]) return;
+        const { teams, matches } = groups[grp];
+        const teamList = Object.entries(teams).map(([name, s]) => ({
+          name, ...s, pts: s.w * 3 + s.d, gd: s.gf - s.ga
+        }));
+        result[grp] = _sortGroup(teamList, matches);
+      });
+      return result;
+    }
+
+    function renderGroupsPlayerNav() {
+      const el = document.getElementById('grp-player-nav');
+      if (!el || !DATA) return;
+      el.innerHTML =
+        `<button class="grp-player-btn ${!GROUPS_PLAYER ? 'active' : ''}" onclick="setGroupsPlayer(null)">Actual</button>` +
+        DATA.players.map(p => {
+          const safe = p.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+          return `<button class="grp-player-btn ${GROUPS_PLAYER === p ? 'active' : ''}" onclick="setGroupsPlayer('${safe}')">${escapeHtml(p)}</button>`;
+        }).join('');
+    }
+
+    function setGroupsPlayer(playerName) {
+      GROUPS_PLAYER = playerName;
+      const modeBar = document.getElementById('grp-mode-bar');
+      if (modeBar) modeBar.classList.toggle('hidden', !playerName);
+      renderGroups();
+    }
+
+    function setGroupsMode(mode) {
+      GROUPS_MODE = mode;
+      document.querySelectorAll('.grp-mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+      renderGroups();
+    }
+
     function renderGroups() {
       if (!DATA) return;
-      const standings = computeGroupStandings();
+      renderGroupsPlayerNav();
+      const standings = GROUPS_PLAYER
+        ? computePredictedStandings(GROUPS_PLAYER, GROUPS_MODE)
+        : computeGroupStandings();
       const el = document.getElementById('groups-grid');
       if (!el) return;
       const gdFmt = n => n > 0 ? `+${n}` : String(n);
       const gdCls = n => n > 0 ? 'gt-gd-pos' : n < 0 ? 'gt-gd-neg' : '';
 
-      el.innerHTML = Object.entries(standings).map(([grp, teams]) => {
+      const banner = GROUPS_PLAYER
+        ? `<div class="grp-view-banner">
+            <span class="grp-view-banner-dot"></span>
+            <span>Viewing <span class="grp-view-banner-name">${escapeHtml(GROUPS_PLAYER)}</span>'s predicted groups</span>
+            <span class="grp-view-banner-mode">— ${GROUPS_MODE === 'pure' ? 'Pure predictions' : 'With actual results'}</span>
+          </div>`
+        : '';
+
+      el.innerHTML = banner + Object.entries(standings).map(([grp, teams]) => {
         const playedMatches = teams.reduce((s, t) => s + t.p, 0) / 2;
+        const headerSub = GROUPS_PLAYER
+          ? `${playedMatches}/6 predicted`
+          : `${playedMatches}/6 · Tap to see predictions`;
         const rows = teams.map((t, i) => {
           const pos = i + 1;
           const isQual = pos <= 2;
@@ -2890,7 +3070,7 @@
         return `<div class="group-card">
           <div class="group-card-head" style="cursor:pointer" onclick="openGroupPredictions('${escapeHtml(grp)}')">
             <span class="group-card-name">${escapeHtml(grp)}</span>
-            <span class="group-card-progress">${playedMatches}/6 · Tap to see predictions</span>
+            <span class="group-card-progress">${headerSub}</span>
           </div>
           <table class="group-tbl">
             <thead><tr>
@@ -2917,6 +3097,7 @@
       const thirds = Object.entries(standings)
         .filter(([, teams]) => teams.length >= 3)
         .map(([grp, teams]) => ({ ...teams[2], group: grp.replace('Group ', '') }))
+        // Criteria: 1) pts  2) gd  3) gf  4) fair play (TODO: yellow/red cards, data not yet available)  5) alphabetical
         .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.name.localeCompare(b.name));
 
       if (!thirds.length) { thirdEl.innerHTML = ''; return; }
