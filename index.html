@@ -2823,11 +2823,7 @@
       let i = 0;
       while (i < base.length) {
         let j = i + 1;
-        // H2H only for teams equal on pts AND overall GD AND overall GF (FIFA 2026 criteria order)
-        while (j < base.length &&
-               base[j].pts === base[i].pts &&
-               base[j].gd  === base[i].gd  &&
-               base[j].gf  === base[i].gf) j++;
+        while (j < base.length && base[j].pts === base[i].pts) j++;
         const tied = base.slice(i, j);
         result.push(...(tied.length > 1 ? _applyH2H(tied, matches) : tied));
         i = j;
