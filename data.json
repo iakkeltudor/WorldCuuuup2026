@@ -727,7 +727,7 @@
             "home": "Czech Republic (41)",
             "away": "South Africa (60)",
             "group": "Group A",
-            "actual_score": null,
+            "actual_score": "1-1",
             "predictions": {
                 "MARC-BORL": "1-1",
                 "MURI TUDOR": "1-0",
@@ -744,7 +744,8 @@
                 "MATEI": "1-0",
                 "SONE": "1-1",
                 "CALIN": "2-1"
-            }
+            },
+            "referee": "Tori Penso (USA)"
         },
         {
             "id": 26,
@@ -755,7 +756,7 @@
             "home": "Switzerland (19)",
             "away": "Bosnia and Herzegovina (65)",
             "group": "Group B",
-            "actual_score": null,
+            "actual_score": "4-1",
             "predictions": {
                 "MARC-BORL": "2-1",
                 "MURI TUDOR": "2-2",
@@ -772,7 +773,8 @@
                 "MATEI": "0-1",
                 "SONE": "1-0",
                 "CALIN": "0-0"
-            }
+            },
+            "referee": "João Pinheiro (Portugal)"
         },
         {
             "id": 27,
@@ -783,7 +785,7 @@
             "home": "Canada (30)",
             "away": "Qatar (55)",
             "group": "Group B",
-            "actual_score": null,
+            "actual_score": "6-0",
             "predictions": {
                 "MARC-BORL": "1-0",
                 "MURI TUDOR": "1-0",
@@ -800,7 +802,8 @@
                 "MATEI": "2-0",
                 "SONE": "2-0",
                 "CALIN": "0-1"
-            }
+            },
+            "referee": "Cristián Garay (Chile)"
         },
         {
             "id": 28,
@@ -811,7 +814,7 @@
             "home": "Mexico (15)",
             "away": "South Korea (25)",
             "group": "Group A",
-            "actual_score": null,
+            "actual_score": "1-0",
             "predictions": {
                 "MARC-BORL": "1-1",
                 "MURI TUDOR": "2-1",
@@ -828,7 +831,8 @@
                 "MATEI": "2-0",
                 "SONE": "1-1",
                 "CALIN": "3-1"
-            }
+            },
+            "referee": "Gustavo Tejera (Uruguay)"
         },
         {
             "id": 29,
