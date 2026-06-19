@@ -843,7 +843,7 @@
             "home": "United States (16)",
             "away": "Australia (27)",
             "group": "Group D",
-            "actual_score": null,
+            "actual_score": "2-0",
             "predictions": {
                 "MARC-BORL": "1-1",
                 "MURI TUDOR": "0-1",
@@ -860,7 +860,8 @@
                 "MATEI": "3-2",
                 "SONE": "3-1",
                 "CALIN": "1-2"
-            }
+            },
+            "referee": "Felix Zwayer (Germany)"
         },
         {
             "id": 30,
