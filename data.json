@@ -814,7 +814,7 @@
             "home": "Mexico (15)",
             "away": "South Korea (25)",
             "group": "Group A",
-            "actual_score": null,
+            "actual_score": "1-0",
             "predictions": {
                 "MARC-BORL": "1-1",
                 "MURI TUDOR": "2-1",
@@ -831,7 +831,8 @@
                 "MATEI": "2-0",
                 "SONE": "1-1",
                 "CALIN": "3-1"
-            }
+            },
+            "referee": "Gustavo Tejera (Uruguay)"
         },
         {
             "id": 29,
