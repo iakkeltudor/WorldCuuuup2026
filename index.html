@@ -370,7 +370,7 @@
     }
 
     /* ── BRACKET ─────────────────────────────────────── */
-    .bracket-wrapper { overflow-x: auto; padding: 20px 12px 32px; -webkit-overflow-scrolling: touch; }
+    .bracket-wrapper { overflow: hidden; padding: 20px 12px 32px; }
     .bk-outer { display: flex; align-items: stretch; width: max-content; margin: 0 auto; }
     .bk-half { display: flex; align-items: stretch; flex-shrink: 0; }
     /* Round column — width set below alongside badge styles */
@@ -2502,17 +2502,7 @@
         const team = teams[slot.r - 1];
         if (!team || team.p === 0) return fallback;
 
-        // Mathematical confirmation check
-        const maxPoss = t => t.pts + (3 - t.p) * 3;
-        const groupDone = teams.every(t => t.p >= 3);
-        let confirmed = groupDone;
-        if (!confirmed) {
-          if (slot.r === 1) {
-            confirmed = teams.slice(1).every(t => maxPoss(t) < team.pts);
-          } else if (slot.r === 2) {
-            confirmed = teams.slice(2).every(t => maxPoss(t) < team.pts);
-          }
-        }
+        const confirmed = isPositionGuaranteed(grpKey, team.name, slot.r);
         return { name: team.name, status: confirmed ? 'confirmed' : 'predicted', label: rankLabel + slot.g };
       }
 
@@ -2572,6 +2562,26 @@
         </div>
         <div class="bk-half bk-rgt">${sfConn}${halfHtml(KO_BRACKET.right, true)}</div>
       </div>`;
+      requestAnimationFrame(scaleBracket);
+    }
+
+    function scaleBracket() {
+      const wrapper = document.querySelector('.bracket-wrapper');
+      const outer = document.querySelector('.bk-outer');
+      if (!wrapper || !outer || !outer.offsetWidth) return;
+      outer.style.transform = '';
+      outer.style.marginBottom = '';
+      const naturalW = outer.offsetWidth;
+      const naturalH = outer.offsetHeight;
+      const availW = wrapper.clientWidth - 24; // subtract 12px horizontal padding each side
+      const scale = Math.min(1, availW / naturalW);
+      if (scale < 1) {
+        // Scale from top-left, then translate to center the shrunken bracket
+        const offset = (availW - naturalW * scale) / 2;
+        outer.style.transformOrigin = 'top left';
+        outer.style.transform = `translateX(${offset}px) scale(${scale})`;
+        outer.style.marginBottom = `-${naturalH * (1 - scale)}px`;
+      }
     }
 
     // ── Match modal ────────────────────────────────────
@@ -2666,6 +2676,124 @@
     }
 
     // ── Group standings (with FIFA tiebreakers) ────────
+
+    function _h2hStats(names, matches) {
+      const s = {};
+      names.forEach(n => { s[n] = { pts: 0, gf: 0, ga: 0 }; });
+      matches.forEach(({ home, away, hg, ag }) => {
+        if (!s[home] || !s[away]) return;
+        s[home].pts += hg > ag ? 3 : hg === ag ? 1 : 0;
+        s[away].pts += ag > hg ? 3 : hg === ag ? 1 : 0;
+        s[home].gf += hg; s[home].ga += ag;
+        s[away].gf += ag; s[away].ga += hg;
+      });
+      return s;
+    }
+
+    function _applyH2H(tied, matches) {
+      if (tied.length <= 1) return tied;
+      const h2h = _h2hStats(tied.map(t => t.name), matches);
+      const ranked = tied.map(t => ({
+        ...t,
+        h2hPts: h2h[t.name].pts,
+        h2hGd:  h2h[t.name].gf - h2h[t.name].ga,
+        h2hGf:  h2h[t.name].gf
+      })).sort((a, b) =>
+        b.h2hPts - a.h2hPts || b.h2hGd - a.h2hGd || b.h2hGf - a.h2hGf ||
+        b.gd     - a.gd     || b.gf    - a.gf     || a.name.localeCompare(b.name)
+      );
+      const result = [];
+      let i = 0;
+      while (i < ranked.length) {
+        let j = i + 1;
+        while (j < ranked.length &&
+          ranked[j].h2hPts === ranked[i].h2hPts &&
+          ranked[j].h2hGd  === ranked[i].h2hGd  &&
+          ranked[j].h2hGf  === ranked[i].h2hGf  &&
+          ranked[j].gd     === ranked[i].gd      &&
+          ranked[j].gf     === ranked[i].gf) j++;
+        const sub = ranked.slice(i, j);
+        if (sub.length > 1 && sub.length < tied.length) {
+          result.push(..._applyH2H(sub, matches));
+        } else {
+          result.push(...sub);
+        }
+        i = j;
+      }
+      return result;
+    }
+
+    function _sortGroup(teams, matches) {
+      const base = [...teams].sort((a, b) =>
+        b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.name.localeCompare(b.name)
+      );
+      const result = [];
+      let i = 0;
+      while (i < base.length) {
+        let j = i + 1;
+        while (j < base.length && base[j].pts === base[i].pts) j++;
+        const tied = base.slice(i, j);
+        result.push(...(tied.length > 1 ? _applyH2H(tied, matches) : tied));
+        i = j;
+      }
+      return result;
+    }
+
+    // Simulate all 3^n remaining-game outcomes and return true only if
+    // teamName always finishes at targetRank (1-based) in this group.
+    function isPositionGuaranteed(grpKey, teamName, targetRank) {
+      const groupMatches = DATA.matches.filter(m => m.group === grpKey && m.id <= 72);
+      const unplayed = groupMatches.filter(m => !m.actual_score);
+      if (unplayed.length === 0) return true;
+
+      const playedResults = groupMatches
+        .filter(m => m.actual_score)
+        .map(m => {
+          const [hg, ag] = m.actual_score.split('-').map(Number);
+          return { home: parseTeam(m.home).name, away: parseTeam(m.away).name, hg, ag };
+        });
+
+      const teamNames = [];
+      groupMatches.forEach(m => {
+        const h = parseTeam(m.home).name, a = parseTeam(m.away).name;
+        if (!teamNames.includes(h)) teamNames.push(h);
+        if (!teamNames.includes(a)) teamNames.push(a);
+      });
+
+      const n = unplayed.length;
+      const total = Math.pow(3, n);
+
+      for (let mask = 0; mask < total; mask++) {
+        let temp = mask;
+        const mockResults = [...playedResults];
+        for (let i = 0; i < n; i++) {
+          const outcome = temp % 3; temp = Math.floor(temp / 3);
+          const home = parseTeam(unplayed[i].home).name;
+          const away = parseTeam(unplayed[i].away).name;
+          // outcome 0 = home win, 1 = draw, 2 = away win (canonical scores for GD)
+          mockResults.push(outcome === 0 ? { home, away, hg:1, ag:0 }
+                         : outcome === 1 ? { home, away, hg:0, ag:0 }
+                         :                 { home, away, hg:0, ag:1 });
+        }
+        const stats = {};
+        teamNames.forEach(name => { stats[name] = { p:0,w:0,d:0,l:0,gf:0,ga:0 }; });
+        mockResults.forEach(({ home, away, hg, ag }) => {
+          const hs = stats[home], as2 = stats[away];
+          hs.p++; as2.p++;
+          hs.gf += hg; hs.ga += ag; as2.gf += ag; as2.ga += hg;
+          if (hg > ag) { hs.w++; as2.l++; }
+          else if (hg < ag) { hs.l++; as2.w++; }
+          else { hs.d++; as2.d++; }
+        });
+        const teamList = Object.entries(stats).map(([name, s]) => ({
+          name, ...s, pts: s.w*3 + s.d, gd: s.gf - s.ga
+        }));
+        const rank = _sortGroup(teamList, mockResults).findIndex(t => t.name === teamName) + 1;
+        if (rank !== targetRank) return false;
+      }
+      return true;
+    }
+
     function computeGroupStandings() {
       // Pass 1: accumulate overall stats + store raw match results per group
       const groups = {};
@@ -2690,75 +2818,6 @@
         g.matches.push({ home: ht.name, away: at.name, hg, ag });
       });
 
-      // Calculate head-to-head stats among a subset of team names
-      function h2hStats(names, matches) {
-        const s = {};
-        names.forEach(n => { s[n] = { pts: 0, gf: 0, ga: 0 }; });
-        matches.forEach(({ home, away, hg, ag }) => {
-          if (!s[home] || !s[away]) return;
-          s[home].pts += hg > ag ? 3 : hg === ag ? 1 : 0;
-          s[away].pts += ag > hg ? 3 : hg === ag ? 1 : 0;
-          s[home].gf += hg; s[home].ga += ag;
-          s[away].gf += ag; s[away].ga += hg;
-        });
-        return s;
-      }
-
-      // Apply h2h tiebreaker to a group of teams already equal on points.
-      // Recurses when only SOME of the tied sub-group are separated.
-      function applyH2H(tied, matches) {
-        if (tied.length <= 1) return tied;
-        const h2h = h2hStats(tied.map(t => t.name), matches);
-        const ranked = tied.map(t => ({
-          ...t,
-          h2hPts: h2h[t.name].pts,
-          h2hGd:  h2h[t.name].gf - h2h[t.name].ga,
-          h2hGf:  h2h[t.name].gf
-        })).sort((a, b) =>
-          b.h2hPts - a.h2hPts || b.h2hGd - a.h2hGd || b.h2hGf - a.h2hGf ||
-          b.gd     - a.gd     || b.gf    - a.gf     || a.name.localeCompare(b.name)
-        );
-
-        // Find sub-groups that are STILL tied on every criterion used above
-        const result = [];
-        let i = 0;
-        while (i < ranked.length) {
-          let j = i + 1;
-          while (j < ranked.length &&
-            ranked[j].h2hPts === ranked[i].h2hPts &&
-            ranked[j].h2hGd  === ranked[i].h2hGd  &&
-            ranked[j].h2hGf  === ranked[i].h2hGf  &&
-            ranked[j].gd     === ranked[i].gd      &&
-            ranked[j].gf     === ranked[i].gf) j++;
-          const sub = ranked.slice(i, j);
-          // Only recurse if we made SOME progress (sub is smaller than the whole tied group)
-          if (sub.length > 1 && sub.length < tied.length) {
-            result.push(...applyH2H(sub, matches));
-          } else {
-            result.push(...sub);
-          }
-          i = j;
-        }
-        return result;
-      }
-
-      // Sort a group's team list using: pts → h2h tiebreakers → overall gd → overall gf
-      function sortGroup(teams, matches) {
-        const base = [...teams].sort((a, b) =>
-          b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.name.localeCompare(b.name)
-        );
-        const result = [];
-        let i = 0;
-        while (i < base.length) {
-          let j = i + 1;
-          while (j < base.length && base[j].pts === base[i].pts) j++;
-          const tied = base.slice(i, j);
-          result.push(...(tied.length > 1 ? applyH2H(tied, matches) : tied));
-          i = j;
-        }
-        return result;
-      }
-
       const ORDER = ['Group A','Group B','Group C','Group D','Group E','Group F',
                      'Group G','Group H','Group I','Group J','Group K','Group L'];
       const result = {};
@@ -2768,7 +2827,7 @@
         const teamList = Object.entries(teams).map(([name, s]) => ({
           name, ...s, pts: s.w * 3 + s.d, gd: s.gf - s.ga
         }));
-        result[grp] = sortGroup(teamList, matches);
+        result[grp] = _sortGroup(teamList, matches);
       });
       return result;
     }
@@ -3842,6 +3901,7 @@
     }
 
     // ── Auth is initialized first; init() is called from onAuthStateChanged ──
+    window.addEventListener('resize', scaleBracket);
 
   </script>
 
