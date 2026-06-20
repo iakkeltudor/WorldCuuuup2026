@@ -959,7 +959,7 @@
             "home": "Netherlands (7)",
             "away": "Sweden (38)",
             "group": "Group F",
-            "actual_score": null,
+            "actual_score": "5-1",
             "predictions": {
                 "MARC-BORL": "2-0",
                 "MURI TUDOR": "2-1",
@@ -976,7 +976,8 @@
                 "MATEI": "3-1",
                 "SONE": "1-0",
                 "CALIN": "3-3"
-            }
+            },
+            "referee": "Michael Oliver (England)"
         },
         {
             "id": 34,
