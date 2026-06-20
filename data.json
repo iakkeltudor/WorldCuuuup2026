@@ -930,7 +930,7 @@
             "home": "Turkey (22)",
             "away": "Paraguay (40)",
             "group": "Group D",
-            "actual_score": null,
+            "actual_score": "0-1",
             "predictions": {
                 "MARC-BORL": "1-0",
                 "MURI TUDOR": "2-1",
@@ -947,7 +947,8 @@
                 "MATEI": "0-2",
                 "SONE": "2-1",
                 "CALIN": "5-2"
-            }
+            },
+            "referee": "Ivan Barton"
         },
         {
             "id": 33,
