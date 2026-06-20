@@ -901,7 +901,7 @@
             "home": "Brazil (6)",
             "away": "Haiti (82)",
             "group": "Group C",
-            "actual_score": null,
+            "actual_score": "3-0",
             "predictions": {
                 "MARC-BORL": "4-0",
                 "MURI TUDOR": "6-0",
@@ -918,7 +918,8 @@
                 "MATEI": "4-0",
                 "SONE": "5-0",
                 "CALIN": "6-0"
-            }
+            },
+            "referee": "Alejandro Hernández Hernández (Spain)"
         },
         {
             "id": 32,
