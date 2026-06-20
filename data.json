@@ -988,7 +988,7 @@
             "home": "Germany (10)",
             "away": "Ivory Coast (34)",
             "group": "Group E",
-            "actual_score": null,
+            "actual_score": "2-1",
             "predictions": {
                 "MARC-BORL": "2-1",
                 "MURI TUDOR": "1-0",
@@ -1005,7 +1005,8 @@
                 "MATEI": "3-0",
                 "SONE": "3-1",
                 "CALIN": "2-2"
-            }
+            },
+            "referee": "Juan Benítez (Paraguay)"
         },
         {
             "id": 35,
