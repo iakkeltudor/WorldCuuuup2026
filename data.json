@@ -1046,7 +1046,7 @@
             "home": "Tunisia (45)",
             "away": "Japan (18)",
             "group": "Group F",
-            "actual_score": null,
+            "actual_score": "0-4",
             "predictions": {
                 "MARC-BORL": "0-2",
                 "MURI TUDOR": "1-3",
@@ -1063,7 +1063,8 @@
                 "MATEI": "1-1",
                 "SONE": "0-2",
                 "CALIN": "2-2"
-            }
+            },
+            "referee": "István Kovács (Romania)"
         },
         {
             "id": 37,
