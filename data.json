@@ -1017,7 +1017,7 @@
             "home": "Ecuador (24)",
             "away": "Curaçao (83)",
             "group": "Group E",
-            "actual_score": null,
+            "actual_score": "0-0",
             "predictions": {
                 "MARC-BORL": "3-1",
                 "MURI TUDOR": "1-0",
@@ -1034,7 +1034,8 @@
                 "MATEI": "4-0",
                 "SONE": "1-0",
                 "CALIN": "2-0"
-            }
+            },
+            "referee": "Ning Ma (China PR)"
         },
         {
             "id": 36,
