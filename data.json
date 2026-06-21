@@ -1104,7 +1104,7 @@
             "home": "Belgium (9)",
             "away": "Iran (21)",
             "group": "Group G",
-            "actual_score": null,
+            "actual_score": "0-0",
             "predictions": {
                 "MARC-BORL": "2-1",
                 "MURI TUDOR": "2-0",
@@ -1121,7 +1121,8 @@
                 "MATEI": "1-1",
                 "SONE": "4-1",
                 "CALIN": "4-0"
-            }
+            },
+            "referee": "Darío Herrera (Argentina)"
         },
         {
             "id": 39,
