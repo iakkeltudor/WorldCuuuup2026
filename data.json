@@ -1075,7 +1075,7 @@
             "home": "Spain (2)",
             "away": "Saudi Arabia (61)",
             "group": "Group H",
-            "actual_score": null,
+            "actual_score": "5-0",
             "predictions": {
                 "MARC-BORL": "4-0",
                 "MURI TUDOR": "4-1",
@@ -1092,7 +1092,8 @@
                 "MATEI": "3-0",
                 "SONE": "3-0",
                 "CALIN": "5-0"
-            }
+            },
+            "referee": "Raphael Claus (Brazil)"
         },
         {
             "id": 38,
