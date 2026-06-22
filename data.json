@@ -1133,7 +1133,7 @@
             "home": "Uruguay (17)",
             "away": "Cape Verde (68)",
             "group": "Group H",
-            "actual_score": null,
+            "actual_score": "2-2",
             "predictions": {
                 "MARC-BORL": "3-0",
                 "MURI TUDOR": "2-0",
@@ -1150,7 +1150,8 @@
                 "MATEI": "3-1",
                 "SONE": "2-0",
                 "CALIN": "3-1"
-            }
+            },
+            "referee": "Espen Eskås (Norway)"
         },
         {
             "id": 40,
