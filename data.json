@@ -1191,7 +1191,7 @@
             "home": "Argentina (3)",
             "away": "Austria (23)",
             "group": "Group J",
-            "actual_score": null,
+            "actual_score": "2-0",
             "predictions": {
                 "MARC-BORL": "3-0",
                 "MURI TUDOR": "2-2",
@@ -1208,7 +1208,8 @@
                 "MATEI": "2-1",
                 "SONE": "2-1",
                 "CALIN": "1-0"
-            }
+            },
+            "referee": "Amin Omar (Egypt)"
         },
         {
             "id": 42,
