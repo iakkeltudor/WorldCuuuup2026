@@ -2456,20 +2456,23 @@
     // Left half:  R32 M73-M80, R16 M89-M92, QF M97-M98, SF M101
     // Right half: SF M102, QF M99-M100, R16 M93-M96, R32 M81-M88
     const KO_BRACKET = {
+      // Left half feeds SF M101 via QF M97 (M89+M90) and M98 (M93+M94)
       left: [
         { name: 'Round of 32', color: '#3b82f6', matches: [
+          // (M73,M75) → R16 M89;  (M74,M77) → R16 M90  →  QF M97
           {num:73,date:'2026-06-29', hs:{r:2,g:'A'}, as:{r:2,g:'B'}},
-          {num:74,date:'2026-06-29', hs:{r:1,g:'E'}, as:{r:3,gs:['A','B','C','D','F']}},
           {num:75,date:'2026-06-30', hs:{r:1,g:'F'}, as:{r:2,g:'C'}},
-          {num:76,date:'2026-06-30', hs:{r:1,g:'C'}, as:{r:2,g:'F'}},
+          {num:74,date:'2026-06-29', hs:{r:1,g:'E'}, as:{r:3,gs:['A','B','C','D','F']}},
           {num:77,date:'2026-07-01', hs:{r:1,g:'I'}, as:{r:3,gs:['C','D','F','G','H']}},
-          {num:78,date:'2026-07-01', hs:{r:2,g:'E'}, as:{r:2,g:'I'}},
-          {num:79,date:'2026-07-02', hs:{r:1,g:'A'}, as:{r:3,gs:['C','E','F','H','I']}},
-          {num:80,date:'2026-07-02', hs:{r:1,g:'L'}, as:{r:3,gs:['E','H','I','J','K']}},
+          // (M83,M84) → R16 M93;  (M81,M82) → R16 M94  →  QF M98
+          {num:83,date:'2026-07-03', hs:{r:2,g:'K'}, as:{r:2,g:'L'}},
+          {num:84,date:'2026-07-03', hs:{r:1,g:'H'}, as:{r:2,g:'J'}},
+          {num:81,date:'2026-07-03', hs:{r:1,g:'D'}, as:{r:3,gs:['B','E','F','I','J']}},
+          {num:82,date:'2026-07-03', hs:{r:1,g:'G'}, as:{r:3,gs:['A','E','H','I','J']}},
         ]},
         { name: 'Round of 16', color: '#8b5cf6', matches: [
           {num:89,date:'2026-07-05'}, {num:90,date:'2026-07-05'},
-          {num:91,date:'2026-07-06'}, {num:92,date:'2026-07-06'},
+          {num:93,date:'2026-07-07'}, {num:94,date:'2026-07-07'},
         ]},
         { name: 'Quarter-finals', color: '#ec4899', matches: [
           {num:97,date:'2026-07-11'}, {num:98,date:'2026-07-11'},
@@ -2478,6 +2481,7 @@
           {num:101,date:'2026-07-15'},
         ]},
       ],
+      // Right half feeds SF M102 via QF M99 (M91+M92) and M100 (M95+M96)
       right: [
         { name: 'Semi-finals', color: '#f59e0b', matches: [
           {num:102,date:'2026-07-16'},
@@ -2486,18 +2490,20 @@
           {num:99,date:'2026-07-12'}, {num:100,date:'2026-07-12'},
         ]},
         { name: 'Round of 16', color: '#8b5cf6', matches: [
-          {num:93,date:'2026-07-07'}, {num:94,date:'2026-07-07'},
+          {num:91,date:'2026-07-06'}, {num:92,date:'2026-07-06'},
           {num:95,date:'2026-07-08'}, {num:96,date:'2026-07-08'},
         ]},
         { name: 'Round of 32', color: '#3b82f6', matches: [
-          {num:81,date:'2026-07-03', hs:{r:1,g:'D'}, as:{r:3,gs:['B','E','F','I','J']}},
-          {num:82,date:'2026-07-03', hs:{r:1,g:'G'}, as:{r:3,gs:['A','E','H','I','J']}},
-          {num:83,date:'2026-07-03', hs:{r:2,g:'K'}, as:{r:2,g:'L'}},
-          {num:84,date:'2026-07-03', hs:{r:1,g:'H'}, as:{r:2,g:'J'}},
-          {num:85,date:'2026-07-04', hs:{r:1,g:'B'}, as:{r:3,gs:['E','F','G','I','J']}},
+          // (M76,M78) → R16 M91;  (M79,M80) → R16 M92  →  QF M99
+          {num:76,date:'2026-06-30', hs:{r:1,g:'C'}, as:{r:2,g:'F'}},
+          {num:78,date:'2026-07-01', hs:{r:2,g:'E'}, as:{r:2,g:'I'}},
+          {num:79,date:'2026-07-02', hs:{r:1,g:'A'}, as:{r:3,gs:['C','E','F','H','I']}},
+          {num:80,date:'2026-07-02', hs:{r:1,g:'L'}, as:{r:3,gs:['E','H','I','J','K']}},
+          // (M86,M88) → R16 M95;  (M85,M87) → R16 M96  →  QF M100
           {num:86,date:'2026-07-04', hs:{r:1,g:'J'}, as:{r:2,g:'H'}},
-          {num:87,date:'2026-07-04', hs:{r:1,g:'K'}, as:{r:3,gs:['D','E','I','J','L']}},
           {num:88,date:'2026-07-04', hs:{r:2,g:'D'}, as:{r:2,g:'G'}},
+          {num:85,date:'2026-07-04', hs:{r:1,g:'B'}, as:{r:3,gs:['E','F','G','I','J']}},
+          {num:87,date:'2026-07-04', hs:{r:1,g:'K'}, as:{r:3,gs:['D','E','I','J','L']}},
         ]},
       ],
       final: {num:104, date:'2026-07-19', cls:'bk-final'},
@@ -2571,6 +2577,49 @@
 
     let _bkCache = {}; // matchNum → { hInfo, aInfo, data, m }
 
+    // Pool key → match number (Annex C slot mapping)
+    const THIRD_POOL_KEY = {
+      'ABCDF': 74, 'CDFGH': 77, 'CEFHI': 79, 'EHIJK': 80,
+      'BEFIJ': 81, 'AEHIJ': 82, 'EFGIJ': 85, 'DEIJL': 87,
+    };
+
+    // Greedy min-degree matching: assigns each qualifying 3rd-place team to exactly
+    // one bracket slot, respecting each slot's eligible-group pool (no duplicates).
+    // On each iteration pick the slot with fewest remaining eligible groups (break
+    // ties by lowest match number), then assign the alphabetically-first group.
+    function computeThirdAlloc(standings) {
+      const SLOTS = [
+        [74, ['A','B','C','D','F']],
+        [77, ['C','D','F','G','H']],
+        [79, ['C','E','F','H','I']],
+        [80, ['E','H','I','J','K']],
+        [81, ['B','E','F','I','J']],
+        [82, ['A','E','H','I','J']],
+        [85, ['E','F','G','I','J']],
+        [87, ['D','E','I','J','L']],
+      ];
+      const thirds = {};
+      for (const g of 'ABCDEFGHIJKL') {
+        const teams = standings['Group ' + g];
+        if (teams && teams.length >= 3 && teams[2].p > 0) thirds[g] = teams[2];
+      }
+      const assignment = {};
+      const used = new Set();
+      for (let iter = 0; iter < 8; iter++) {
+        const open = SLOTS
+          .filter(([mn]) => !(mn in assignment))
+          .map(([mn, pool]) => ({ mn, avail: pool.filter(g => thirds[g] && !used.has(g)) }))
+          .filter(s => s.avail.length > 0);
+        if (!open.length) break;
+        open.sort((a, b) => a.avail.length - b.avail.length || a.mn - b.mn);
+        const chosen = open[0];
+        const group = [...chosen.avail].sort()[0];
+        assignment[chosen.mn] = group;
+        used.add(group);
+      }
+      return { assignment, thirds };
+    }
+
     function renderBracket() {
       const matchById = {};
       if (DATA?.matches) DATA.matches.forEach(m => { matchById[m.id] = m; });
@@ -2578,13 +2627,21 @@
 
       // Compute group standings for R32 slot predictions
       const standings = DATA?.matches ? computeGroupStandings() : {};
+      const thirdAlloc = computeThirdAlloc(standings);
 
       // Resolve a slot definition { r, g } or { r, gs } into display info
       function getSlotInfo(slot) {
         if (!slot) return null;
-        // Third-place slot — show eligible groups as label until fully determined
+        // Third-place slot — look up via greedy allocation (no duplicates across slots)
         if (slot.r === 3) {
-          return { name: null, status: 'tbd', label: '3rd ' + slot.gs.join('/') };
+          const label = '3rd ' + slot.gs.join('/');
+          const matchNum = THIRD_POOL_KEY[slot.gs.join('')];
+          const assignedGroup = matchNum !== undefined ? thirdAlloc.assignment[matchNum] : undefined;
+          if (!assignedGroup) return { name: null, status: 'tbd', label };
+          const team = thirdAlloc.thirds[assignedGroup];
+          if (!team) return { name: null, status: 'tbd', label };
+          const allDone = slot.gs.every(g => { const t = standings['Group ' + g]; return t && t.every(tm => tm.p === 3); });
+          return { name: team.name, status: allDone ? 'confirmed' : 'predicted', label };
         }
         const grpKey = 'Group ' + slot.g;
         const teams = standings[grpKey];
