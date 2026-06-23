@@ -1336,7 +1336,7 @@
             "home": "England (4)",
             "away": "Ghana (73)",
             "group": "Group L",
-            "actual_score": null,
+            "actual_score": "0-0",
             "predictions": {
                 "MARC-BORL": "3-0",
                 "MURI TUDOR": "3-1",
@@ -1353,7 +1353,8 @@
                 "MATEI": "3-0",
                 "SONE": "2-1",
                 "CALIN": "4-0"
-            }
+            },
+            "referee": "Said Martinez (Honduras)"
         },
         {
             "id": 47,
