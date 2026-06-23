@@ -1278,7 +1278,7 @@
             "home": "Jordan (63)",
             "away": "Algeria (29)",
             "group": "Group J",
-            "actual_score": null,
+            "actual_score": "1-2",
             "predictions": {
                 "MARC-BORL": "0-3",
                 "MURI TUDOR": "1-1",
@@ -1295,7 +1295,8 @@
                 "MATEI": "2-1",
                 "SONE": "0-2",
                 "CALIN": "2-4"
-            }
+            },
+            "referee": "Slavko Vinčič (Slovenia)"
         },
         {
             "id": 45,
