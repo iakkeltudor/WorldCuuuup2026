@@ -499,6 +499,22 @@
     .m-pts-exact { color: var(--green); }
     .m-pts-outcome { color: var(--amber); }
     .m-pts-wrong { color: var(--red); }
+    /* ── KO predictions ──────────────────────────────── */
+    .bk-pred-open { font-size: .48rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; background: rgba(245,158,11,.15); color: #f59e0b; border: 1px solid rgba(245,158,11,.3); border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
+    .bk-pred-locked { font-size: .7rem; color: var(--green); line-height: 1; }
+    .ko-pred-hint { font-size: .76rem; color: var(--text2); text-align: center; padding: 14px 0 8px; font-style: italic; line-height: 1.5; }
+    .ko-pred-inputs { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px 0 16px; }
+    .ko-pred-team { font-size: .68rem; color: var(--text2); text-align: center; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+    .ko-score-input { width: 52px; padding: 8px 4px; text-align: center; background: var(--card2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 1.3rem; font-weight: 700; -moz-appearance: textfield; }
+    .ko-score-input::-webkit-inner-spin-button, .ko-score-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .ko-score-input:focus { outline: none; border-color: var(--accent); }
+    .ko-pred-dash { font-size: 1.2rem; color: var(--text3); font-weight: 300; }
+    .ko-lock-btn { width: 100%; padding: 10px; background: var(--accent); color: #000; border: none; border-radius: 8px; font-weight: 700; font-size: .88rem; cursor: pointer; transition: opacity .12s; margin-top: 2px; }
+    .ko-lock-btn:hover:not(:disabled) { opacity: .85; }
+    .ko-lock-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .ko-my-pred { background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.25); border-radius: 8px; padding: 10px 14px; margin: 10px 0 6px; font-size: .82rem; color: var(--green); }
+    .ko-missed { font-size: .76rem; color: var(--text3); text-align: center; padding: 10px 0 4px; font-style: italic; }
+    .ko-no-teams { font-size: .78rem; color: var(--text3); text-align: center; padding: 20px 0; }
 
     /* ── GROUPS TAB ─────────────────────────────────────── */
     #main-groups { max-width: 1100px; margin: 0 auto; padding: 20px 14px 70px; }
@@ -822,6 +838,55 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
+
+    /* ── STAGE NAV (group / knockout toggle) ─────────── */
+    .stage-nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .stage-toggle {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .stage-btn {
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: .78rem;
+      font-weight: 600;
+      padding: 7px 22px;
+      transition: background .15s, color .15s, box-shadow .15s;
+      white-space: nowrap;
+    }
+
+    .stage-btn:hover {
+      color: var(--text);
+    }
+
+    .stage-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.25);
+    }
+
+    /* KO stage tag variants */
+    .ko-tag-r32 { background: rgba(59,130,246,.15); color: #3b82f6; }
+    .ko-tag-r16 { background: rgba(139,92,246,.15); color: #8b5cf6; }
+    .ko-tag-qf  { background: rgba(236,72,153,.15); color: #ec4899; }
+    .ko-tag-sf  { background: rgba(245,158,11,.15); color: #f59e0b; }
+    .ko-tag-3rd { background: rgba(100,116,139,.15); color: #94a3b8; }
+    .ko-tag-fin { background: rgba(239,68,68,.15); color: #ef4444; }
 
     .card-meta {
       font-size: .67rem;
@@ -2140,6 +2205,12 @@
 
   <!-- ── MATCHES TAB ────────────────────────────────── -->
   <div id="tab-matches" class="tab-panel">
+    <div class="stage-nav">
+      <div class="stage-toggle">
+        <button class="stage-btn active" onclick="setMatchesView('group')">Group Stage</button>
+        <button class="stage-btn" onclick="setMatchesView('ko')">Knockout</button>
+      </div>
+    </div>
     <div class="day-nav" id="day-nav"></div>
     <div id="main-matches">
       <div class="state-msg">Loading&hellip;</div>
@@ -2270,8 +2341,36 @@
     let ACTIVE_TAB = 'matches';
     let GROUPS_PLAYER = null;
     let GROUPS_MODE = 'pure';
+    let KO_DATA = {}; // matchNum → { home, away, predictions: { player: score } }
+    let MATCHES_VIEW = 'group'; // 'group' | 'ko'
     const CHAT_DB_URL = 'https://worldcuuuup-9a603-default-rtdb.europe-west1.firebasedatabase.app';
     const CHAT_PATH = 'chatMessages';
+    // Bracket wiring: match → { match: nextRoundMatchNum, side: 'home'|'away' }
+    const KO_NEXT = {
+      73:{match:89,side:'home'}, 75:{match:89,side:'away'},
+      74:{match:90,side:'home'}, 77:{match:90,side:'away'},
+      83:{match:93,side:'home'}, 84:{match:93,side:'away'},
+      81:{match:94,side:'home'}, 82:{match:94,side:'away'},
+      76:{match:91,side:'home'}, 78:{match:91,side:'away'},
+      79:{match:92,side:'home'}, 80:{match:92,side:'away'},
+      86:{match:95,side:'home'}, 88:{match:95,side:'away'},
+      85:{match:96,side:'home'}, 87:{match:96,side:'away'},
+      89:{match:97,side:'home'}, 90:{match:97,side:'away'},
+      93:{match:98,side:'home'}, 94:{match:98,side:'away'},
+      91:{match:99,side:'home'}, 92:{match:99,side:'away'},
+      95:{match:100,side:'home'},96:{match:100,side:'away'},
+      97:{match:101,side:'home'},98:{match:101,side:'away'},
+      99:{match:102,side:'home'},100:{match:102,side:'away'},
+      101:{match:104,side:'home'},102:{match:104,side:'away'},
+    };
+    const KO_STAGES = [
+      { label: 'Round of 32',    cls: 'ko-tag-r32', nums: [73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88] },
+      { label: 'Round of 16',    cls: 'ko-tag-r16', nums: [89,90,91,92,93,94,95,96] },
+      { label: 'Quarter-finals', cls: 'ko-tag-qf',  nums: [97,98,99,100] },
+      { label: 'Semi-finals',    cls: 'ko-tag-sf',  nums: [101,102] },
+      { label: '3rd Place',      cls: 'ko-tag-3rd', nums: [103] },
+      { label: 'Final',          cls: 'ko-tag-fin', nums: [104] },
+    ];
     let CHAT_TIMER = null;
     let CHAT_SIG = '';
 
@@ -2307,6 +2406,7 @@
     // Games before noon belong to the previous day's viewing session
     // (e.g. 01:00 and 05:00 games follow the 22:00 game of the night before)
     function sessionDate(m) {
+      if (!m.time) return m.date;
       const h = parseInt(m.time.split(':')[0], 10);
       if (h < 12) {
         const d = new Date(m.date + 'T12:00:00');
@@ -2317,7 +2417,12 @@
     }
     function byDate() {
       const g = {};
-      DATA.matches.forEach(m => { const k = sessionDate(m); (g[k] = g[k] || []).push(m); });
+      DATA.matches.filter(m => m.id < 73).forEach(m => { const k = sessionDate(m); (g[k] = g[k] || []).push(m); });
+      return g;
+    }
+    function byDateKo() {
+      const g = {};
+      DATA.matches.filter(m => m.id >= 73).forEach(m => { const k = sessionDate(m); (g[k] = g[k] || []).push(m); });
       return g;
     }
     function escapeHtml(value) {
@@ -2567,8 +2672,12 @@
         aInfo = awayInfo || (data?.away ? { name: parseTeam(data.away).name, status: 'result' } : null);
       }
 
+      const predState = CURRENT_USER ? getKoPredState(m.num, m) : null;
+      const predBadge = predState === 'open' ? '<span class="bk-pred-open">predict</span>'
+                      : predState === 'locked' ? '<span class="bk-pred-locked">&#10003;</span>'
+                      : '';
       return `<div class="bk-match${m.cls ? ' ' + m.cls : ''}" onclick="showMatchModal(${m.num})">
-        <div class="bk-match-meta"><span>M${m.num}</span><span>${dateStr}</span></div>
+        <div class="bk-match-meta"><span>M${m.num}</span><span>${dateStr}</span>${predBadge}</div>
         ${bkTeamRow(hInfo, homeWon)}
         <div class="bk-divider"></div>
         ${bkTeamRow(aInfo, awayWon)}
@@ -2658,8 +2767,14 @@
       // Build match HTML, injecting slot info for R32 matches
       function matchHtml(m) {
         const data = matchById[m.num];
-        const hInfo = m.hs ? getSlotInfo(m.hs) : null;
-        const aInfo = m.as ? getSlotInfo(m.as) : null;
+        let hInfo = m.hs ? getSlotInfo(m.hs) : null;
+        let aInfo = m.as ? getSlotInfo(m.as) : null;
+        // Lazy-write confirmed R32 teams to Firebase
+        if (m.hs && m.as) maybeLazyWriteR32Teams(m.num, hInfo, aInfo);
+        // For R16+ (no slot defined), pull confirmed teams from Firebase
+        const koEntry = KO_DATA[m.num];
+        if (!hInfo && koEntry?.home) hInfo = { name: koEntry.home, status: 'confirmed', label: '' };
+        if (!aInfo && koEntry?.away) aInfo = { name: koEntry.away, status: 'confirmed', label: '' };
         _bkCache[m.num] = { hInfo, aInfo, data, m };
         return bkMatchHtml(m, data, hInfo, aInfo);
       }
@@ -2735,6 +2850,7 @@
 
     // ── Match modal ────────────────────────────────────
     function showMatchModal(matchNum) {
+      if (matchNum >= 73) { showKoMatchModal(matchNum); return; }
       const cached = _bkCache[matchNum];
       const data   = cached?.data;
       const m      = cached?.m;
@@ -2791,6 +2907,96 @@
     function closeMatchModal(e) {
       if (!e || e.target === document.getElementById('match-modal')) {
         document.getElementById('match-modal').classList.add('hidden');
+      }
+    }
+
+    function showKoMatchModal(matchNum) {
+      const m = _bkCache[matchNum]?.m;
+      const state = getKoPredState(matchNum, m);
+      const teams = getKoTeams(matchNum);
+      const score = getKoScore(matchNum);
+      const koEntry = KO_DATA[matchNum] || {};
+      const allPreds = koEntry.predictions || {};
+      const myPred = allPreds[CURRENT_USER?.playerName];
+      const players = DATA?.players || [];
+      const homeDisplay = teams?.home || _bkCache[matchNum]?.hInfo?.label || 'TBD';
+      const awayDisplay = teams?.away || _bkCache[matchNum]?.aInfo?.label || 'TBD';
+      const dateStr = m?.date
+        ? new Date(m.date + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
+        : '';
+
+      let html = `<div class="m-id">Match ${matchNum}</div>
+        <div class="m-vs">${escapeHtml(homeDisplay)} <span style="color:var(--text3);font-weight:400">vs</span> ${escapeHtml(awayDisplay)}</div>
+        <div class="m-date">${escapeHtml(dateStr)}</div>`;
+
+      if (state === 'no-teams') {
+        html += `<div class="ko-no-teams">Teams not yet confirmed</div>`;
+      } else if (state === 'played') {
+        html += `<div class="m-score-block"><div class="m-score-big">${escapeHtml(score)}</div><div class="m-score-label">Final score</div></div>`;
+        html += _koPredsTable(players, allPreds);
+      } else if (state === 'open') {
+        html += `<div class="ko-pred-hint">Lock in your prediction to see everyone else's</div>
+          <div class="ko-pred-inputs">
+            <div class="ko-pred-team">${escapeHtml(homeDisplay)}</div>
+            <input class="ko-score-input" id="ko-h-${matchNum}" type="number" min="0" max="20" inputmode="numeric" placeholder="0">
+            <span class="ko-pred-dash">—</span>
+            <input class="ko-score-input" id="ko-a-${matchNum}" type="number" min="0" max="20" inputmode="numeric" placeholder="0">
+            <div class="ko-pred-team">${escapeHtml(awayDisplay)}</div>
+          </div>
+          <button class="ko-lock-btn" id="ko-lock-btn-${matchNum}" onclick="submitKoPrediction(${matchNum})">Lock in prediction</button>`;
+      } else {
+        if (state === 'locked' && myPred) {
+          html += `<div class="ko-my-pred">Your prediction: <strong>${escapeHtml(myPred)}</strong></div>`;
+        } else {
+          html += `<div class="ko-missed">You didn't lock in a prediction for this match</div>`;
+        }
+        html += _koPredsTable(players, allPreds);
+      }
+
+      document.getElementById('modal-content').innerHTML = html;
+      document.getElementById('match-modal').classList.remove('hidden');
+    }
+
+    function _koPredsTable(players, allPreds) {
+      let rows = '';
+      players.forEach(p => {
+        const pred = allPreds[p];
+        rows += `<tr>
+          <td>${escapeHtml(dn(p))}</td>
+          <td>${pred ? escapeHtml(pred) : '<span class="no-pred">—</span>'}</td>
+        </tr>`;
+      });
+      return `<div class="m-preds-head">Predictions</div>
+        <table class="m-tbl">
+          <thead><tr><th>Player</th><th>Prediction</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    async function submitKoPrediction(matchNum) {
+      const hEl = document.getElementById(`ko-h-${matchNum}`);
+      const aEl = document.getElementById(`ko-a-${matchNum}`);
+      const btn = document.getElementById(`ko-lock-btn-${matchNum}`);
+      if (!hEl || !aEl) return;
+      const h = hEl.value.trim();
+      const a = aEl.value.trim();
+      if (h === '' || a === '') { alert('Enter both scores.'); return; }
+      const hNum = parseInt(h, 10), aNum = parseInt(a, 10);
+      if (isNaN(hNum) || isNaN(aNum) || hNum < 0 || aNum < 0) { alert('Invalid scores.'); return; }
+      const prediction = `${hNum}-${aNum}`;
+      const player = CURRENT_USER?.playerName;
+      if (!player) return;
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+      const ok = await koPut(`ko_matches/${matchNum}/predictions/${encodeURIComponent(player)}`, prediction);
+      if (ok) {
+        KO_DATA[matchNum] = KO_DATA[matchNum] || {};
+        KO_DATA[matchNum].predictions = KO_DATA[matchNum].predictions || {};
+        KO_DATA[matchNum].predictions[player] = prediction;
+        renderBracket();
+        showKoMatchModal(matchNum);
+      } else {
+        if (btn) { btn.disabled = false; btn.textContent = 'Lock in prediction'; }
+        alert('Failed to save. Please try again.');
       }
     }
 
@@ -3915,9 +4121,13 @@
 
     // ── Day nav ────────────────────────────────────────
     function renderNav() {
-      const groups = byDate();
+      const groups = MATCHES_VIEW === 'ko' ? byDateKo() : byDate();
       const dates = Object.keys(groups).sort();
-      const withResults = new Set(DATA.matches.filter(m => m.actual_score).map(m => sessionDate(m)));
+      const withResults = new Set(
+        DATA.matches
+          .filter(m => m.actual_score && (MATCHES_VIEW === 'ko' ? m.id >= 73 : m.id < 73))
+          .map(m => sessionDate(m))
+      );
       document.getElementById('day-nav').innerHTML =
         `<button class="day-btn ${FILTER === 'all' ? 'active' : ''}" onclick="setFilter('all')">All days</button>` +
         dates.map(d =>
@@ -3927,6 +4137,15 @@
     }
     function setFilter(val) {
       FILTER = val;
+      renderNav();
+      renderMatches();
+    }
+    function setMatchesView(view) {
+      MATCHES_VIEW = view;
+      FILTER = 'all';
+      document.querySelectorAll('.stage-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.includes(view === 'group' ? 'Group' : 'Knockout'));
+      });
       renderNav();
       renderMatches();
     }
@@ -4045,6 +4264,7 @@
 
     // ── Render matches ─────────────────────────────────
     function renderMatches() {
+      if (MATCHES_VIEW === 'ko') { renderKoMatches(); return; }
       const groups = byDate();
       const dates = Object.keys(groups).sort();
       const visible = FILTER === 'all' ? dates : dates.filter(d => d === FILTER);
@@ -4057,6 +4277,87 @@
       ${groups[d].map(m => renderCard(m)).join('')}
     </div>`
       ).join('');
+    }
+
+    // ── KO match card ──────────────────────────────────
+    function buildKoPredCols(matchNum, actualScore) {
+      const preds = (KO_DATA[matchNum] || {}).predictions || {};
+      return DATA.players.map(player => {
+        const pred = preds[player];
+        if (!pred) return '';
+        const pts = calcPts(pred, actualScore);
+        const cls = stateClass(pts);
+        const mine = CURRENT_USER?.playerName === player ? ' pred-col-mine' : '';
+        const ptsHtml = pts !== null
+          ? `<span class="pred-col-pts">${pts > 0 ? '+' : ''}${pts}</span>`
+          : '';
+        return `<div class="pred-col ${cls}${mine}" title="${player}: ${pred}${pts !== null ? ` (${pts}pts)` : ''}">
+          <span class="pred-col-name">${player}</span>
+          <span class="pred-col-score">${pred}</span>
+          ${ptsHtml}
+        </div>`;
+      }).join('');
+    }
+
+    function renderKoCard(matchNum, stageLabel, stageCls) {
+      const match = DATA.matches.find(m => m.id === matchNum);
+      const koEntry = KO_DATA[matchNum] || {};
+      const homeName = koEntry.home || match?.home || null;
+      const awayName = koEntry.away || match?.away || null;
+      const actualScore = match?.actual_score || null;
+      const preds = koEntry.predictions || {};
+      const n = DATA.players.filter(p => preds[p]).length;
+      const cols = n > 0 ? bestCols(n) : 1;
+      const colsSm = n > 0 ? bestCols(n, 4) : 1;
+      const dateStr = match?.date
+        ? new Date(match.date + 'T12:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'short'})
+        : '';
+      const scoreHtml = actualScore
+        ? `<div class="score-display">${actualScore}</div>`
+        : `<div class="score-display pending">vs</div>`;
+      const homeHtml = homeName
+        ? `<div class="team-name">${escapeHtml(homeName)}</div>`
+        : `<div class="team-name" style="color:var(--text2)">TBD</div>`;
+      const awayHtml = awayName
+        ? `<div class="team-name">${escapeHtml(awayName)}</div>`
+        : `<div class="team-name" style="color:var(--text2)">TBD</div>`;
+      return `<div class="match-card" data-id="${matchNum}">
+        <div class="card-top">
+          <span class="group-tag ${stageCls}">${stageLabel}</span>
+          <span class="card-meta">
+            <span class="time">M${matchNum}</span>
+            <span class="sep">|</span>
+            <span class="time">${dateStr}</span>
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="teams-row">
+            <div class="team home">${homeHtml}</div>
+            <div class="score-col">${scoreHtml}</div>
+            <div class="team away">${awayHtml}</div>
+          </div>
+        </div>
+        <div class="pred-grid" id="preds-ko-${matchNum}"
+             style="--pred-cols:${cols};--pred-cols-sm:${colsSm}">${buildKoPredCols(matchNum, actualScore)}</div>
+      </div>`;
+    }
+
+    function renderKoMatches() {
+      document.getElementById('main-matches').innerHTML = KO_STAGES.map(stage => {
+        const visible = stage.nums.filter(matchNum => {
+          if (FILTER === 'all') return true;
+          const m = DATA.matches.find(x => x.id === matchNum);
+          return m && sessionDate(m) === FILTER;
+        });
+        if (!visible.length) return '';
+        return `<div class="day-section">
+          <div class="day-heading">
+            <span class="day-heading-text">${stage.label}</span>
+            <div class="day-heading-line"></div>
+          </div>
+          ${visible.map(n => renderKoCard(n, stage.label, stage.cls)).join('')}
+        </div>`;
+      }).join('');
     }
 
     // ── Set actual score (admin) ───────────────────────
@@ -4072,7 +4373,8 @@
 
     function updateProgress() {
       const played = DATA.matches.filter(m => m.actual_score).length;
-      document.getElementById('hdr-progress').textContent = `${played} of ${DATA.matches.length} matches scored`;
+      const total = DATA.matches.filter(m => m.home && m.away).length;
+      document.getElementById('hdr-progress').textContent = `${played} of ${total} matches scored`;
     }
 
     // ── Admin ──────────────────────────────────────────
@@ -4126,6 +4428,8 @@
       }
 
       await loadNicknames();
+      await loadKoData();
+      lazyWriteKoProgressions();
       updateProgress();
       renderNav();
       renderMatches();
@@ -4161,6 +4465,101 @@
         const res = await fetch(`${CHAT_DB_URL}/nicknames.json`);
         if (res.ok) NICKNAMES = (await res.json()) || {};
       } catch {}
+    }
+
+    // ── KO predictions (Firebase) ──────────────────────
+    async function loadKoData() {
+      try {
+        const res = await fetch(`${CHAT_DB_URL}/ko_matches.json`);
+        if (res.ok) KO_DATA = (await res.json()) || {};
+      } catch {}
+    }
+
+    async function koPatch(matchNum, updates) {
+      if (!auth.currentUser) return;
+      try {
+        const token = await auth.currentUser.getIdToken();
+        await fetch(`${CHAT_DB_URL}/ko_matches/${matchNum}.json?auth=${token}`, {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates),
+        });
+      } catch {}
+    }
+
+    async function koPut(path, value) {
+      if (!auth.currentUser) return false;
+      try {
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch(`${CHAT_DB_URL}/${path}.json?auth=${token}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(value),
+        });
+        return res.ok;
+      } catch { return false; }
+    }
+
+    function getKoTeams(matchNum) {
+      const ko = KO_DATA[matchNum];
+      if (ko?.home && ko?.away) return { home: ko.home, away: ko.away };
+      const d = DATA?.matches?.find(m => m.id === matchNum);
+      if (d?.home && d?.away) return { home: parseTeam(d.home).name, away: parseTeam(d.away).name };
+      return null;
+    }
+
+    function getKoScore(matchNum) {
+      return DATA?.matches?.find(m => m.id === matchNum)?.actual_score || null;
+    }
+
+    function isKoOpen(matchNum, m) {
+      if (!CURRENT_USER) return false;
+      if (getKoScore(matchNum)) return false;
+      const teams = getKoTeams(matchNum);
+      if (!teams?.home || !teams?.away) return false;
+      if (!m?.date) return true;
+      const kickoff = new Date(`${m.date}T${m.time || '22:00'}:00Z`).getTime();
+      return Date.now() < kickoff - 30 * 60 * 1000;
+    }
+
+    function getKoPredState(matchNum, m) {
+      if (getKoScore(matchNum)) return 'played';
+      const teams = getKoTeams(matchNum);
+      if (!teams?.home || !teams?.away) return 'no-teams';
+      const myPred = KO_DATA[matchNum]?.predictions?.[CURRENT_USER?.playerName];
+      if (myPred) return 'locked';
+      if (isKoOpen(matchNum, m)) return 'open';
+      return 'closed';
+    }
+
+    function maybeLazyWriteR32Teams(matchNum, hInfo, aInfo) {
+      if (!auth.currentUser) return;
+      const existing = KO_DATA[matchNum] || {};
+      const updates = {};
+      if (hInfo?.status === 'confirmed' && hInfo.name && !existing.home) updates.home = hInfo.name;
+      if (aInfo?.status === 'confirmed' && aInfo.name && !existing.away) updates.away = aInfo.name;
+      if (!Object.keys(updates).length) return;
+      KO_DATA[matchNum] = { ...existing, ...updates };
+      koPatch(matchNum, updates);
+    }
+
+    function lazyWriteKoProgressions() {
+      if (!auth.currentUser) return;
+      const matchById = {};
+      DATA?.matches?.forEach(m => { matchById[m.id] = m; });
+      for (const [numStr, next] of Object.entries(KO_NEXT)) {
+        const num = Number(numStr);
+        const score = matchById[num]?.actual_score || KO_DATA[num]?.actual_score;
+        if (!score) continue;
+        const parts = score.split('-').map(Number);
+        if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1]) || parts[0] === parts[1]) continue;
+        const homeWon = parts[0] > parts[1];
+        const teams = getKoTeams(num);
+        const winner = homeWon ? teams?.home : teams?.away;
+        if (!winner) continue;
+        const existingNext = KO_DATA[next.match] || {};
+        if (existingNext[next.side]) continue;
+        KO_DATA[next.match] = { ...existingNext, [next.side]: winner };
+        koPatch(next.match, { [next.side]: winner });
+      }
     }
 
     function dn(playerName) {
