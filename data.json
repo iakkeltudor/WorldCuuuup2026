@@ -2100,7 +2100,7 @@
             "time": null,
             "timezone": "UTC+3",
             "venue": null,
-            "home": null,
+            "home": "Germany",
             "away": null,
             "actual_score": null
         },
@@ -2150,7 +2150,7 @@
             "time": null,
             "timezone": "UTC+3",
             "venue": null,
-            "home": null,
+            "home": "Mexico",
             "away": null,
             "actual_score": null
         },
@@ -2170,7 +2170,7 @@
             "time": null,
             "timezone": "UTC+3",
             "venue": null,
-            "home": null,
+            "home": "United States",
             "away": null,
             "actual_score": null
         },
@@ -2220,7 +2220,7 @@
             "time": null,
             "timezone": "UTC+3",
             "venue": null,
-            "home": null,
+            "home": "Argentina",
             "away": null,
             "actual_score": null
         },
