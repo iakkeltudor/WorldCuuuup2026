@@ -140,6 +140,15 @@
     .pp-stat:last-child { border-right: none; }
     .pp-stat-val { font-size: 1.25rem; font-weight: 800; color: var(--text); }
     .pp-stat-lbl { font-size: .58rem; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
+    .pp-lucky {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 14px; border-bottom: 1px solid var(--border);
+      background: rgba(245,158,11,.05);
+    }
+    .pp-lucky-lbl { font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); white-space: nowrap; }
+    .pp-lucky-team { font-size: .88rem; font-weight: 800; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pp-lucky-pts { font-size: .72rem; font-weight: 700; color: var(--accent); white-space: nowrap; }
+    .pp-lucky-flag { width: 18px; height: auto; border-radius: 2px; flex-shrink: 0; }
     .pp-body { flex: 1; overflow-y: auto; }
     .pp-day-header {
       font-size: .68rem; font-weight: 700; color: var(--text3);
@@ -5018,6 +5027,28 @@ function buildProfileNeighbors(player) {
         <div class="pp-stat"><span class="pp-stat-val">${best}</span><span class="pp-stat-lbl">Best streak</span></div>
       </div>`;
 
+      // Lucky team: team whose matches gave the player the most points
+      const teamPts = {};
+      for (const m of played) {
+        if (m.id >= 73 || !m.home || !m.away || !m.predictions) continue;
+        const pred = m.predictions[player];
+        if (!pred) continue;
+        const pts = calcPts(pred, m.actual_score) || 0;
+        if (pts === 0) continue;
+        const home = parseTeam(m.home).name;
+        const away = parseTeam(m.away).name;
+        teamPts[home] = (teamPts[home] || 0) + pts;
+        teamPts[away] = (teamPts[away] || 0) + pts;
+      }
+      const luckyEntry = Object.entries(teamPts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0];
+      const luckyHtml = luckyEntry
+        ? (() => {
+            const [name, pts] = luckyEntry;
+            const flagHtml = FLAGS[name] ? `<img class="pp-lucky-flag" src="https://flagcdn.com/w20/${FLAGS[name]}.png" alt="" loading="lazy">` : '';
+            return `<div class="pp-lucky">${flagHtml}<span class="pp-lucky-lbl">⭐ Lucky team</span><span class="pp-lucky-team">${escapeHtml(name)}</span><span class="pp-lucky-pts">${pts} pts</span></div>`;
+          })()
+        : '';
+
       // All day groups for predictions list (group stage only — KO predictions live in Firebase)
       const allSorted = DATA.matches.filter(m => m.id < 73).sort((a, b) =>
         (a.date + a.time) < (b.date + b.time) ? -1 : 1
@@ -5052,6 +5083,7 @@ function buildProfileNeighbors(player) {
 
       document.getElementById('pp-body').innerHTML =
         statsHtml +
+        luckyHtml +
         buildProfileNeighbors(player) +
         daysHtml;
     }
