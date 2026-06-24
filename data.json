@@ -2093,7 +2093,7 @@
             "timezone": "UTC+3",
             "venue": null,
             "home": null,
-            "away": null,
+            "away": "Canada",
             "actual_score": null
         },
         {
@@ -2212,7 +2212,7 @@
             "time": null,
             "timezone": "UTC+3",
             "venue": null,
-            "home": null,
+            "home": "Switzerland",
             "away": null,
             "actual_score": null
         },
