@@ -3472,11 +3472,11 @@
           <td class="tt-stat">${t.w}</td>
           <td class="tt-stat">${t.d}</td>
           <td class="tt-stat">${t.l}</td>
-          <td class="tt-stat">${t.gf}</td>
-          <td class="tt-stat">${t.ga}</td>
+          <td>${t.gf}</td>
+          <td>${t.ga}</td>
           <td class="${gdCls(t.gd)}">${gdFmt(t.gd)}</td>
           <td class="tt-pts">${t.pts}</td>
-          <td class="tt-status">${badge}</td>
+          <td class="tt-stat tt-status">${badge}</td>
         </tr>`;
       }).join('');
 
@@ -3495,11 +3495,11 @@
               <th class="tt-stat" title="Won">W</th>
               <th class="tt-stat" title="Drawn">D</th>
               <th class="tt-stat" title="Lost">L</th>
-              <th class="tt-stat" title="Goals For">GF</th>
-              <th class="tt-stat" title="Goals Against">GA</th>
+              <th title="Goals For">GF</th>
+              <th title="Goals Against">GA</th>
               <th title="Goal Difference">GD</th>
               <th class="tt-pts" title="Points">Pts</th>
-              <th class="tt-status">Status</th>
+              <th class="tt-stat tt-status">Status</th>
             </tr></thead>
             <tbody>${thirdRows}</tbody>
           </table>
