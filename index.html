@@ -380,6 +380,7 @@
 
     /* ── BRACKET ─────────────────────────────────────── */
     .bracket-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 20px 12px 32px; }
+    @media (min-width: 768px) { .bracket-wrapper { overflow: hidden; } }
     .bk-outer { display: flex; align-items: stretch; width: max-content; margin: 0 auto; }
     .bk-half { display: flex; align-items: stretch; flex-shrink: 0; }
     /* Round column — width set below alongside badge styles */
@@ -584,6 +585,14 @@
     .ko-qualifier-btn:hover { border-color: var(--accent); }
     .ko-qualifier-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
     .ko-pred-qualifier { font-size: .78rem; color: var(--text2); }
+    /* KO card team rows with flags */
+    .ko-team-with-flag { display: flex; align-items: center; gap: 5px; }
+    .ko-team-with-flag.ko-away { flex-direction: row-reverse; justify-content: flex-start; }
+    .ko-flag { width: 18px; height: auto; border-radius: 2px; flex-shrink: 0; }
+    /* Qualifier flag in pred-col */
+    .pred-col-qual { display: flex; align-items: center; justify-content: center; gap: 3px; margin-top: 1px; }
+    .pred-col-qual-flag { width: 14px; height: auto; border-radius: 2px; opacity: .85; }
+    .pred-col-qual-abbr { font-size: .45rem; color: var(--text2); font-weight: 600; }
 
     /* ── GROUPS TAB ─────────────────────────────────────── */
     #main-groups { max-width: 1100px; margin: 0 auto; padding: 20px 14px 70px; }
@@ -2977,8 +2986,24 @@
     }
 
     function scaleBracket() {
+      const wrapper = document.querySelector('.bracket-wrapper');
       const outer = document.querySelector('.bk-outer');
-      if (outer) { outer.style.transform = ''; outer.style.marginBottom = ''; }
+      if (!wrapper || !outer) return;
+      outer.style.transform = '';
+      outer.style.marginBottom = '';
+      // Mobile: CSS overflow-x:auto handles scrolling — no scaling needed
+      if (window.innerWidth < 768) return;
+      if (!outer.offsetWidth) return;
+      const naturalW = outer.offsetWidth;
+      const naturalH = outer.offsetHeight;
+      const availW = wrapper.clientWidth - 24;
+      const scale = Math.min(1, availW / naturalW);
+      if (scale < 1) {
+        const offset = (availW - naturalW * scale) / 2;
+        outer.style.transformOrigin = 'top left';
+        outer.style.transform = `translateX(${offset}px) scale(${scale})`;
+        outer.style.marginBottom = `-${naturalH * (1 - scale)}px`;
+      }
     }
 
     // ── Match modal ────────────────────────────────────
@@ -3135,7 +3160,7 @@
           const qualName = qualifier === 'home' ? homeName : qualifier === 'away' ? awayName : null;
           cell = escapeHtml(score) + (qualName ? ` <span class="ko-pred-qualifier">→ ${escapeHtml(qualName)}</span>` : '');
         }
-        rows += `<tr><td>${escapeHtml(dn(p))}</td><td>${cell}</td></tr>`;
+        rows += `<tr><td>${escapeHtml(p)}</td><td>${cell}</td></tr>`;
       });
       return `<div class="m-preds-head">Predictions</div>
         <table class="m-tbl">
@@ -4543,23 +4568,49 @@
 
     // ── KO match card ──────────────────────────────────
     function buildKoPredCols(matchNum, actualScore) {
-      const preds = (KO_DATA[matchNum] || {}).predictions || {};
+      const koEntry = KO_DATA[matchNum] || {};
+      const preds = koEntry.predictions || {};
+      const match = DATA.matches.find(m => m.id === matchNum);
+      const homeName = koEntry.home || match?.home || null;
+      const awayName = koEntry.away || match?.away || null;
       return DATA.players.map(player => {
         const pred = preds[player];
         if (!pred) return '';
-        const { score } = parseKoPred(pred);
+        const { score, qualifier } = parseKoPred(pred);
         const pts = calcPts(score, actualScore);
         const cls = stateClass(pts);
         const mine = CURRENT_USER?.playerName === player ? ' pred-col-mine' : '';
         const ptsHtml = pts !== null
           ? `<span class="pred-col-pts">${pts > 0 ? '+' : ''}${pts}</span>`
           : '';
-        return `<div class="pred-col ${cls}${mine}" title="${player}: ${score}${pts !== null ? ` (${pts}pts)` : ''}">
+        // For draw predictions, show a small flag of the predicted qualifier
+        let qualHtml = '';
+        if (qualifier) {
+          const rawQual = qualifier === 'home' ? homeName : awayName;
+          const qualName = rawQual ? parseTeam(rawQual).name : null;
+          const code = qualName && FLAGS[qualName];
+          if (code) {
+            qualHtml = `<span class="pred-col-qual"><img class="pred-col-qual-flag" src="https://flagcdn.com/w20/${code}.png" alt="${qualName}" loading="lazy"></span>`;
+          } else if (qualName) {
+            qualHtml = `<span class="pred-col-qual"><span class="pred-col-qual-abbr">${escapeHtml(qualName.slice(0, 3).toUpperCase())}</span></span>`;
+          }
+        }
+        const qualTitle = qualifier ? ` → ${qualifier === 'home' ? (homeName ? parseTeam(homeName).name : 'home') : (awayName ? parseTeam(awayName).name : 'away')} qualifies` : '';
+        return `<div class="pred-col ${cls}${mine}" title="${player}: ${score}${qualTitle}${pts !== null ? ` (${pts}pts)` : ''}">
           <span class="pred-col-name">${player}</span>
           <span class="pred-col-score">${escapeHtml(score)}</span>
+          ${qualHtml}
           ${ptsHtml}
         </div>`;
       }).join('');
+    }
+
+    function koTeamHtml(rawName, isAway) {
+      if (!rawName) return `<div class="team-name" style="color:var(--text2)">TBD</div>`;
+      const { name } = parseTeam(rawName);
+      const code = FLAGS[name];
+      const flagImg = code ? `<img class="ko-flag" src="https://flagcdn.com/w20/${code}.png" alt="" loading="lazy">` : '';
+      return `<div class="team-name ko-team-with-flag${isAway ? ' ko-away' : ''}">${flagImg}<span>${escapeHtml(name)}</span></div>`;
     }
 
     function renderKoCard(matchNum, stageLabel, stageCls) {
@@ -4578,12 +4629,8 @@
       const scoreHtml = actualScore
         ? `<div class="score-display">${actualScore}</div>`
         : `<div class="score-display pending">vs</div>`;
-      const homeHtml = homeName
-        ? `<div class="team-name">${escapeHtml(homeName)}</div>`
-        : `<div class="team-name" style="color:var(--text2)">TBD</div>`;
-      const awayHtml = awayName
-        ? `<div class="team-name">${escapeHtml(awayName)}</div>`
-        : `<div class="team-name" style="color:var(--text2)">TBD</div>`;
+      const homeHtml = koTeamHtml(homeName, false);
+      const awayHtml = koTeamHtml(awayName, true);
       return `<div class="match-card" data-id="${matchNum}">
         <div class="card-top">
           <span class="group-tag ${stageCls}">${stageLabel}</span>
