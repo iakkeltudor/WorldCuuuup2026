@@ -370,7 +370,7 @@
     }
 
     /* ── BRACKET ─────────────────────────────────────── */
-    .bracket-wrapper { overflow: hidden; padding: 20px 12px 32px; }
+    .bracket-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 20px 12px 32px; }
     .bk-outer { display: flex; align-items: stretch; width: max-content; margin: 0 auto; }
     .bk-half { display: flex; align-items: stretch; flex-shrink: 0; }
     /* Round column — width set below alongside badge styles */
@@ -641,6 +641,7 @@
     }
     .third-section-sub { font-size: .65rem; color: var(--text3); }
     .third-card {
+      overflow-x: auto;
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); overflow: hidden;
     }
@@ -1173,6 +1174,7 @@
       .profile-player-name { display: none; }
       .profile-chip { padding: 4px; }
       .header-inner { padding-right: 50px; }
+      .tt-stat { display: none; }
     }
     .insight-card {
       background: var(--surface);
@@ -2895,22 +2897,8 @@
     }
 
     function scaleBracket() {
-      const wrapper = document.querySelector('.bracket-wrapper');
       const outer = document.querySelector('.bk-outer');
-      if (!wrapper || !outer || !outer.offsetWidth) return;
-      outer.style.transform = '';
-      outer.style.marginBottom = '';
-      const naturalW = outer.offsetWidth;
-      const naturalH = outer.offsetHeight;
-      const availW = wrapper.clientWidth - 24; // subtract 12px horizontal padding each side
-      const scale = Math.min(1, availW / naturalW);
-      if (scale < 1) {
-        // Scale from top-left, then translate to center the shrunken bracket
-        const offset = (availW - naturalW * scale) / 2;
-        outer.style.transformOrigin = 'top left';
-        outer.style.transform = `translateX(${offset}px) scale(${scale})`;
-        outer.style.marginBottom = `-${naturalH * (1 - scale)}px`;
-      }
+      if (outer) { outer.style.transform = ''; outer.style.marginBottom = ''; }
     }
 
     // ── Match modal ────────────────────────────────────
@@ -3480,12 +3468,12 @@
           <td class="tt-rank">${rank}</td>
           <td class="tt-team">${escapeHtml(t.name)}</td>
           <td class="tt-grp">${escapeHtml(t.group)}</td>
-          <td>${t.p}</td>
-          <td>${t.w}</td>
-          <td>${t.d}</td>
-          <td>${t.l}</td>
-          <td>${t.gf}</td>
-          <td>${t.ga}</td>
+          <td class="tt-stat">${t.p}</td>
+          <td class="tt-stat">${t.w}</td>
+          <td class="tt-stat">${t.d}</td>
+          <td class="tt-stat">${t.l}</td>
+          <td class="tt-stat">${t.gf}</td>
+          <td class="tt-stat">${t.ga}</td>
           <td class="${gdCls(t.gd)}">${gdFmt(t.gd)}</td>
           <td class="tt-pts">${t.pts}</td>
           <td class="tt-status">${badge}</td>
@@ -3503,12 +3491,12 @@
               <th class="tt-rank">#</th>
               <th class="tt-team">Team</th>
               <th class="tt-grp" title="Group">Grp</th>
-              <th title="Played">P</th>
-              <th title="Won">W</th>
-              <th title="Drawn">D</th>
-              <th title="Lost">L</th>
-              <th title="Goals For">GF</th>
-              <th title="Goals Against">GA</th>
+              <th class="tt-stat" title="Played">P</th>
+              <th class="tt-stat" title="Won">W</th>
+              <th class="tt-stat" title="Drawn">D</th>
+              <th class="tt-stat" title="Lost">L</th>
+              <th class="tt-stat" title="Goals For">GF</th>
+              <th class="tt-stat" title="Goals Against">GA</th>
               <th title="Goal Difference">GD</th>
               <th class="tt-pts" title="Points">Pts</th>
               <th class="tt-status">Status</th>
