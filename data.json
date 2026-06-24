@@ -1421,7 +1421,7 @@
             "home": "Switzerland (19)",
             "away": "Canada (30)",
             "group": "Group B",
-            "actual_score": null,
+            "actual_score": "2-1",
             "predictions": {
                 "MARC-BORL": "2-1",
                 "MURI TUDOR": "1-1",
@@ -1438,7 +1438,8 @@
                 "MATEI": "2-0",
                 "SONE": "2-1",
                 "CALIN": "0-1"
-            }
+            },
+            "referee": "Ramon Abatti Abel (Brazil)"
         },
         {
             "id": 50,
@@ -1449,7 +1450,7 @@
             "home": "Bosnia and Herzegovina (65)",
             "away": "Qatar (55)",
             "group": "Group B",
-            "actual_score": null,
+            "actual_score": "3-1",
             "predictions": {
                 "MARC-BORL": "2-0",
                 "MURI TUDOR": "1-0",
@@ -1466,7 +1467,8 @@
                 "MATEI": "2-0",
                 "SONE": "2-0",
                 "CALIN": "2-2"
-            }
+            },
+            "referee": "Jesús Valenzuela (Venezuela)"
         },
         {
             "id": 51,
