@@ -525,21 +525,33 @@
       0%   { background-position: 0% 50%; }
       100% { background-position: 200% 50%; }
     }
+    @-webkit-keyframes the-game-shake {
+      0%,100% { -webkit-transform: translateZ(0) rotate(0deg); transform: translateZ(0) rotate(0deg); }
+      20%     { -webkit-transform: translateZ(0) rotate(-1.5deg); transform: translateZ(0) rotate(-1.5deg); }
+      40%     { -webkit-transform: translateZ(0) rotate(1.5deg); transform: translateZ(0) rotate(1.5deg); }
+      60%     { -webkit-transform: translateZ(0) rotate(-1deg); transform: translateZ(0) rotate(-1deg); }
+      80%     { -webkit-transform: translateZ(0) rotate(1deg); transform: translateZ(0) rotate(1deg); }
+    }
     @keyframes the-game-shake {
-      0%,100% { transform: rotate(0deg); }
-      20%     { transform: rotate(-1.5deg); }
-      40%     { transform: rotate(1.5deg); }
-      60%     { transform: rotate(-1deg); }
-      80%     { transform: rotate(1deg); }
+      0%,100% { transform: translateZ(0) rotate(0deg); }
+      20%     { transform: translateZ(0) rotate(-1.5deg); }
+      40%     { transform: translateZ(0) rotate(1.5deg); }
+      60%     { transform: translateZ(0) rotate(-1deg); }
+      80%     { transform: translateZ(0) rotate(1deg); }
     }
     .match-card.the-game {
       border: 2px solid #ef4444;
-      background: linear-gradient(135deg, rgba(239,68,68,.09) 0%, var(--card) 45%, rgba(249,115,22,.07) 100%);
+      background: linear-gradient(135deg, rgba(239,68,68,.09) 0%, transparent 45%, rgba(249,115,22,.07) 100%), var(--card);
+      -webkit-animation: the-game-pulse 2.2s ease-in-out infinite, the-game-shake 4s ease-in-out infinite;
       animation: the-game-pulse 2.2s ease-in-out infinite, the-game-shake 4s ease-in-out infinite;
+      will-change: transform;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
     .the-game-banner {
       background: linear-gradient(90deg, #dc2626, #ef4444, #f97316, #ef4444, #dc2626);
       background-size: 300% 100%;
+      -webkit-animation: the-game-shimmer 2.5s linear infinite;
       animation: the-game-shimmer 2.5s linear infinite;
       color: #fff;
       font-size: .62rem;
@@ -4863,8 +4875,8 @@ function buildProfileNeighbors(player) {
         <div class="pp-stat"><span class="pp-stat-val">${best}</span><span class="pp-stat-lbl">Best streak</span></div>
       </div>`;
 
-      // All day groups for predictions list
-      const allSorted = [...DATA.matches].sort((a, b) =>
+      // All day groups for predictions list (group stage only — KO predictions live in Firebase)
+      const allSorted = DATA.matches.filter(m => m.id < 73).sort((a, b) =>
         (a.date + a.time) < (b.date + b.time) ? -1 : 1
       );
       const dayGroups = {};
