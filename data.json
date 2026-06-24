@@ -1191,7 +1191,7 @@
             "home": "Argentina (3)",
             "away": "Austria (23)",
             "group": "Group J",
-            "actual_score": null,
+            "actual_score": "2-0",
             "predictions": {
                 "MARC-BORL": "3-0",
                 "MURI TUDOR": "2-2",
@@ -1208,7 +1208,8 @@
                 "MATEI": "2-1",
                 "SONE": "2-1",
                 "CALIN": "1-0"
-            }
+            },
+            "referee": "Amin Omar (Egypt)"
         },
         {
             "id": 42,
@@ -1219,7 +1220,7 @@
             "home": "France (1)",
             "away": "Iraq (57)",
             "group": "Group I",
-            "actual_score": null,
+            "actual_score": "3-0",
             "predictions": {
                 "MARC-BORL": "5-0",
                 "MURI TUDOR": "5-0",
@@ -1236,7 +1237,8 @@
                 "MATEI": "4-1",
                 "SONE": "3-1",
                 "CALIN": "6-0"
-            }
+            },
+            "referee": "Drew Fischer (Canada)"
         },
         {
             "id": 43,
@@ -1247,7 +1249,7 @@
             "home": "Norway (31)",
             "away": "Senegal (14)",
             "group": "Group I",
-            "actual_score": null,
+            "actual_score": "3-2",
             "predictions": {
                 "MARC-BORL": "2-2",
                 "MURI TUDOR": "2-2",
@@ -1264,7 +1266,8 @@
                 "MATEI": "0-1",
                 "SONE": "2-1",
                 "CALIN": "0-2"
-            }
+            },
+            "referee": "Wilton Sampaio (Brazil)"
         },
         {
             "id": 44,
@@ -1275,7 +1278,7 @@
             "home": "Jordan (63)",
             "away": "Algeria (29)",
             "group": "Group J",
-            "actual_score": null,
+            "actual_score": "1-2",
             "predictions": {
                 "MARC-BORL": "0-3",
                 "MURI TUDOR": "1-1",
@@ -1292,7 +1295,8 @@
                 "MATEI": "2-1",
                 "SONE": "0-2",
                 "CALIN": "2-4"
-            }
+            },
+            "referee": "Slavko Vinčič (Slovenia)"
         },
         {
             "id": 45,
@@ -1303,7 +1307,7 @@
             "home": "Portugal (5)",
             "away": "Uzbekistan (50)",
             "group": "Group K",
-            "actual_score": null,
+            "actual_score": "5-0",
             "predictions": {
                 "MARC-BORL": "3-0",
                 "MURI TUDOR": "3-0",
@@ -1320,7 +1324,8 @@
                 "MATEI": "3-0",
                 "SONE": "2-0",
                 "CALIN": "4-0"
-            }
+            },
+            "referee": "Jalal Jayed (Morocco)"
         },
         {
             "id": 46,
@@ -1331,7 +1336,7 @@
             "home": "England (4)",
             "away": "Ghana (73)",
             "group": "Group L",
-            "actual_score": null,
+            "actual_score": "0-0",
             "predictions": {
                 "MARC-BORL": "3-0",
                 "MURI TUDOR": "3-1",
@@ -1348,7 +1353,8 @@
                 "MATEI": "3-0",
                 "SONE": "2-1",
                 "CALIN": "4-0"
-            }
+            },
+            "referee": "Said Martinez (Honduras)"
         },
         {
             "id": 47,
@@ -1359,7 +1365,7 @@
             "home": "Panama (33)",
             "away": "Croatia (11)",
             "group": "Group L",
-            "actual_score": null,
+            "actual_score": "0-1",
             "predictions": {
                 "MARC-BORL": "1-2",
                 "MURI TUDOR": "0-2",
@@ -1387,7 +1393,7 @@
             "home": "Colombia (13)",
             "away": "DR Congo (46)",
             "group": "Group K",
-            "actual_score": null,
+            "actual_score": "1-0",
             "predictions": {
                 "MARC-BORL": "2-0",
                 "MURI TUDOR": "2-1",
