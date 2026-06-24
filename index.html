@@ -1686,6 +1686,61 @@
     }
     .lb-you { font-size: .58rem; font-weight: 600; letter-spacing: .03em; color: #3b82f6; background: rgba(59,130,246,.12); border: 1px solid rgba(59,130,246,.25); border-radius: 20px; padding: 1px 6px; margin-left: 5px; vertical-align: middle; }
 
+    /* ── LB TIMELINE ──────────────────────────────────── */
+    .lb-tl-wrap {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 14px 12px;
+    }
+    .lb-tl-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px;
+    }
+    .lb-tl-date-label {
+      font-size: .72rem; font-weight: 700; color: var(--text2);
+    }
+    .lb-tl-live-btn {
+      font-size: .64rem; font-weight: 800; letter-spacing: .04em;
+      padding: 3px 10px; border: 1px solid var(--border2);
+      border-radius: 20px; background: transparent; color: var(--text3);
+      cursor: pointer; transition: all .15s; white-space: nowrap; flex-shrink: 0;
+    }
+    .lb-tl-live-btn.live-active {
+      background: var(--accent); color: #000; border-color: var(--accent);
+    }
+    .lb-tl-slider-row { padding: 4px 2px; }
+    .lb-tl-slider {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 4px; border-radius: 2px; outline: none; cursor: pointer;
+      background: linear-gradient(to right, var(--accent) var(--fill, 100%), var(--border2) var(--fill, 100%));
+    }
+    .lb-tl-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent); cursor: grab;
+      box-shadow: 0 2px 8px rgba(0,0,0,.5); border: 2px solid rgba(0,0,0,.25);
+      transition: transform .1s;
+    }
+    .lb-tl-slider:active::-webkit-slider-thumb { transform: scale(1.15); cursor: grabbing; }
+    .lb-tl-slider::-moz-range-thumb {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent); cursor: grab;
+      box-shadow: 0 2px 8px rgba(0,0,0,.5); border: 2px solid rgba(0,0,0,.25);
+    }
+    .lb-tl-slider::-moz-range-track {
+      height: 4px; border-radius: 2px; background: var(--border2);
+    }
+    .lb-tl-slider::-moz-range-progress {
+      height: 4px; border-radius: 2px; background: var(--accent);
+    }
+    .lb-tl-ends {
+      display: flex; justify-content: space-between;
+      margin-top: 6px; padding: 0 2px;
+    }
+    .lb-tl-end-lbl {
+      font-size: .6rem; color: var(--text3); font-weight: 600;
+    }
+
     /* Form dots */
     .form-row {
       display: flex;
@@ -2282,6 +2337,20 @@
   <!-- ── LEADERBOARD TAB ────────────────────────────── -->
   <div id="tab-leaderboard" class="tab-panel hidden">
     <div id="main-leaderboard">
+      <div class="lb-tl-wrap">
+        <div class="lb-tl-header">
+          <span class="lb-tl-date-label" id="lb-tl-label">Live standings</span>
+          <button class="lb-tl-live-btn live-active" id="lb-tl-live-btn" onclick="setLbDate(null)">⬤ Live</button>
+        </div>
+        <div class="lb-tl-slider-row">
+          <input type="range" id="lb-tl-slider" class="lb-tl-slider" min="0" max="1" step="1" value="1" oninput="onLbSlider(this.value)" list="lb-tl-ticks">
+          <datalist id="lb-tl-ticks"></datalist>
+        </div>
+        <div class="lb-tl-ends">
+          <span id="lb-tl-start-lbl" class="lb-tl-end-lbl"></span>
+          <span id="lb-tl-end-lbl" class="lb-tl-end-lbl"></span>
+        </div>
+      </div>
       <div class="stats-row" id="stats-row"></div>
       <div class="table-wrap">
         <table class="league-table">
@@ -2405,6 +2474,7 @@
     let GROUPS_MODE = 'pure';
     let KO_DATA = {}; // matchNum → { home, away, predictions: { player: score } }
     let MATCHES_VIEW = 'group'; // 'group' | 'ko'
+    let LB_DATE = null; // null = live (all scored matches); 'YYYY-MM-DD' = show standings up to that day
     const CHAT_DB_URL = 'https://worldcuuuup-9a603-default-rtdb.europe-west1.firebasedatabase.app';
     const CHAT_PATH = 'chatMessages';
     // Bracket wiring: match → { match: nextRoundMatchNum, side: 'home'|'away' }
@@ -2506,6 +2576,7 @@
         let pts = 0, exact = 0, ocount = 0, wrong = 0, played = 0;
         DATA.matches.forEach(m => {
           if (!m.actual_score) return;
+          if (LB_DATE && m.date > LB_DATE) return;
           const pred = m.predictions[player];
           if (!pred) return;
           played++;
@@ -2522,7 +2593,7 @@
 
     function getForm(player) {
       return DATA.matches
-        .filter(m => m.actual_score && m.predictions[player])
+        .filter(m => m.actual_score && m.predictions[player] && (!LB_DATE || m.date <= LB_DATE))
         .slice(-5)
         .map(m => calcPts(m.predictions[player], m.actual_score));
     }
@@ -2556,8 +2627,8 @@
 
     // ── Render leaderboard tab ─────────────────────────
     function renderStatCards() {
-      const scored = DATA.matches.filter(m => m.actual_score).length;
-      const total = DATA.matches.length;
+      const scored = DATA.matches.filter(m => m.actual_score && (!LB_DATE || m.date <= LB_DATE)).length;
+      const total = DATA.matches.filter(m => m.home && m.away).length;
       const lb = calcLB();
       const topExact = [...lb].sort((a, b) => b.exact - a.exact)[0];
       const leader = lb[0];
@@ -3507,7 +3578,91 @@
       </div>`;
     }
 
+    function _lbDates() {
+      return [...new Set(DATA.matches.map(m => m.date))].sort();
+    }
+
+    function _liveIdx(allDates) {
+      const scored = DATA.matches.filter(m => m.actual_score).map(m => m.date).sort();
+      const last = scored[scored.length - 1];
+      if (!last) return 0;
+      const idx = allDates.lastIndexOf(last);
+      return idx >= 0 ? idx : 0;
+    }
+
+    function _syncSlider(allDates) {
+      const slider = document.getElementById('lb-tl-slider');
+      if (!slider || !allDates.length) return;
+      const maxIdx = allDates.length - 1;
+      slider.max = maxIdx;
+      const idx = LB_DATE === null ? _liveIdx(allDates) : allDates.indexOf(LB_DATE);
+      slider.value = Math.max(0, Math.min(idx >= 0 ? idx : maxIdx, maxIdx));
+      const pct = maxIdx === 0 ? 100 : (parseInt(slider.value, 10) / maxIdx) * 100;
+      slider.style.setProperty('--fill', `${pct}%`);
+    }
+
+    function renderLbTimeline() {
+      const allDates = _lbDates();
+      const slider = document.getElementById('lb-tl-slider');
+      if (!slider || !allDates.length) return;
+
+      const ticks = document.getElementById('lb-tl-ticks');
+      if (ticks) ticks.innerHTML = allDates.map((_, i) => `<option value="${i}"></option>`).join('');
+
+      const startEl = document.getElementById('lb-tl-start-lbl');
+      if (startEl) {
+        const d = new Date(allDates[0] + 'T12:00:00');
+        startEl.textContent = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      }
+      const endEl = document.getElementById('lb-tl-end-lbl');
+      if (endEl) {
+        const d = new Date(allDates[allDates.length - 1] + 'T12:00:00');
+        endEl.textContent = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      }
+
+      _syncSlider(allDates);
+      updateLbTimeline();
+    }
+
+    function onLbSlider(val) {
+      const allDates = _lbDates();
+      const idx = parseInt(val, 10);
+      const liveIdx = _liveIdx(allDates);
+      // Dragging to or past the live position counts as Live
+      LB_DATE = idx >= liveIdx ? null : (allDates[idx] || null);
+      const maxIdx = allDates.length - 1;
+      const pct = maxIdx === 0 ? 100 : (idx / maxIdx) * 100;
+      const slider = document.getElementById('lb-tl-slider');
+      if (slider) slider.style.setProperty('--fill', `${pct}%`);
+      updateLbTimeline();
+      renderStatCards();
+      renderLeagueTable();
+    }
+
+    function setLbDate(date) {
+      LB_DATE = date;
+      _syncSlider(_lbDates());
+      updateLbTimeline();
+      renderStatCards();
+      renderLeagueTable();
+    }
+
+    function updateLbTimeline() {
+      const label = document.getElementById('lb-tl-label');
+      const liveBtn = document.getElementById('lb-tl-live-btn');
+      if (label) {
+        if (LB_DATE) {
+          const d = new Date(LB_DATE + 'T12:00:00');
+          label.textContent = 'After ' + d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long' });
+        } else {
+          label.textContent = 'Live standings';
+        }
+      }
+      if (liveBtn) liveBtn.classList.toggle('live-active', !LB_DATE);
+    }
+
     function renderLeaderboard() {
+      renderLbTimeline();
       renderStatCards();
       renderLeagueTable();
     }
