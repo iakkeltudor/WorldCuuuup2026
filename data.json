@@ -1479,7 +1479,7 @@
             "home": "Scotland (43)",
             "away": "Brazil (6)",
             "group": "Group C",
-            "actual_score": null,
+            "actual_score": "0-3",
             "predictions": {
                 "MARC-BORL": "1-3",
                 "MURI TUDOR": "0-3",
@@ -1496,7 +1496,8 @@
                 "MATEI": "1-2",
                 "SONE": "2-3",
                 "CALIN": "1-1"
-            }
+            },
+            "referee": "César Ramos (Mexico)"
         },
         {
             "id": 52,
@@ -1507,7 +1508,7 @@
             "home": "Morocco (8)",
             "away": "Haiti (82)",
             "group": "Group C",
-            "actual_score": null,
+            "actual_score": "4-2",
             "predictions": {
                 "MARC-BORL": "2-0",
                 "MURI TUDOR": "3-0",
@@ -1524,7 +1525,8 @@
                 "MATEI": "3-0",
                 "SONE": "3-0",
                 "CALIN": "1-0"
-            }
+            },
+            "referee": "Danny Makkelie (Netherlands)"
         },
         {
             "id": 53,
