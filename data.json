@@ -1,4 +1,4 @@
-﻿{
+{
     "admin_password": "mondial2026",
     "players": [
         "MARC-BORL",
@@ -1595,7 +1595,7 @@
             "home": "Curaçao (83)",
             "away": "Ivory Coast (34)",
             "group": "Group E",
-            "actual_score": null,
+            "actual_score": "0-2",
             "predictions": {
                 "MARC-BORL": "0-2",
                 "MURI TUDOR": "1-2",
@@ -1612,7 +1612,8 @@
                 "MATEI": "0-3",
                 "SONE": "0-2",
                 "CALIN": "2-7"
-            }
+            },
+            "referee": "Glenn Nyberg (Sweden)"
         },
         {
             "id": 56,
@@ -1623,7 +1624,7 @@
             "home": "Ecuador (24)",
             "away": "Germany (10)",
             "group": "Group E",
-            "actual_score": null,
+            "actual_score": "2-1",
             "predictions": {
                 "MARC-BORL": "1-3",
                 "MURI TUDOR": "1-1",
@@ -1640,7 +1641,8 @@
                 "MATEI": "1-0",
                 "SONE": "2-2",
                 "CALIN": "0-0"
-            }
+            },
+            "referee": "Tori Penso (USA)"
         },
         {
             "id": 57,
