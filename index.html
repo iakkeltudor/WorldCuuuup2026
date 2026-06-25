@@ -437,6 +437,13 @@
       top: 50%; left: 0; right: 0;
       border-top: 1px solid var(--border);
     }
+    /* ── Bracket progression highlighting ───────────── */
+    .bk-conn-rgt .bk-seg.bk-seg-prog::before,
+    .bk-conn-rgt .bk-seg.bk-seg-prog::after { border-color: rgba(16,185,129,.75); }
+    .bk-conn-lft .bk-seg.bk-seg-prog::before,
+    .bk-conn-lft .bk-seg.bk-seg-prog::after { border-color: rgba(16,185,129,.75); }
+    .bk-sf-seg.bk-sf-seg-prog::before { border-color: rgba(16,185,129,.75); }
+    .bk-match.bk-prog { border-color: rgba(16,185,129,.35); }
     /* Center column (Final + 3rd) */
     .bk-center-col { display: flex; flex-direction: column; width: 180px; flex-shrink: 0; }
     .bk-center-head {
@@ -514,6 +521,8 @@
     .ko-pred-gate:hover { background: rgba(245,158,11,.13); }
     .ko-pred-gate-icon { font-size: .9rem; flex-shrink: 0; }
     .ko-pred-gate-text { font-size: .74rem; font-weight: 600; color: #f59e0b; }
+    .bk-admin-score-input { width: 56px; padding: 1px 3px; text-align: center; background: var(--card2); border: 1px solid var(--border2); border-radius: 4px; color: var(--text); font-size: .65rem; font-weight: 700; }
+    .bk-admin-score-input:focus { outline: none; border-color: var(--accent); }
     .bk-pred-open { font-size: .48rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; background: rgba(245,158,11,.15); color: #f59e0b; border: 1px solid rgba(245,158,11,.3); border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
     .bk-pred-locked { font-size: .48rem; font-weight: 700; letter-spacing: .05em; background: rgba(34,197,94,.15); color: var(--green); border: 1px solid rgba(34,197,94,.3); border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
     .ko-pred-hint { font-size: .76rem; color: var(--text2); text-align: center; padding: 14px 0 8px; font-style: italic; line-height: 1.5; }
@@ -2496,6 +2505,7 @@
     // ── State ──────────────────────────────────────────
     let DATA = null;
     let ADMIN = false;
+    let _adminScoreSnapshot = null; // KO actual_scores before admin preview
     let FILTER = 'all';
     let ACTIVE_TAB = 'matches';
     let GROUPS_PLAYER = null;
@@ -2726,54 +2736,54 @@
       left: [
         { name: 'Round of 32', color: '#3b82f6', matches: [
           // (M73,M75) → R16 M89;  (M74,M77) → R16 M90  →  QF M97
-          {num:73,date:'2026-06-29', hs:{r:2,g:'A'}, as:{r:2,g:'B'}},
+          {num:73,date:'2026-06-28', hs:{r:2,g:'A'}, as:{r:2,g:'B'}},
           {num:75,date:'2026-06-30', hs:{r:1,g:'F'}, as:{r:2,g:'C'}},
           {num:74,date:'2026-06-29', hs:{r:1,g:'E'}, as:{r:3,gs:['A','B','C','D','F']}},
           {num:77,date:'2026-07-01', hs:{r:1,g:'I'}, as:{r:3,gs:['C','D','F','G','H']}},
           // (M83,M84) → R16 M93;  (M81,M82) → R16 M94  →  QF M98
           {num:83,date:'2026-07-03', hs:{r:2,g:'K'}, as:{r:2,g:'L'}},
-          {num:84,date:'2026-07-03', hs:{r:1,g:'H'}, as:{r:2,g:'J'}},
-          {num:81,date:'2026-07-03', hs:{r:1,g:'D'}, as:{r:3,gs:['B','E','F','I','J']}},
-          {num:82,date:'2026-07-03', hs:{r:1,g:'G'}, as:{r:3,gs:['A','E','H','I','J']}},
+          {num:84,date:'2026-07-02', hs:{r:1,g:'H'}, as:{r:2,g:'J'}},
+          {num:81,date:'2026-07-02', hs:{r:1,g:'D'}, as:{r:3,gs:['B','E','F','I','J']}},
+          {num:82,date:'2026-07-01', hs:{r:1,g:'G'}, as:{r:3,gs:['A','E','H','I','J']}},
         ]},
         { name: 'Round of 16', color: '#8b5cf6', matches: [
-          {num:89,date:'2026-07-05'}, {num:90,date:'2026-07-05'},
-          {num:93,date:'2026-07-07'}, {num:94,date:'2026-07-07'},
+          {num:89,date:'2026-07-05'}, {num:90,date:'2026-07-04'},
+          {num:93,date:'2026-07-06'}, {num:94,date:'2026-07-07'},
         ]},
         { name: 'Quarter-finals', color: '#ec4899', matches: [
-          {num:97,date:'2026-07-11'}, {num:98,date:'2026-07-11'},
+          {num:97,date:'2026-07-09'}, {num:98,date:'2026-07-10'},
         ]},
         { name: 'Semi-finals', color: '#f59e0b', matches: [
-          {num:101,date:'2026-07-15'},
+          {num:101,date:'2026-07-14'},
         ]},
       ],
       // Right half feeds SF M102 via QF M99 (M91+M92) and M100 (M95+M96)
       right: [
         { name: 'Semi-finals', color: '#f59e0b', matches: [
-          {num:102,date:'2026-07-16'},
+          {num:102,date:'2026-07-15'},
         ]},
         { name: 'Quarter-finals', color: '#ec4899', matches: [
           {num:99,date:'2026-07-12'}, {num:100,date:'2026-07-12'},
         ]},
         { name: 'Round of 16', color: '#8b5cf6', matches: [
-          {num:91,date:'2026-07-06'}, {num:92,date:'2026-07-06'},
-          {num:95,date:'2026-07-08'}, {num:96,date:'2026-07-08'},
+          {num:91,date:'2026-07-05'}, {num:92,date:'2026-07-06'},
+          {num:95,date:'2026-07-07'}, {num:96,date:'2026-07-07'},
         ]},
         { name: 'Round of 32', color: '#3b82f6', matches: [
           // (M76,M78) → R16 M91;  (M79,M80) → R16 M92  →  QF M99
-          {num:76,date:'2026-06-30', hs:{r:1,g:'C'}, as:{r:2,g:'F'}},
-          {num:78,date:'2026-07-01', hs:{r:2,g:'E'}, as:{r:2,g:'I'}},
-          {num:79,date:'2026-07-02', hs:{r:1,g:'A'}, as:{r:3,gs:['C','E','F','H','I']}},
-          {num:80,date:'2026-07-02', hs:{r:1,g:'L'}, as:{r:3,gs:['E','H','I','J','K']}},
+          {num:76,date:'2026-06-29', hs:{r:1,g:'C'}, as:{r:2,g:'F'}},
+          {num:78,date:'2026-06-30', hs:{r:2,g:'E'}, as:{r:2,g:'I'}},
+          {num:79,date:'2026-07-01', hs:{r:1,g:'A'}, as:{r:3,gs:['C','E','F','H','I']}},
+          {num:80,date:'2026-07-01', hs:{r:1,g:'L'}, as:{r:3,gs:['E','H','I','J','K']}},
           // (M86,M88) → R16 M95;  (M85,M87) → R16 M96  →  QF M100
           {num:86,date:'2026-07-04', hs:{r:1,g:'J'}, as:{r:2,g:'H'}},
-          {num:88,date:'2026-07-04', hs:{r:2,g:'D'}, as:{r:2,g:'G'}},
-          {num:85,date:'2026-07-04', hs:{r:1,g:'B'}, as:{r:3,gs:['E','F','G','I','J']}},
+          {num:88,date:'2026-07-03', hs:{r:2,g:'D'}, as:{r:2,g:'G'}},
+          {num:85,date:'2026-07-03', hs:{r:1,g:'B'}, as:{r:3,gs:['E','F','G','I','J']}},
           {num:87,date:'2026-07-04', hs:{r:1,g:'K'}, as:{r:3,gs:['D','E','I','J','L']}},
         ]},
       ],
       final: {num:104, date:'2026-07-19', cls:'bk-final'},
-      third: {num:103, date:'2026-07-18', cls:'bk-third'},
+      third: {num:103, date:'2026-07-19', cls:'bk-third'},
     };
 
     // ISO 3166-1 alpha-2 codes → flagcdn.com images (emoji flags don't render on Windows)
@@ -2842,8 +2852,14 @@
         const { score: myScore } = parseKoPred(myPred);
         predBadge = `<span class="bk-pred-locked">${myScore ? escapeHtml(myScore) + ' ✓'  : '✓'}</span>`;
       }
+      const metaRight = ADMIN
+        ? `<input class="bk-admin-score-input" type="text" placeholder="0-0"
+             value="${score || ''}"
+             onchange="setKoScore(${m.num}, this.value.trim(), true)"
+             onclick="event.stopPropagation()">`
+        : `<span>${dateStr}</span>${predBadge}`;
       return `<div class="bk-match${m.cls ? ' ' + m.cls : ''}" onclick="showMatchModal(${m.num})">
-        <div class="bk-match-meta"><span>M${m.num}</span><span>${dateStr}</span>${predBadge}</div>
+        <div class="bk-match-meta"><span>M${m.num}</span>${metaRight}</div>
         ${bkTeamRow(hInfo, homeWon)}
         <div class="bk-divider"></div>
         ${bkTeamRow(aInfo, awayWon)}
@@ -2968,7 +2984,15 @@
             const segCount = isRight
               ? rounds[ri + 1].matches.length / 2
               : round.matches.length / 2;
-            const segs = Array.from({length: segCount}, () => '<div class="bk-seg"></div>').join('');
+            const srcRound = isRight ? rounds[ri + 1] : rounds[ri];
+            const segs = Array.from({length: segCount}, (_, j) => {
+              const ma = srcRound.matches[j * 2];
+              const mb = srcRound.matches[j * 2 + 1];
+              const doneA = !!(ma && matchById[ma.num]?.actual_score);
+              const doneB = !!(mb && matchById[mb.num]?.actual_score);
+              const prog = doneA && doneB ? ' bk-seg-prog' : '';
+              return `<div class="bk-seg${prog}"></div>`;
+            }).join('');
             const dir = isRight ? 'bk-conn-lft' : 'bk-conn-rgt';
             cols.push(`<div class="bk-conn ${dir}"><div class="bk-conn-head"></div><div class="bk-conn-segs">${segs}</div></div>`);
           }
@@ -2976,10 +3000,15 @@
         return cols.join('');
       }
 
-      const sfConn = `<div class="bk-sf-conn"><div class="bk-sf-conn-head"></div><div class="bk-sf-conn-segs"><div class="bk-sf-seg"></div></div></div>`;
+      function sfConnHtml(sfMatchNum) {
+        const done = !!(matchById[sfMatchNum]?.actual_score);
+        return `<div class="bk-sf-conn"><div class="bk-sf-conn-head"></div><div class="bk-sf-conn-segs"><div class="bk-sf-seg${done ? ' bk-sf-seg-prog' : ''}"></div></div></div>`;
+      }
+      const sfConnL = sfConnHtml(KO_BRACKET.left[KO_BRACKET.left.length - 1].matches[0].num);
+      const sfConnR = sfConnHtml(KO_BRACKET.right[0].matches[0].num);
 
       el.innerHTML = `<div class="bk-outer">
-        <div class="bk-half bk-lft">${halfHtml(KO_BRACKET.left, false)}${sfConn}</div>
+        <div class="bk-half bk-lft">${halfHtml(KO_BRACKET.left, false)}${sfConnL}</div>
         <div class="bk-center-col">
           <div class="bk-center-head">&#9917; Final</div>
           <div class="bk-center-slots">
@@ -2990,7 +3019,7 @@
             </div>
           </div>
         </div>
-        <div class="bk-half bk-rgt">${sfConn}${halfHtml(KO_BRACKET.right, true)}</div>
+        <div class="bk-half bk-rgt">${sfConnR}${halfHtml(KO_BRACKET.right, true)}</div>
       </div>`;
       requestAnimationFrame(scaleBracket);
     }
@@ -4646,9 +4675,15 @@
       const dateStr = match?.date
         ? new Date(match.date + 'T12:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'short'})
         : '';
-      const scoreHtml = actualScore
-        ? `<div class="score-display">${actualScore}</div>`
-        : `<div class="score-display pending">vs</div>`;
+      const scoreHtml = ADMIN
+        ? `<input class="score-input" type="text" placeholder="0-0"
+             value="${actualScore || ''}"
+             onclick="event.stopPropagation()"
+             oninput="setKoScore(${matchNum}, this.value.trim())"
+             onchange="setKoScore(${matchNum}, this.value.trim())">`
+        : actualScore
+          ? `<div class="score-display">${actualScore}</div>`
+          : `<div class="score-display pending">vs</div>`;
       const homeHtml = koTeamHtml(homeName, false);
       const awayHtml = koTeamHtml(awayName, true);
       const predState = CURRENT_USER ? getKoPredState(matchNum, match) : null;
@@ -4660,13 +4695,16 @@
            </div>`
         : `<div class="pred-grid" id="preds-ko-${matchNum}"
                style="--pred-cols:${cols};--pred-cols-sm:${colsSm}">${buildKoPredCols(matchNum, actualScore)}</div>`;
+      const matchTime = match?.time;
+      const matchTz = match?.timezone || 'UTC+3';
+      const venue = match?.venue ? match.venue.split(',')[0] : null;
       return `<div class="match-card" data-id="${matchNum}">
         <div class="card-top">
           <span class="group-tag ${stageCls}">${stageLabel}</span>
           <span class="card-meta">
-            <span class="time">M${matchNum}</span>
-            <span class="sep">|</span>
-            <span class="time">${dateStr}</span>
+            ${matchTime ? `<span class="time">${matchTime}</span><span class="tz"> ${matchTz}</span><span class="sep">|</span>` : `<span class="time">${dateStr}</span><span class="sep">|</span>`}
+            ${matchTime ? `<span class="time">${dateStr}</span>` : ''}
+            ${venue ? `<span class="sep">|</span><span class="venue">${escapeHtml(venue)}</span>` : ''}
           </span>
         </div>
         <div class="card-body">
@@ -4715,6 +4753,22 @@
       document.getElementById('hdr-progress').textContent = `${played} of ${total} matches scored`;
     }
 
+    async function setKoScore(matchId, val, rerenderBracket = false) {
+      const match = DATA.matches.find(m => m.id === matchId);
+      if (!match) return;
+      const isValid = /^\d{1,2}-\d{1,2}$/.test(val);
+      const score = isValid ? val : null;
+      match.actual_score = score;
+      KO_DATA[matchId] = KO_DATA[matchId] || {};
+      KO_DATA[matchId].actual_score = score;
+      const predEl = document.getElementById(`preds-ko-${matchId}`);
+      if (predEl) predEl.innerHTML = buildKoPredCols(matchId, score);
+      if (isValid) lazyWriteKoProgressions();
+      if (rerenderBracket) renderBracket();
+      if (ACTIVE_TAB === 'leaderboard') renderLeaderboard();
+      updateProgress();
+    }
+
     // ── Admin ──────────────────────────────────────────
     function enterAdmin() {
       const pwd = DATA.admin_password;
@@ -4722,16 +4776,30 @@
         const entered = window.prompt('Admin password:');
         if (entered !== pwd) { alert('Wrong password.'); return; }
       }
+      // Snapshot KO actual_scores so we can restore on exit
+      _adminScoreSnapshot = {};
+      DATA?.matches?.forEach(m => { if (m.id >= 73) _adminScoreSnapshot[m.id] = m.actual_score || null; });
       ADMIN = true;
       document.getElementById('admin-bar').classList.add('on');
       document.getElementById('admin-toggle').classList.add('on');
       renderMatches();
+      renderBracket();
     }
-    function leaveAdmin() {
+    async function leaveAdmin() {
       ADMIN = false;
       document.getElementById('admin-bar').classList.remove('on');
       document.getElementById('admin-toggle').classList.remove('on');
+      // Restore KO actual_scores to pre-admin state
+      if (_adminScoreSnapshot && DATA?.matches) {
+        DATA.matches.forEach(m => {
+          if (m.id >= 73) m.actual_score = _adminScoreSnapshot[m.id] || null;
+        });
+      }
+      _adminScoreSnapshot = null;
+      // Reload KO_DATA from Firebase to discard test progressions
+      await loadKoData();
       renderMatches();
+      renderBracket();
     }
 
     // ── Export ─────────────────────────────────────────
@@ -4809,7 +4877,18 @@
     async function loadKoData() {
       try {
         const res = await fetch(`${CHAT_DB_URL}/ko_matches.json`);
-        if (res.ok) KO_DATA = (await res.json()) || {};
+        if (res.ok) {
+          KO_DATA = (await res.json()) || {};
+          // Sync KO actual scores from Firebase into DATA.matches so getKoScore() works
+          if (DATA?.matches) {
+            for (const [numStr, entry] of Object.entries(KO_DATA)) {
+              if (entry?.actual_score) {
+                const m = DATA.matches.find(m => m.id === Number(numStr));
+                if (m) m.actual_score = entry.actual_score;
+              }
+            }
+          }
+        }
       } catch {}
     }
 
@@ -4896,7 +4975,7 @@
         const existingNext = KO_DATA[next.match] || {};
         if (existingNext[next.side]) continue;
         KO_DATA[next.match] = { ...existingNext, [next.side]: winner };
-        koPatch(next.match, { [next.side]: winner });
+        if (!ADMIN) koPatch(next.match, { [next.side]: winner });
       }
     }
 
