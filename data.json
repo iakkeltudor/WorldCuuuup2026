@@ -2096,7 +2096,7 @@
             "time": null,
             "timezone": "UTC+3",
             "venue": null,
-            "home": null,
+            "home": "South Africa",
             "away": "Canada",
             "actual_score": null
         },
@@ -2117,7 +2117,7 @@
             "timezone": "UTC+3",
             "venue": null,
             "home": null,
-            "away": null,
+            "away": "Morocco",
             "actual_score": null
         },
         {
@@ -2126,7 +2126,7 @@
             "time": null,
             "timezone": "UTC+3",
             "venue": null,
-            "home": null,
+            "home": "Brazil",
             "away": null,
             "actual_score": null
         },
