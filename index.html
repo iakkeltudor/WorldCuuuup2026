@@ -4715,9 +4715,8 @@
         <div class="card-top">
           <span class="group-tag ${stageCls}">${stageLabel}</span>
           <span class="card-meta">
-            ${matchTime ? `<span class="time">${matchTime}</span><span class="tz"> ${matchTz}</span><span class="sep">|</span>` : `<span class="time">${dateStr}</span><span class="sep">|</span>`}
-            ${matchTime ? `<span class="time">${dateStr}</span>` : ''}
-            ${venue ? `<span class="sep">|</span><span class="venue">${escapeHtml(venue)}</span>` : ''}
+            ${matchTime ? `<span class="time">${matchTime}</span><span class="tz"> ${matchTz}</span>` : ''}
+            ${venue ? `${matchTime ? '<span class="sep">|</span>' : ''}<span class="venue">${escapeHtml(venue)}</span>` : ''}
           </span>
         </div>
         <div class="card-body">
@@ -4797,19 +4796,23 @@
     }
 
     function renderKoMatches() {
-      document.getElementById('main-matches').innerHTML = KO_STAGES.map(stage => {
-        const visible = stage.nums.filter(matchNum => {
-          if (FILTER === 'all') return true;
-          const m = DATA.matches.find(x => x.id === matchNum);
-          return m && sessionDate(m) === FILTER;
-        });
-        if (!visible.length) return '';
+      const stageByNum = {};
+      KO_STAGES.forEach(s => s.nums.forEach(n => { stageByNum[n] = s; }));
+      const groups = byDateKo();
+      const dates = Object.keys(groups).sort();
+      const visible = FILTER === 'all' ? dates : dates.filter(d => d === FILTER);
+      document.getElementById('main-matches').innerHTML = visible.map(d => {
+        const normHour = t => { const h = parseInt((t || '0').split(':')[0], 10); return h < 12 ? h + 24 : h; };
+        const sorted = groups[d].slice().sort((a, b) => normHour(a.time) - normHour(b.time) || (a.time || '').localeCompare(b.time || ''));
         return `<div class="day-section">
           <div class="day-heading">
-            <span class="day-heading-text">${stage.label}</span>
+            <span class="day-heading-text">${fmtLong(d)}</span>
             <div class="day-heading-line"></div>
           </div>
-          ${visible.map(n => renderKoCard(n, stage.label, stage.cls)).join('')}
+          ${sorted.map(m => {
+            const s = stageByNum[m.id];
+            return s ? renderKoCard(m.id, s.label, s.cls) : '';
+          }).join('')}
         </div>`;
       }).join('');
     }
