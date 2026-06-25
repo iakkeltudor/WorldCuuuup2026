@@ -510,6 +510,10 @@
     .m-pts-outcome { color: var(--amber); }
     .m-pts-wrong { color: var(--red); }
     /* ── KO predictions ──────────────────────────────── */
+    .ko-pred-gate { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 14px; background: rgba(245,158,11,.07); border-top: 1px solid rgba(245,158,11,.18); cursor: pointer; transition: background .15s; }
+    .ko-pred-gate:hover { background: rgba(245,158,11,.13); }
+    .ko-pred-gate-icon { font-size: .9rem; flex-shrink: 0; }
+    .ko-pred-gate-text { font-size: .74rem; font-weight: 600; color: #f59e0b; }
     .bk-pred-open { font-size: .48rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; background: rgba(245,158,11,.15); color: #f59e0b; border: 1px solid rgba(245,158,11,.3); border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
     .bk-pred-locked { font-size: .48rem; font-weight: 700; letter-spacing: .05em; background: rgba(34,197,94,.15); color: var(--green); border: 1px solid rgba(34,197,94,.3); border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
     .ko-pred-hint { font-size: .76rem; color: var(--text2); text-align: center; padding: 14px 0 8px; font-style: italic; line-height: 1.5; }
@@ -1104,6 +1108,12 @@
     .pred-col.st-pending {
       background: var(--card);
     }
+
+    .pred-col.st-none {
+      background: var(--card);
+      opacity: .4;
+    }
+    .pred-col.st-none .pred-col-score { color: var(--text3); font-size: .75rem; }
 
     .pred-col.st-exact {
       background: var(--green-bg);
@@ -2830,7 +2840,7 @@
       } else if (predState === 'locked') {
         const myPred = KO_DATA[m.num]?.predictions?.[CURRENT_USER.playerName];
         const { score: myScore } = parseKoPred(myPred);
-        predBadge = `<span class="bk-pred-locked">${myScore ? escapeHtml(myScore) + ' ✓' : '✓'}</span>`;
+        predBadge = `<span class="bk-pred-locked">${myScore ? escapeHtml(myScore) + ' ✓'  : '✓'}</span>`;
       }
       return `<div class="bk-match${m.cls ? ' ' + m.cls : ''}" onclick="showMatchModal(${m.num})">
         <div class="bk-match-meta"><span>M${m.num}</span><span>${dateStr}</span>${predBadge}</div>
@@ -3076,8 +3086,12 @@
     }
 
     function updateKoQualifier(matchNum) {
-      const h = parseInt(document.getElementById(`ko-h-${matchNum}`)?.value, 10);
-      const a = parseInt(document.getElementById(`ko-a-${matchNum}`)?.value, 10);
+      const hEl = document.getElementById(`ko-h-${matchNum}`);
+      const aEl = document.getElementById(`ko-a-${matchNum}`);
+      if (hEl) hEl.value = hEl.value.replace(/[^0-9]/g, '');
+      if (aEl) aEl.value = aEl.value.replace(/[^0-9]/g, '');
+      const h = parseInt(hEl?.value, 10);
+      const a = parseInt(aEl?.value, 10);
       const sec = document.getElementById(`ko-qual-${matchNum}`);
       if (!sec) return;
       const isDraw = !isNaN(h) && !isNaN(a) && h === a;
@@ -3121,9 +3135,9 @@
         html += `<div class="ko-pred-hint">Lock in your prediction to see everyone else's</div>
           <div class="ko-pred-inputs">
             <div class="ko-pred-team">${escapeHtml(homeDisplay)}</div>
-            <input class="ko-score-input" id="ko-h-${matchNum}" type="number" min="0" max="20" inputmode="numeric" placeholder="0" oninput="updateKoQualifier(${matchNum})">
+            <input class="ko-score-input" id="ko-h-${matchNum}" type="number" min="0" max="20" step="1" inputmode="numeric" placeholder="0" oninput="updateKoQualifier(${matchNum})">
             <span class="ko-pred-dash">—</span>
-            <input class="ko-score-input" id="ko-a-${matchNum}" type="number" min="0" max="20" inputmode="numeric" placeholder="0" oninput="updateKoQualifier(${matchNum})">
+            <input class="ko-score-input" id="ko-a-${matchNum}" type="number" min="0" max="20" step="1" inputmode="numeric" placeholder="0" oninput="updateKoQualifier(${matchNum})">
             <div class="ko-pred-team">${escapeHtml(awayDisplay)}</div>
           </div>
           <div class="ko-qualifier-section" id="ko-qual-${matchNum}" style="display:none">
@@ -3194,6 +3208,7 @@
         KO_DATA[matchNum].predictions = KO_DATA[matchNum].predictions || {};
         KO_DATA[matchNum].predictions[player] = prediction;
         renderBracket();
+        if (MATCHES_VIEW === 'ko') renderKoMatches();
         showKoMatchModal(matchNum);
       } else {
         if (btn) { btn.disabled = false; btn.textContent = 'Lock in prediction'; }
@@ -4575,7 +4590,13 @@
       const awayName = koEntry.away || match?.away || null;
       return DATA.players.map(player => {
         const pred = preds[player];
-        if (!pred) return '';
+        if (!pred) {
+          const mine = CURRENT_USER?.playerName === player ? ' pred-col-mine' : '';
+          return `<div class="pred-col st-none${mine}" title="${escapeHtml(player)}: no prediction">
+            <span class="pred-col-name">${escapeHtml(player)}</span>
+            <span class="pred-col-score">—</span>
+          </div>`;
+        }
         const { score, qualifier } = parseKoPred(pred);
         const pts = calcPts(score, actualScore);
         const cls = stateClass(pts);
@@ -4619,10 +4640,9 @@
       const homeName = koEntry.home || match?.home || null;
       const awayName = koEntry.away || match?.away || null;
       const actualScore = match?.actual_score || null;
-      const preds = koEntry.predictions || {};
-      const n = DATA.players.filter(p => preds[p]).length;
-      const cols = n > 0 ? bestCols(n) : 1;
-      const colsSm = n > 0 ? bestCols(n, 4) : 1;
+      const n = DATA.players.length;
+      const cols = bestCols(n);
+      const colsSm = bestCols(n, 4);
       const dateStr = match?.date
         ? new Date(match.date + 'T12:00:00').toLocaleDateString('en-GB', {day:'numeric', month:'short'})
         : '';
@@ -4631,6 +4651,15 @@
         : `<div class="score-display pending">vs</div>`;
       const homeHtml = koTeamHtml(homeName, false);
       const awayHtml = koTeamHtml(awayName, true);
+      const predState = CURRENT_USER ? getKoPredState(matchNum, match) : null;
+      const showGate = predState === 'open';
+      const bottomHtml = showGate
+        ? `<div class="ko-pred-gate" onclick="showKoMatchModal(${matchNum})">
+            <span class="ko-pred-gate-icon">🔒</span>
+            <span class="ko-pred-gate-text">Predict first to see everyone's picks</span>
+           </div>`
+        : `<div class="pred-grid" id="preds-ko-${matchNum}"
+               style="--pred-cols:${cols};--pred-cols-sm:${colsSm}">${buildKoPredCols(matchNum, actualScore)}</div>`;
       return `<div class="match-card" data-id="${matchNum}">
         <div class="card-top">
           <span class="group-tag ${stageCls}">${stageLabel}</span>
@@ -4647,8 +4676,7 @@
             <div class="team away">${awayHtml}</div>
           </div>
         </div>
-        <div class="pred-grid" id="preds-ko-${matchNum}"
-             style="--pred-cols:${cols};--pred-cols-sm:${colsSm}">${buildKoPredCols(matchNum, actualScore)}</div>
+        ${bottomHtml}
       </div>`;
     }
 
