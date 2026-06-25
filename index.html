@@ -516,6 +516,13 @@
     .m-pts-exact { color: var(--green); }
     .m-pts-outcome { color: var(--amber); }
     .m-pts-wrong { color: var(--red); }
+    /* ── KO countdown ────────────────────────────────── */
+    .ko-countdown-banner { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 16px; margin-bottom: 12px; background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.2); border-radius: 10px; flex-wrap: wrap; }
+    #bk-countdown .ko-countdown-banner { margin: 0 0 10px 0; }
+    @media (max-width: 480px) { .ko-countdown-banner { gap: 6px; padding: 8px 12px; } .ko-countdown-label { font-size: .72rem; } .ko-countdown-timer { font-size: .82rem; } }
+    .ko-countdown-label { font-size: .78rem; color: var(--text2); font-weight: 500; }
+    .ko-countdown-timer { font-size: .9rem; font-weight: 700; color: #818cf8; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+    .ko-countdown-icon { font-size: .9rem; }
     /* ── KO predictions ──────────────────────────────── */
     .ko-pred-gate { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 14px; background: rgba(245,158,11,.07); border-top: 1px solid rgba(245,158,11,.18); cursor: pointer; transition: background .15s; }
     .ko-pred-gate:hover { background: rgba(245,158,11,.13); }
@@ -2366,6 +2373,7 @@
       </div>
     </div>
     <div class="day-nav" id="day-nav"></div>
+    <div id="ko-countdown"></div>
     <div id="main-matches">
       <div class="state-msg">Loading&hellip;</div>
     </div>
@@ -2431,6 +2439,7 @@
 
   <!-- ── BRACKET TAB ──────────────────────────────── -->
   <div id="tab-bracket" class="tab-panel hidden">
+    <div id="bk-countdown"></div>
     <div class="bk-legend">
       <span class="bk-legend-item"><span class="bk-legend-dot bk-legend-conf"></span>Confirmed</span>
       <span class="bk-legend-item"><span class="bk-legend-dot bk-legend-pred"></span>Predicted</span>
@@ -2506,6 +2515,7 @@
     let DATA = null;
     let ADMIN = false;
     let _adminScoreSnapshot = null; // KO actual_scores before admin preview
+    let _koCountdownTimer = null;
     let FILTER = 'all';
     let ACTIVE_TAB = 'matches';
     let GROUPS_PLAYER = null;
@@ -2659,8 +2669,10 @@
       if (tab === 'leaderboard') renderLeaderboard();
       if (tab === 'stats') renderStats();
       if (tab === 'groups') renderGroups();
-      if (tab === 'bracket') renderBracket();
+      if (tab === 'bracket') { renderBracket(); startKoCountdown(); }
       if (tab === 'chat') startChat();
+      if (tab !== 'matches' && tab !== 'bracket') stopKoCountdown();
+      else if (tab === 'matches' && MATCHES_VIEW !== 'ko') stopKoCountdown();
     }
 
     // ── Render leaderboard tab ─────────────────────────
@@ -4477,6 +4489,7 @@
       });
       renderNav();
       renderMatches();
+      if (view === 'ko') startKoCountdown(); else stopKoCountdown();
     }
 
     // ── Best column count for pred grid ───────────────
@@ -4716,6 +4729,71 @@
         </div>
         ${bottomHtml}
       </div>`;
+    }
+
+    // ── KO countdown ──────────────────────────────────
+    function koDeadlineMs(dateStr, timeStr) {
+      const [y, mo, d] = dateStr.split('-').map(Number);
+      const [h, mi] = timeStr.split(':').map(Number);
+      return Date.UTC(y, mo - 1, d, h - 3, mi, 0); // UTC+3 → UTC
+    }
+
+    function getNextKoDeadline() {
+      const now = Date.now();
+      for (const stage of KO_STAGES) {
+        let earliest = null;
+        for (const num of stage.nums) {
+          const m = DATA?.matches?.find(x => x.id === num);
+          if (!m?.date || !m?.time) continue;
+          const ms = koDeadlineMs(m.date, m.time);
+          if (earliest === null || ms < earliest) earliest = ms;
+        }
+        if (earliest !== null && earliest > now) return { label: stage.label, deadline: earliest };
+      }
+      return null;
+    }
+
+    function fmtCountdown(ms) {
+      const s = Math.max(0, Math.floor(ms / 1000));
+      const d = Math.floor(s / 86400);
+      const h = Math.floor((s % 86400) / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+      const pad = n => String(n).padStart(2, '0');
+      return (d > 0 ? `${d}d ` : '') + `${pad(h)}h ${pad(m)}m ${pad(sec)}s`;
+    }
+
+    function renderKoCountdown() {
+      const info = getNextKoDeadline();
+      const html = (() => {
+        if (!info) return '';
+        const remaining = info.deadline - Date.now();
+        if (remaining <= 0) return '';
+        return `<div class="ko-countdown-banner">
+          <span class="ko-countdown-icon">⏱</span>
+          <span class="ko-countdown-label">${info.label} predictions close in</span>
+          <span class="ko-countdown-timer">${fmtCountdown(remaining)}</span>
+        </div>`;
+      })();
+      const koEl = document.getElementById('ko-countdown');
+      const bkEl = document.getElementById('bk-countdown');
+      if (koEl) koEl.innerHTML = MATCHES_VIEW === 'ko' ? html : '';
+      if (bkEl) bkEl.innerHTML = ACTIVE_TAB === 'bracket' ? html : '';
+    }
+
+    function startKoCountdown() {
+      if (_koCountdownTimer) return;
+      renderKoCountdown();
+      _koCountdownTimer = setInterval(renderKoCountdown, 1000);
+    }
+
+    function stopKoCountdown() {
+      if (ACTIVE_TAB === 'bracket' || (ACTIVE_TAB === 'matches' && MATCHES_VIEW === 'ko')) return;
+      if (_koCountdownTimer) { clearInterval(_koCountdownTimer); _koCountdownTimer = null; }
+      const koEl = document.getElementById('ko-countdown');
+      const bkEl = document.getElementById('bk-countdown');
+      if (koEl) koEl.innerHTML = '';
+      if (bkEl) bkEl.innerHTML = '';
     }
 
     function renderKoMatches() {
