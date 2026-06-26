@@ -1653,7 +1653,7 @@
             "home": "Japan (18)",
             "away": "Sweden (38)",
             "group": "Group F",
-            "actual_score": null,
+            "actual_score": "1-1",
             "predictions": {
                 "MARC-BORL": "1-2",
                 "MURI TUDOR": "1-2",
@@ -1670,7 +1670,8 @@
                 "MATEI": "3-2",
                 "SONE": "1-1",
                 "CALIN": "1-0"
-            }
+            },
+            "referee": "Ivan Barton"
         },
         {
             "id": 58,
@@ -1681,7 +1682,7 @@
             "home": "Tunisia (45)",
             "away": "Netherlands (7)",
             "group": "Group F",
-            "actual_score": null,
+            "actual_score": "1-3",
             "predictions": {
                 "MARC-BORL": "0-3",
                 "MURI TUDOR": "1-3",
@@ -1698,7 +1699,8 @@
                 "MATEI": "1-3",
                 "SONE": "0-3",
                 "CALIN": "1-5"
-            }
+            },
+            "referee": "Katia García (Mexico)"
         },
         {
             "id": 59,
