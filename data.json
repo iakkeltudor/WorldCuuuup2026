@@ -1769,7 +1769,7 @@
             "home": "Norway (31)",
             "away": "France (1)",
             "group": "Group I",
-            "actual_score": null,
+            "actual_score": "1-4",
             "predictions": {
                 "MARC-BORL": "1-3",
                 "MURI TUDOR": "1-0",
@@ -1786,7 +1786,8 @@
                 "MATEI": "1-2",
                 "SONE": "2-5",
                 "CALIN": "2-0"
-            }
+            },
+            "referee": "Michael Oliver (England)"
         },
         {
             "id": 62,
@@ -1797,7 +1798,7 @@
             "home": "Senegal (14)",
             "away": "Iraq (57)",
             "group": "Group I",
-            "actual_score": null,
+            "actual_score": "5-0",
             "predictions": {
                 "MARC-BORL": "2-0",
                 "MURI TUDOR": "1-0",
@@ -1814,7 +1815,8 @@
                 "MATEI": "4-1",
                 "SONE": "2-0",
                 "CALIN": "1-1"
-            }
+            },
+            "referee": "Anthony Taylor (England)"
         },
         {
             "id": 63,
