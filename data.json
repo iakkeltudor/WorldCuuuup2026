@@ -2144,7 +2144,7 @@
             "time": "00:00",
             "timezone": "UTC+3",
             "venue": "MetLife Stadium, East Rutherford",
-            "home": null,
+            "home": "France",
             "away": null,
             "actual_score": null
         },
@@ -2155,7 +2155,7 @@
             "timezone": "UTC+3",
             "venue": "AT&T Stadium, Arlington",
             "home": "Ivory Coast",
-            "away": null,
+            "away": "Norway",
             "actual_score": null
         },
         {
