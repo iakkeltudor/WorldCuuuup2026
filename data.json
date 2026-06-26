@@ -1711,7 +1711,7 @@
             "home": "Turkey (22)",
             "away": "United States (16)",
             "group": "Group D",
-            "actual_score": null,
+            "actual_score": "3-2",
             "predictions": {
                 "MARC-BORL": "1-2",
                 "MURI TUDOR": "1-1",
@@ -1728,7 +1728,8 @@
                 "MATEI": "1-2",
                 "SONE": "3-3",
                 "CALIN": "2-4"
-            }
+            },
+            "referee": "Mustapha Ghorbal"
         },
         {
             "id": 60,
@@ -1739,7 +1740,7 @@
             "home": "Paraguay (40)",
             "away": "Australia (27)",
             "group": "Group D",
-            "actual_score": null,
+            "actual_score": "0-0",
             "predictions": {
                 "MARC-BORL": "1-1",
                 "MURI TUDOR": "3-2",
@@ -1756,7 +1757,8 @@
                 "MATEI": "0-0",
                 "SONE": "1-2",
                 "CALIN": "3-3"
-            }
+            },
+            "referee": "Clément Turpin (France)"
         },
         {
             "id": 61,
