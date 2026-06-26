@@ -1,4 +1,4 @@
-﻿{
+{
     "admin_password": "mondial2026",
     "players": [
         "MARC-BORL",
@@ -1595,7 +1595,7 @@
             "home": "Curaçao (83)",
             "away": "Ivory Coast (34)",
             "group": "Group E",
-            "actual_score": null,
+            "actual_score": "0-2",
             "predictions": {
                 "MARC-BORL": "0-2",
                 "MURI TUDOR": "1-2",
@@ -1612,7 +1612,8 @@
                 "MATEI": "0-3",
                 "SONE": "0-2",
                 "CALIN": "2-7"
-            }
+            },
+            "referee": "Glenn Nyberg (Sweden)"
         },
         {
             "id": 56,
@@ -1623,7 +1624,7 @@
             "home": "Ecuador (24)",
             "away": "Germany (10)",
             "group": "Group E",
-            "actual_score": null,
+            "actual_score": "2-1",
             "predictions": {
                 "MARC-BORL": "1-3",
                 "MURI TUDOR": "1-1",
@@ -1640,7 +1641,8 @@
                 "MATEI": "1-0",
                 "SONE": "2-2",
                 "CALIN": "0-0"
-            }
+            },
+            "referee": "Tori Penso (USA)"
         },
         {
             "id": 57,
@@ -1651,7 +1653,7 @@
             "home": "Japan (18)",
             "away": "Sweden (38)",
             "group": "Group F",
-            "actual_score": null,
+            "actual_score": "1-1",
             "predictions": {
                 "MARC-BORL": "1-2",
                 "MURI TUDOR": "1-2",
@@ -1668,7 +1670,8 @@
                 "MATEI": "3-2",
                 "SONE": "1-1",
                 "CALIN": "1-0"
-            }
+            },
+            "referee": "Ivan Barton"
         },
         {
             "id": 58,
@@ -1679,7 +1682,7 @@
             "home": "Tunisia (45)",
             "away": "Netherlands (7)",
             "group": "Group F",
-            "actual_score": null,
+            "actual_score": "1-3",
             "predictions": {
                 "MARC-BORL": "0-3",
                 "MURI TUDOR": "1-3",
@@ -1696,7 +1699,8 @@
                 "MATEI": "1-3",
                 "SONE": "0-3",
                 "CALIN": "1-5"
-            }
+            },
+            "referee": "Katia García (Mexico)"
         },
         {
             "id": 59,
@@ -1707,7 +1711,7 @@
             "home": "Turkey (22)",
             "away": "United States (16)",
             "group": "Group D",
-            "actual_score": null,
+            "actual_score": "3-2",
             "predictions": {
                 "MARC-BORL": "1-2",
                 "MURI TUDOR": "1-1",
@@ -1724,7 +1728,8 @@
                 "MATEI": "1-2",
                 "SONE": "3-3",
                 "CALIN": "2-4"
-            }
+            },
+            "referee": "Mustapha Ghorbal"
         },
         {
             "id": 60,
@@ -1735,7 +1740,7 @@
             "home": "Paraguay (40)",
             "away": "Australia (27)",
             "group": "Group D",
-            "actual_score": null,
+            "actual_score": "0-0",
             "predictions": {
                 "MARC-BORL": "1-1",
                 "MURI TUDOR": "3-2",
@@ -1752,7 +1757,8 @@
                 "MATEI": "0-0",
                 "SONE": "1-2",
                 "CALIN": "3-3"
-            }
+            },
+            "referee": "Clément Turpin (France)"
         },
         {
             "id": 61,
@@ -2146,7 +2152,7 @@
             "time": "19:00",
             "timezone": "UTC+3",
             "venue": "AT&T Stadium, Arlington",
-            "home": null,
+            "home": "Ivory Coast",
             "away": null,
             "actual_score": null
         },
