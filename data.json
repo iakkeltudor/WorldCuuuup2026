@@ -1885,7 +1885,7 @@
             "home": "Egypt (28)",
             "away": "Iran (21)",
             "group": "Group G",
-            "actual_score": null,
+            "actual_score": "1-2",
             "predictions": {
                 "MARC-BORL": "2-2",
                 "MURI TUDOR": "2-0",
@@ -1902,7 +1902,8 @@
                 "MATEI": "1-0",
                 "SONE": "3-2",
                 "CALIN": "3-0"
-            }
+            },
+            "referee": "Szymon Marciniak (Poland)"
         },
         {
             "id": 66,
@@ -1913,7 +1914,7 @@
             "home": "New Zealand (85)",
             "away": "Belgium (9)",
             "group": "Group G",
-            "actual_score": null,
+            "actual_score": "1-5",
             "predictions": {
                 "MARC-BORL": "0-3",
                 "MURI TUDOR": "0-3",
@@ -1930,7 +1931,8 @@
                 "MATEI": "0-3",
                 "SONE": "1-4",
                 "CALIN": "0-1"
-            }
+            },
+            "referee": "Adham Makhadmeh (Jordan)"
         },
         {
             "id": 67,
