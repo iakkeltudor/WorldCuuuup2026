@@ -2198,7 +2198,7 @@
             "time": "23:00",
             "timezone": "UTC+3",
             "venue": "Lumen Field, Seattle",
-            "home": null,
+            "home": "Belgium",
             "away": null,
             "actual_score": null
         },
@@ -2218,7 +2218,7 @@
             "time": "22:00",
             "timezone": "UTC+3",
             "venue": "SoFi Stadium, Inglewood",
-            "home": null,
+            "home": "Spain",
             "away": null,
             "actual_score": null
         },
@@ -2239,7 +2239,7 @@
             "timezone": "UTC+3",
             "venue": "Hard Rock Stadium, Miami Gardens",
             "home": "Argentina",
-            "away": null,
+            "away": "Cape Verde",
             "actual_score": null
         },
         {
@@ -2259,7 +2259,7 @@
             "timezone": "UTC+3",
             "venue": "AT&T Stadium, Arlington",
             "home": "Australia",
-            "away": null,
+            "away": "Iran",
             "actual_score": null
         },
         {
