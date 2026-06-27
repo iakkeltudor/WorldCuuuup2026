@@ -2952,14 +2952,10 @@
       // Build match HTML, injecting slot info for R32 matches
       function matchHtml(m) {
         const data = matchById[m.num];
+        // Slot computation gives predicted/confirmed labels from standings
         let hInfo = m.hs ? getSlotInfo(m.hs) : null;
         let aInfo = m.as ? getSlotInfo(m.as) : null;
-        // If data.json has explicit teams for this R32 slot, treat them as confirmed.
-        if (m.hs && data?.home) hInfo = { name: data.home, status: 'confirmed', label: hInfo?.label || '' };
-        if (m.as && data?.away) aInfo = { name: data.away, status: 'confirmed', label: aInfo?.label || '' };
-        // Lazy-write confirmed R32 teams to Firebase
-        if (m.hs && m.as) maybeLazyWriteR32Teams(m.num, hInfo, aInfo);
-        // Pull confirmed teams from Firebase — covers R16+ (no slot) and overrides slot computation for R32
+        // Firebase is the manual source of truth — always wins over standings computation
         const koEntry = KO_DATA[m.num];
         if (koEntry?.home) hInfo = { name: koEntry.home, status: 'confirmed', label: hInfo?.label || '' };
         if (koEntry?.away) aInfo = { name: koEntry.away, status: 'confirmed', label: aInfo?.label || '' };
