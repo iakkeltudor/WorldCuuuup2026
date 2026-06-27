@@ -1943,7 +1943,7 @@
             "home": "Panama (33)",
             "away": "England (4)",
             "group": "Group L",
-            "actual_score": null,
+            "actual_score": "0-2",
             "predictions": {
                 "MARC-BORL": "1-2",
                 "MURI TUDOR": "0-3",
@@ -1960,7 +1960,8 @@
                 "MATEI": "0-3",
                 "SONE": "1-2",
                 "CALIN": "0-2"
-            }
+            },
+            "referee": "Abdulrahman Al Jassim (Qatar)"
         },
         {
             "id": 68,
@@ -1971,7 +1972,7 @@
             "home": "Croatia (11)",
             "away": "Ghana (73)",
             "group": "Group L",
-            "actual_score": null,
+            "actual_score": "2-1",
             "predictions": {
                 "MARC-BORL": "2-2",
                 "MURI TUDOR": "2-1",
@@ -1988,7 +1989,8 @@
                 "MATEI": "2-0",
                 "SONE": "2-2",
                 "CALIN": "3-0"
-            }
+            },
+            "referee": "Drew Fischer (Canada)"
         },
         {
             "id": 69,
