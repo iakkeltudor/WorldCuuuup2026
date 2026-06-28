@@ -4862,7 +4862,10 @@
     }
 
     function winnerPredOpen() {
-      return !DATA?.matches?.find(m => m.id === 104)?.actual_score;
+      const firstKoMs = (DATA?.matches || [])
+        .filter(m => m.id >= 73 && m.date && m.time)
+        .reduce((min, m) => { const ms = koDeadlineMs(m.date, m.time); return min === null || ms < min ? ms : min; }, null);
+      return firstKoMs === null || Date.now() < firstKoMs;
     }
 
     function getAllTeams() {
