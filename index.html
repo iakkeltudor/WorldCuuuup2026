@@ -4992,14 +4992,22 @@
       if (!el) return;
       const actual = WINNER_DATA.actual;
       const isOpen = winnerPredOpen();
+      const myPred = CURRENT_USER ? (WINNER_DATA.predictions?.[CURRENT_USER.playerName] || null) : null;
+      const canSeeAll = !isOpen || !!myPred || !CURRENT_USER;
       const n = DATA.players.length;
       const cols = bestCols(n), colsSm = bestCols(n, 4);
       const subtitle = actual
         ? `🏆 Winner: <strong>${escapeHtml(actual)}</strong> ${_winnerFlagImg(actual)}`
         : isOpen ? '· predictions open' : '· waiting for result';
+      const bodyHtml = canSeeAll
+        ? `<div class="pred-grid" style="--pred-cols:${cols};--pred-cols-sm:${colsSm};margin-top:8px">${_winnerPickCols(false)}</div>`
+        : `<div class="ko-pred-gate" onclick="showTab('matches');setMatchesView('ko')" style="border-radius:8px;margin-top:8px">
+            <span class="ko-pred-gate-icon">🏆</span>
+            <span class="ko-pred-gate-text">Pick your champion in the Knockout tab to see everyone's predictions</span>
+           </div>`;
       el.innerHTML = `<div class="winner-summary-wrap">
         <div class="winner-summary-title">Tournament winner picks <span class="winner-summary-sub">${subtitle}</span></div>
-        <div class="pred-grid" style="--pred-cols:${cols};--pred-cols-sm:${colsSm};margin-top:8px">${_winnerPickCols(false)}</div>
+        ${bodyHtml}
       </div>`;
     }
 
