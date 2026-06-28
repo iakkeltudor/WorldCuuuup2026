@@ -59,6 +59,32 @@ function fetchJson(url, headers) {
   });
 }
 
+function firebasePatch(path, data) {
+  return new Promise((resolve, reject) => {
+    const url = new URL(`${FIREBASE_DB_URL}${path}.json`);
+    const body = JSON.stringify(data);
+    const options = {
+      hostname: url.hostname,
+      path: url.pathname + url.search,
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body),
+      },
+    };
+    const req = https.request(options, res => {
+      res.resume();
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) resolve();
+        else reject(new Error(`Firebase PATCH ${path} → HTTP ${res.statusCode}`));
+      });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
+
 async function main() {
   const token = process.env.FOOTBALL_API_KEY;
 
@@ -74,6 +100,7 @@ async function main() {
   let updatedCount = 0;
   let cleanedCount = 0;
   let teamsUpdatedCount = 0;
+  let qualifiersUpdatedCount = 0;
 
   // ── Step 1: populate null home/away on KO stubs from Firebase ──────────────
   console.log('Fetching KO team assignments from Firebase...');
@@ -143,7 +170,11 @@ async function main() {
 
     if (!found) continue;
 
-    const { home, away } = found.score.fullTime;
+    // KO matches: use regularTime (90-min score) so draw+pens stores "1-1" not "7-6"
+    // regularTime only appears in the API response when duration is EXTRA_TIME or PENALTY_SHOOTOUT
+    const isKo = match.id >= 73;
+    const scoreSource = (isKo && found.score.regularTime) ? found.score.regularTime : found.score.fullTime;
+    const { home, away } = scoreSource;
     if (home === null || away === null) {
       console.log(`  Match ${match.id}: ${match.home} vs ${match.away} — FINISHED but score not yet populated`);
       continue;
@@ -153,6 +184,22 @@ async function main() {
       match.actual_score = `${home}-${away}`;
       console.log(`  Match ${match.id}: ${match.home} vs ${match.away} → ${match.actual_score}`);
       updatedCount++;
+    }
+
+    // KO matches: auto-set qualifier in Firebase when 90-min result is a draw
+    if (isKo && home === away && found.score.winner && found.score.winner !== 'DRAW') {
+      const qualifier = found.score.winner === 'HOME_TEAM' ? 'home' : 'away';
+      const existingQual = koFirebase[match.id]?.qualifier;
+      if (existingQual !== qualifier) {
+        try {
+          await firebasePatch(`/ko_matches/${match.id}`, { qualifier });
+          koFirebase[match.id] = { ...(koFirebase[match.id] || {}), qualifier };
+          console.log(`  Match ${match.id}: qualifier set to "${qualifier}" (${found.score.duration})`);
+          qualifiersUpdatedCount++;
+        } catch (err) {
+          console.warn(`  Match ${match.id}: failed to write qualifier — ${err.message}`);
+        }
+      }
     }
 
     if (!match.referee) {
@@ -175,6 +222,10 @@ async function main() {
     );
   } else {
     console.log('\nNo changes — data.json unchanged.');
+  }
+
+  if (qualifiersUpdatedCount > 0) {
+    console.log(`Firebase: ${qualifiersUpdatedCount} KO qualifier(s) written.`);
   }
 }
 

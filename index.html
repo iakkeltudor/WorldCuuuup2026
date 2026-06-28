@@ -4964,7 +4964,7 @@
             <span class="ko-pred-gate-icon">🏆</span>
             <span class="ko-pred-gate-text">Pick your champion to see everyone's predictions</span>
            </div>`
-        : `<div class="pred-grid" style="--pred-cols:${cols};--pred-cols-sm:${colsSm}">${_winnerPickCols()}</div>`;
+        : `<div class="pred-grid" style="--pred-cols:${cols};--pred-cols-sm:${colsSm}">${_winnerPickCols(false)}</div>`;
       const myPickBtn = myPred
         ? `<button class="winner-change-btn" onclick="event.stopPropagation();showWinnerModal()">${_winnerFlagImg(myPred)}${escapeHtml(myPred)}${isOpen ? ' <span style="opacity:.5;font-size:.8rem">· change</span>' : ''}</button>`
         : '';
@@ -5089,7 +5089,13 @@
 
       if (hasKoToday || (hasUpcomingKo && !hasGroupToday)) {
         setMatchesView('ko');
-        if (hasKoToday) setFilter(today);
+        if (hasKoToday) {
+          setFilter(today);
+          setTimeout(() => {
+            const firstMatch = document.querySelector('#main-matches .match-card:not(.winner-pred-card)');
+            if (firstMatch) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 80);
+        }
       } else {
         renderNav();
         renderMatches();
