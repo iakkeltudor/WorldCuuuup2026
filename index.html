@@ -1540,6 +1540,37 @@
       color: var(--text3);
     }
 
+    /* ── WINNER PREDICTION ─────────────────────────────── */
+    .winner-pred-card {
+      border-color: rgba(255,200,50,.25);
+      background: linear-gradient(135deg, var(--card) 0%, rgba(255,200,50,.04) 100%);
+      margin-bottom: 16px;
+    }
+    .winner-card-title { font-size:1rem; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .winner-actual { font-size:.95rem; color:var(--green); margin:4px 0; }
+    .winner-change-btn {
+      background:var(--card2); border:1px solid var(--border); border-radius:8px;
+      padding:5px 10px; color:var(--text); font-size:.88rem; cursor:pointer; margin-top:4px;
+    }
+    .winner-change-btn:hover { opacity:.8; }
+    .winner-team-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+      gap:6px; max-height:280px; overflow-y:auto; padding:2px;
+    }
+    .winner-team-btn {
+      display:flex; align-items:center; gap:6px; padding:7px 10px;
+      background:var(--card2); border:1px solid var(--border); border-radius:8px;
+      color:var(--text); font-size:.85rem; cursor:pointer; text-align:left;
+    }
+    .winner-team-btn:hover { opacity:.8; }
+    .winner-team-btn.active { border-color:var(--accent); color:var(--accent); background:rgba(99,102,241,.12); }
+    .winner-summary-wrap {
+      margin:12px 0 16px; padding:14px 16px;
+      background:var(--card); border:1px solid var(--border); border-radius:12px;
+    }
+    .winner-summary-title { font-size:.9rem; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .winner-summary-sub { font-weight:400; color:var(--text2); margin-left:4px; }
+
     /* ── LEADERBOARD TAB ──────────────────────────────── */
     #main-leaderboard {
       max-width: 900px;
@@ -2397,6 +2428,7 @@
         </div>
       </div>
       <div class="stats-row" id="stats-row"></div>
+      <div id="winner-summary"></div>
       <div class="table-wrap">
         <table class="league-table">
           <thead>
@@ -2521,6 +2553,7 @@
     let GROUPS_PLAYER = null;
     let GROUPS_MODE = 'pure';
     let KO_DATA = {}; // matchNum → { home, away, predictions: { player: score } }
+    let WINNER_DATA = { predictions: {}, actual: null }; // tournament winner predictions
     let MATCHES_VIEW = 'group'; // 'group' | 'ko'
     let LB_DATE = null; // null = live (all scored matches); 'YYYY-MM-DD' = show standings up to that day
     const CHAT_DB_URL = 'https://worldcuuuup-9a603-default-rtdb.europe-west1.firebasedatabase.app';
@@ -2670,6 +2703,9 @@
             else wrong++;
           }
         });
+        if (!LB_DATE && WINNER_DATA.actual && WINNER_DATA.predictions?.[player] === WINNER_DATA.actual) {
+          pts += 5;
+        }
         const ppg = played > 0 ? (pts / played).toFixed(1) : '—';
         return { player, pts, exact, ocount, wrong, played, ppg };
       }).sort((a, b) => b.pts - a.pts || b.exact - a.exact || b.ocount - a.ocount);
@@ -3687,6 +3723,7 @@
     function renderLeaderboard() {
       renderLbTimeline();
       renderStatCards();
+      renderWinnerSummary();
       renderLeagueTable();
     }
 
@@ -4754,7 +4791,7 @@
       const groups = byDateKo();
       const dates = Object.keys(groups).sort();
       const visible = FILTER === 'all' ? dates : dates.filter(d => d === FILTER);
-      document.getElementById('main-matches').innerHTML = visible.map(d => {
+      document.getElementById('main-matches').innerHTML = renderWinnerCard() + visible.map(d => {
         const normHour = t => { const h = parseInt((t || '0').split(':')[0], 10); return h < 12 ? h + 24 : h; };
         const sorted = groups[d].slice().sort((a, b) => normHour(a.time) - normHour(b.time) || (a.time || '').localeCompare(b.time || ''));
         return `<div class="day-section">
@@ -4812,6 +4849,158 @@
       if (predEl) predEl.innerHTML = buildKoPredCols(matchNum, actualScore);
       if (ACTIVE_TAB === 'leaderboard') renderLeaderboard();
       renderMatches();
+    }
+
+    async function loadWinnerData() {
+      try {
+        const res = await fetch(`${CHAT_DB_URL}/winner.json`);
+        if (res.ok) {
+          const d = await res.json();
+          if (d) { WINNER_DATA = d; if (!WINNER_DATA.predictions) WINNER_DATA.predictions = {}; }
+        }
+      } catch {}
+    }
+
+    function winnerPredOpen() {
+      return !DATA?.matches?.find(m => m.id === 104)?.actual_score;
+    }
+
+    function getAllTeams() {
+      const s = new Set();
+      for (let num = 73; num <= 88; num++) {
+        const entry = KO_DATA[num] || {};
+        if (entry.home) s.add(parseTeam(entry.home).name);
+        if (entry.away) s.add(parseTeam(entry.away).name);
+      }
+      return [...s].sort();
+    }
+
+    async function saveWinnerPred(team) {
+      if (!auth.currentUser || !CURRENT_USER?.playerName) return;
+      const player = CURRENT_USER.playerName;
+      WINNER_DATA.predictions = WINNER_DATA.predictions || {};
+      WINNER_DATA.predictions[player] = team;
+      try {
+        const token = await auth.currentUser.getIdToken();
+        await fetch(`${CHAT_DB_URL}/winner/predictions/${encodeURIComponent(player)}.json?auth=${token}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(team)
+        });
+      } catch {}
+      document.getElementById('match-modal').classList.add('hidden');
+      if (MATCHES_VIEW === 'ko') renderKoMatches();
+      if (ACTIVE_TAB === 'leaderboard') renderLeaderboard();
+    }
+
+    async function setTournamentWinner(team) {
+      WINNER_DATA.actual = team || null;
+      try {
+        const token = await auth.currentUser.getIdToken();
+        await fetch(`${CHAT_DB_URL}/winner/actual.json?auth=${token}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(team || null)
+        });
+      } catch {}
+      if (MATCHES_VIEW === 'ko') renderKoMatches();
+      if (ACTIVE_TAB === 'leaderboard') renderLeaderboard();
+    }
+
+    function showWinnerModal() {
+      if (!CURRENT_USER) return;
+      const teams = getAllTeams();
+      const myPred = WINNER_DATA.predictions?.[CURRENT_USER.playerName];
+      const flagImg = name => { const c = FLAGS[name]; return c ? `<img src="https://flagcdn.com/w20/${c}.png" alt="${escapeHtml(name)}" loading="lazy" style="width:16px;vertical-align:middle;border-radius:2px;margin-right:4px">` : ''; };
+      document.getElementById('modal-content').innerHTML = `
+        <div class="m-id">Tournament Prediction</div>
+        <div class="m-vs">🏆 Who wins the World Cup?</div>
+        ${myPred ? `<div class="ko-my-pred" style="margin:8px 0">Your pick: ${flagImg(myPred)}<strong>${escapeHtml(myPred)}</strong></div>` : ''}
+        <input type="text" id="winner-search" placeholder="Search team…" oninput="filterWinnerTeams(this.value)"
+          style="width:100%;box-sizing:border-box;padding:8px 10px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;margin:8px 0">
+        <div class="winner-team-grid" id="winner-team-grid">
+          ${teams.map(t => `<button class="winner-team-btn${myPred === t ? ' active' : ''}" onclick="saveWinnerPred('${escapeHtml(t)}')">${flagImg(t)}<span>${escapeHtml(t)}</span></button>`).join('')}
+        </div>`;
+      document.getElementById('match-modal').classList.remove('hidden');
+    }
+
+    function filterWinnerTeams(q) {
+      const lower = q.toLowerCase();
+      document.querySelectorAll('#winner-team-grid .winner-team-btn').forEach(btn => {
+        btn.style.display = (btn.textContent || '').toLowerCase().includes(lower) ? '' : 'none';
+      });
+    }
+
+    function _winnerFlagImg(name) {
+      const c = FLAGS[name];
+      return c ? `<img src="https://flagcdn.com/w20/${c}.png" alt="${escapeHtml(name)}" loading="lazy" style="width:14px;vertical-align:middle;border-radius:2px;margin-right:3px">` : '';
+    }
+
+    function _winnerPickCols(useNickname = true) {
+      const actual = WINNER_DATA.actual;
+      return DATA.players.map(player => {
+        const pred = WINNER_DATA.predictions?.[player] || null;
+        const cls = !actual ? 'st-pending' : pred === actual ? 'st-exact' : 'st-wrong';
+        const isMe = player === CURRENT_USER?.playerName;
+        const mine = isMe ? ' pred-col-mine' : '';
+        const pts = actual && pred === actual ? `<span class="pred-col-pts">+5</span>` : '';
+        const scoreHtml = pred
+          ? `<span class="pred-col-score" style="font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">${_winnerFlagImg(pred)}${escapeHtml(pred)}</span>`
+          : `<span class="pred-col-score" style="color:var(--text3)">—</span>`;
+        const displayName = useNickname ? dn(player) : player;
+        return `<div class="pred-col ${cls}${mine}" title="${escapeHtml(player)}: ${pred || 'no pick'}">
+          <span class="pred-col-name">${escapeHtml(displayName)}</span>
+          ${scoreHtml}${pts}
+        </div>`;
+      }).join('');
+    }
+
+    function renderWinnerCard() {
+      const myPlayer = CURRENT_USER?.playerName;
+      const myPred = myPlayer ? (WINNER_DATA.predictions?.[myPlayer] || null) : null;
+      const actual = WINNER_DATA.actual;
+      const isOpen = winnerPredOpen();
+      const canSeeAll = !isOpen || !!myPred || !CURRENT_USER;
+      const n = DATA.players.length;
+      const cols = bestCols(n), colsSm = bestCols(n, 4);
+      const bottomHtml = !canSeeAll
+        ? `<div class="ko-pred-gate" onclick="showWinnerModal()">
+            <span class="ko-pred-gate-icon">🏆</span>
+            <span class="ko-pred-gate-text">Pick your champion to see everyone's predictions</span>
+           </div>`
+        : `<div class="pred-grid" style="--pred-cols:${cols};--pred-cols-sm:${colsSm}">${_winnerPickCols()}</div>`;
+      const myPickBtn = myPred
+        ? `<button class="winner-change-btn" onclick="event.stopPropagation();showWinnerModal()">${_winnerFlagImg(myPred)}${escapeHtml(myPred)}${isOpen ? ' <span style="opacity:.5;font-size:.8rem">· change</span>' : ''}</button>`
+        : '';
+      const actualHtml = actual ? `<div class="winner-actual">🏆 Winner: <strong>${escapeHtml(actual)}</strong> ${_winnerFlagImg(actual)}</div>` : '';
+      const adminHtml = ADMIN ? `<div class="ko-qualifier-section" style="margin-top:6px">
+        <div class="ko-qualifier-label">Set tournament winner</div>
+        <input class="score-input" type="text" placeholder="Team name" value="${escapeHtml(actual || '')}"
+          onclick="event.stopPropagation()" onchange="setTournamentWinner(this.value.trim() || null)">
+      </div>` : '';
+      return `<div class="match-card winner-pred-card">
+        <div class="card-top">
+          <span class="group-tag ko-tag-fin">World Cup</span>
+          <span class="card-meta">${isOpen ? '<span style="color:var(--accent)">Predictions open</span>' : 'Predictions closed'}</span>
+        </div>
+        <div class="card-body">
+          <div class="winner-card-title">🏆 Who wins the tournament?</div>
+          ${actualHtml}${myPickBtn}${adminHtml}
+        </div>
+        ${bottomHtml}
+      </div>`;
+    }
+
+    function renderWinnerSummary() {
+      const el = document.getElementById('winner-summary');
+      if (!el) return;
+      const actual = WINNER_DATA.actual;
+      const isOpen = winnerPredOpen();
+      const n = DATA.players.length;
+      const cols = bestCols(n), colsSm = bestCols(n, 4);
+      const subtitle = actual
+        ? `🏆 Winner: <strong>${escapeHtml(actual)}</strong> ${_winnerFlagImg(actual)}`
+        : isOpen ? '· predictions open' : '· waiting for result';
+      el.innerHTML = `<div class="winner-summary-wrap">
+        <div class="winner-summary-title">Tournament winner picks <span class="winner-summary-sub">${subtitle}</span></div>
+        <div class="pred-grid" style="--pred-cols:${cols};--pred-cols-sm:${colsSm};margin-top:8px">${_winnerPickCols(false)}</div>
+      </div>`;
     }
 
     async function clearKoTeam(matchNum, side) {
@@ -4889,13 +5078,23 @@
 
       await loadNicknames();
       await loadKoData();
+      await loadWinnerData();
       lazyWriteKoProgressions();
       updateProgress();
-      renderNav();
-      renderMatches();
 
       const today = new Date().toISOString().slice(0, 10);
-      if (DATA.matches.some(m => sessionDate(m) === today)) setFilter(today);
+      const hasKoToday = DATA.matches.some(m => m.id >= 73 && sessionDate(m) === today);
+      const hasUpcomingKo = DATA.matches.some(m => m.id >= 73 && !m.actual_score);
+      const hasGroupToday = DATA.matches.some(m => m.id < 73 && sessionDate(m) === today);
+
+      if (hasKoToday || (hasUpcomingKo && !hasGroupToday)) {
+        setMatchesView('ko');
+        if (hasKoToday) setFilter(today);
+      } else {
+        renderNav();
+        renderMatches();
+        if (hasGroupToday) setFilter(today);
+      }
     }
 
     // ── Auth is initialized first; init() is called from onAuthStateChanged ──
