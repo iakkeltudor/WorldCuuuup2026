@@ -2116,7 +2116,8 @@
             "venue": "SoFi Stadium, Inglewood",
             "home": "South Africa",
             "away": "Canada",
-            "actual_score": null
+            "actual_score": "0-1",
+            "referee": "João Pinheiro (Portugal)"
         },
         {
             "id": 74,
