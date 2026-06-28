@@ -1943,7 +1943,7 @@
             "home": "Panama (33)",
             "away": "England (4)",
             "group": "Group L",
-            "actual_score": null,
+            "actual_score": "0-2",
             "predictions": {
                 "MARC-BORL": "1-2",
                 "MURI TUDOR": "0-3",
@@ -1960,7 +1960,8 @@
                 "MATEI": "0-3",
                 "SONE": "1-2",
                 "CALIN": "0-2"
-            }
+            },
+            "referee": "Abdulrahman Al Jassim (Qatar)"
         },
         {
             "id": 68,
@@ -1971,7 +1972,7 @@
             "home": "Croatia (11)",
             "away": "Ghana (73)",
             "group": "Group L",
-            "actual_score": null,
+            "actual_score": "2-1",
             "predictions": {
                 "MARC-BORL": "2-2",
                 "MURI TUDOR": "2-1",
@@ -1988,7 +1989,8 @@
                 "MATEI": "2-0",
                 "SONE": "2-2",
                 "CALIN": "3-0"
-            }
+            },
+            "referee": "Drew Fischer (Canada)"
         },
         {
             "id": 69,
@@ -1999,7 +2001,7 @@
             "home": "Colombia (13)",
             "away": "Portugal (5)",
             "group": "Group K",
-            "actual_score": null,
+            "actual_score": "0-0",
             "predictions": {
                 "MARC-BORL": "1-2",
                 "MURI TUDOR": "2-2",
@@ -2016,7 +2018,8 @@
                 "MATEI": "0-2",
                 "SONE": "1-3",
                 "CALIN": "1-4"
-            }
+            },
+            "referee": "Alireza Faghani (Iran)"
         },
         {
             "id": 70,
@@ -2027,7 +2030,7 @@
             "home": "DR Congo (46)",
             "away": "Uzbekistan (50)",
             "group": "Group K",
-            "actual_score": null,
+            "actual_score": "3-1",
             "predictions": {
                 "MARC-BORL": "2-1",
                 "MURI TUDOR": "1-1",
@@ -2044,7 +2047,8 @@
                 "MATEI": "2-2",
                 "SONE": "2-1",
                 "CALIN": "2-2"
-            }
+            },
+            "referee": "Felix Zwayer (Germany)"
         },
         {
             "id": 71,
@@ -2055,7 +2059,7 @@
             "home": "Algeria (29)",
             "away": "Austria (23)",
             "group": "Group J",
-            "actual_score": null,
+            "actual_score": "3-3",
             "predictions": {
                 "MARC-BORL": "2-1",
                 "MURI TUDOR": "1-3",
@@ -2072,7 +2076,8 @@
                 "MATEI": "0-0",
                 "SONE": "2-2",
                 "CALIN": "3-4"
-            }
+            },
+            "referee": "Il'giz Tantashev (Uzbekistan)"
         },
         {
             "id": 72,
@@ -2083,7 +2088,7 @@
             "home": "Jordan (63)",
             "away": "Argentina (3)",
             "group": "Group J",
-            "actual_score": null,
+            "actual_score": "1-3",
             "predictions": {
                 "MARC-BORL": "0-4",
                 "MURI TUDOR": "0-5",
@@ -2100,7 +2105,8 @@
                 "MATEI": "1-3",
                 "SONE": "0-1",
                 "CALIN": "1-3"
-            }
+            },
+            "referee": "István Kovács (Romania)"
         },
         {
             "id": 73,
