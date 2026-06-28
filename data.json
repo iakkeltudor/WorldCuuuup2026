@@ -1,4 +1,4 @@
-﻿{
+{
     "admin_password": "mondial2026",
     "players": [
         "MARC BRL",
@@ -2185,7 +2185,7 @@
             "timezone": "UTC+3",
             "venue": "Mercedes-Benz Stadium, Atlanta",
             "home": "England",
-            "away": null,
+            "away": "DR Congo",
             "actual_score": null
         },
         {
@@ -2205,7 +2205,7 @@
             "timezone": "UTC+3",
             "venue": "Lumen Field, Seattle",
             "home": "Belgium",
-            "away": null,
+            "away": "Senegal",
             "actual_score": null
         },
         {
@@ -2214,8 +2214,8 @@
             "time": "02:00",
             "timezone": "UTC+3",
             "venue": "BMO Field, Toronto",
-            "home": null,
-            "away": null,
+            "home": "Portugal",
+            "away": "Croatia",
             "actual_score": null
         },
         {
@@ -2225,7 +2225,7 @@
             "timezone": "UTC+3",
             "venue": "SoFi Stadium, Inglewood",
             "home": "Spain",
-            "away": null,
+            "away": "Austria",
             "actual_score": null
         },
         {
@@ -2235,7 +2235,7 @@
             "timezone": "UTC+3",
             "venue": "BC Place, Vancouver",
             "home": "Switzerland",
-            "away": null,
+            "away": "Algeria",
             "actual_score": null
         },
         {
@@ -2254,8 +2254,8 @@
             "time": "03:30",
             "timezone": "UTC+3",
             "venue": "Arrowhead Stadium, Kansas City",
-            "home": null,
-            "away": null,
+            "home": "Colombia",
+            "away": "Ghana",
             "actual_score": null
         },
         {
