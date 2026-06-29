@@ -2619,6 +2619,25 @@
       if (h !== a) return h > a ? 'home' : 'away';
       return KO_DATA[matchNum]?.qualifier || null;
     }
+    // Unified helpers — work for both group (m.id < 73) and KO matches
+    function getMatchPred(match, player) {
+      if (match.id < 73) return match.predictions?.[player] || null;
+      return KO_DATA[match.id]?.predictions?.[player] || null;
+    }
+    function getMatchScorePts(match, player) {
+      const pred = getMatchPred(match, player);
+      if (!pred || !match.actual_score) return null;
+      if (match.id < 73) return calcPts(pred, match.actual_score);
+      const { score } = parseKoPred(pred);
+      return score ? calcPts(score, match.actual_score) : null;
+    }
+    function getMatchPredOutcome(match, player) {
+      const pred = getMatchPred(match, player);
+      if (!pred) return null;
+      const scorePart = match.id < 73 ? pred : (parseKoPred(pred).score || pred);
+      return scorePart && scorePart.includes('-') ? outcome(scorePart.trim()) : null;
+    }
+
     function stateClass(pts) {
       if (pts === null) return 'st-pending';
       if (pts === 3) return 'st-exact';
@@ -2713,9 +2732,10 @@
 
     function getForm(player) {
       return DATA.matches
-        .filter(m => m.actual_score && m.predictions[player] && (!LB_DATE || m.date <= LB_DATE))
+        .filter(m => m.actual_score && getMatchPred(m, player) && (!LB_DATE || m.date <= LB_DATE))
+        .sort((a, b) => (a.date + (a.time || '')) < (b.date + (b.time || '')) ? -1 : 1)
         .slice(-5)
-        .map(m => calcPts(m.predictions[player], m.actual_score));
+        .map(m => getMatchScorePts(m, player));
     }
     function renderFormDots(form) {
       if (!form.length) return '<span class="form-empty">—</span>';
@@ -3733,7 +3753,7 @@
       const played = DATA.matches.filter(m => m.actual_score);
 
       const sorted = [...played].sort((a, b) =>
-        (a.date + a.time) < (b.date + b.time) ? -1 : 1
+        (a.date + (a.time || '')) < (b.date + (b.time || '')) ? -1 : 1
       );
 
       const st = {};
@@ -3746,9 +3766,8 @@
       for (const p of players) {
         let cur = 0, longest = 0, cold = 0;
         for (const m of sorted) {
-          const pred = m.predictions[p];
-          if (!pred) continue;
-          const pts = calcPts(pred, m.actual_score);
+          const pts = getMatchScorePts(m, p);
+          if (pts === null) continue;
           if (pts >= 1) { cur++; cold = 0; if (cur > longest) longest = cur; }
           else { cold++; cur = 0; }
         }
@@ -3768,11 +3787,11 @@
       for (const p of players) {
         let perfect = 0;
         for (const matches of Object.values(dayGroups)) {
-          const hasPred = matches.some(m => m.predictions[p]);
+          const hasPred = matches.some(m => getMatchPred(m, p));
           if (!hasPred) continue;
           const allRight = matches.every(m => {
-            const pred = m.predictions[p];
-            return pred && calcPts(pred, m.actual_score) >= 1;
+            const pts = getMatchScorePts(m, p);
+            return pts !== null && pts >= 1;
           });
           if (allRight) perfect++;
         }
@@ -3785,8 +3804,8 @@
         let totalPts = 0;
         for (const m of matches) {
           for (const p of players) {
-            const pred = m.predictions[p];
-            if (pred) totalPts += calcPts(pred, m.actual_score) || 0;
+            const pts = getMatchScorePts(m, p);
+            if (pts !== null) totalPts += pts;
           }
         }
         if (!biggestMatchday || totalPts > biggestMatchday.totalPts) {
@@ -3796,8 +3815,8 @@
 
       // Teamkill matches: every player with a prediction scored 0
       const teamkills = played.filter(m => {
-        const active = players.filter(p => m.predictions[p]);
-        return active.length > 0 && active.every(p => calcPts(m.predictions[p], m.actual_score) === 0);
+        const active = players.filter(p => getMatchPred(m, p));
+        return active.length > 0 && active.every(p => getMatchScorePts(m, p) === 0);
       });
 
       // Per-match pass: upsets + lone wolf + basic counters
@@ -3809,9 +3828,9 @@
         const counts = { H: 0, D: 0, A: 0 };
         let total = 0;
         for (const p of players) {
-          const pred = m.predictions[p];
-          if (!pred) continue;
-          counts[outcome(pred.trim())]++;
+          const predOut = getMatchPredOutcome(m, p);
+          if (!predOut) continue;
+          counts[predOut]++;
           total++;
         }
         const majorOut = ['H', 'D', 'A'].reduce((a, b) => counts[a] >= counts[b] ? a : b);
@@ -3819,23 +3838,27 @@
 
         // lone wolf: exactly one player predicted the correct outcome
         const correctCallers = players.filter(p => {
-          const pred = m.predictions[p];
-          return pred && calcPts(pred, actual) >= 1;
+          const pts = getMatchScorePts(m, p);
+          return pts !== null && pts >= 1;
         });
         const isLoneWolf = correctCallers.length === 1;
 
         for (const p of players) {
-          const pred = m.predictions[p];
+          const pred = getMatchPred(m, p);
           if (!pred) continue;
-          const pts = calcPts(pred, actual);
+          const pts = getMatchScorePts(m, p);
+          if (pts === null) continue;
           if (pts === 3) st[p].exact++;
           if (pts >= 1) st[p].outcomes++;
-          if (isUpset && outcome(pred.trim()) === actualOut) st[p].upsets++;
+          if (isUpset && getMatchPredOutcome(m, p) === actualOut) st[p].upsets++;
           if (isLoneWolf && correctCallers[0] === p) st[p].loneWolf++;
           if (pts === 0) {
-            const [ph, pa] = pred.trim().split('-').map(Number);
-            const [ah, aa] = actual.split('-').map(Number);
-            if (Math.abs(ph - ah) + Math.abs(pa - aa) === 1) st[p].closeCall++;
+            const scorePart = m.id < 73 ? pred : (parseKoPred(pred).score || pred);
+            if (scorePart && scorePart.includes('-')) {
+              const [ph, pa] = scorePart.trim().split('-').map(Number);
+              const [ah, aa] = actual.split('-').map(Number);
+              if (Math.abs(ph - ah) + Math.abs(pa - aa) === 1) st[p].closeCall++;
+            }
           }
         }
       }
@@ -4039,21 +4062,21 @@
     // ── Stat detail modal ──────────────────────────────
     function getStatMatches(player, statKey) {
       const allPlayed = DATA.matches.filter(m => m.actual_score);
-      const pPlayed = allPlayed.filter(m => m.predictions[player]);
-      const sorted = [...pPlayed].sort((a, b) => (a.date + a.time) < (b.date + b.time) ? -1 : 1);
+      const pPlayed = allPlayed.filter(m => getMatchPred(m, player));
+      const sorted = [...pPlayed].sort((a, b) => (a.date + (a.time || '')) < (b.date + (b.time || '')) ? -1 : 1);
       const players = DATA.players;
 
       switch (statKey) {
         case 'exact':
-          return sorted.filter(m => calcPts(m.predictions[player], m.actual_score) === 3);
+          return sorted.filter(m => getMatchScorePts(m, player) === 3);
 
         case 'outcomes':
-          return sorted.filter(m => calcPts(m.predictions[player], m.actual_score) >= 1);
+          return sorted.filter(m => getMatchScorePts(m, player) >= 1);
 
         case 'streak': {
           let cur = [], longest = [];
           for (const m of sorted) {
-            if (calcPts(m.predictions[player], m.actual_score) >= 1) {
+            if (getMatchScorePts(m, player) >= 1) {
               cur.push(m);
               if (cur.length > longest.length) longest = [...cur];
             } else { cur = []; }
@@ -4064,7 +4087,7 @@
         case 'currentStreak': {
           const streak = [];
           for (let i = sorted.length - 1; i >= 0; i--) {
-            if (calcPts(sorted[i].predictions[player], sorted[i].actual_score) >= 1)
+            if (getMatchScorePts(sorted[i], player) >= 1)
               streak.unshift(sorted[i]);
             else break;
           }
@@ -4074,7 +4097,7 @@
         case 'coldStreak': {
           const streak = [];
           for (let i = sorted.length - 1; i >= 0; i--) {
-            if (calcPts(sorted[i].predictions[player], sorted[i].actual_score) === 0)
+            if (getMatchScorePts(sorted[i], player) === 0)
               streak.unshift(sorted[i]);
             else break;
           }
@@ -4083,12 +4106,13 @@
 
         case 'upsets':
           return sorted.filter(m => {
-            if (calcPts(m.predictions[player], m.actual_score) < 1) return false;
+            if (getMatchScorePts(m, player) < 1) return false;
             const actualOut = outcome(m.actual_score);
             const counts = { H: 0, D: 0, A: 0 }; let total = 0;
             for (const p of players) {
-              if (!m.predictions[p]) continue;
-              counts[outcome(m.predictions[p].trim())]++; total++;
+              const predOut = getMatchPredOutcome(m, p);
+              if (!predOut) continue;
+              counts[predOut]++; total++;
             }
             const majorOut = ['H', 'D', 'A'].reduce((a, b) => counts[a] >= counts[b] ? a : b);
             return total > 0 && majorOut !== actualOut;
@@ -4096,16 +4120,18 @@
 
         case 'loneWolf':
           return sorted.filter(m => {
-            if (calcPts(m.predictions[player], m.actual_score) < 1) return false;
-            const correct = players.filter(p => m.predictions[p] && calcPts(m.predictions[p], m.actual_score) >= 1);
+            if (getMatchScorePts(m, player) < 1) return false;
+            const correct = players.filter(p => getMatchScorePts(m, p) >= 1);
             return correct.length === 1;
           });
 
         case 'closeCall':
           return sorted.filter(m => {
-            const pred = m.predictions[player];
-            if (!pred || calcPts(pred, m.actual_score) !== 0) return false;
-            const [ph, pa] = pred.trim().split('-').map(Number);
+            const pred = getMatchPred(m, player);
+            if (!pred || getMatchScorePts(m, player) !== 0) return false;
+            const scorePart = m.id < 73 ? pred : (parseKoPred(pred).score || pred);
+            if (!scorePart || !scorePart.includes('-')) return false;
+            const [ph, pa] = scorePart.trim().split('-').map(Number);
             const [ah, aa] = m.actual_score.split('-').map(Number);
             return Math.abs(ph - ah) + Math.abs(pa - aa) === 1;
           });
@@ -4116,12 +4142,12 @@
           const result = [];
           for (const matches of Object.values(dayGroups)) {
             const isPerfect = matches.every(m => {
-              const pred = m.predictions[player];
-              return pred && calcPts(pred, m.actual_score) >= 1;
+              const pts = getMatchScorePts(m, player);
+              return pts !== null && pts >= 1;
             });
             if (isPerfect) result.push(...matches);
           }
-          return result.sort((a, b) => (a.date + a.time) < (b.date + b.time) ? -1 : 1);
+          return result.sort((a, b) => (a.date + (a.time || '')) < (b.date + (b.time || '')) ? -1 : 1);
         }
 
         default: return [];
@@ -4156,11 +4182,11 @@
           const ht = parseTeam(m.home);
           const at = parseTeam(m.away);
           let predBadge = '';
-          if (player && m.predictions[player]) {
-            const pts = calcPts(m.predictions[player], m.actual_score);
-            const pred = m.predictions[player];
-            const cls = pts === 3 ? 'exact' : pts === 1 ? 'outcome' : 'wrong';
-            const lbl = pts === 3 ? `⚡ ${pred}  +3 pts` : pts === 1 ? `✓ ${pred}  +1 pt` : `✗ ${pred}  +0 pts`;
+          if (player && getMatchPred(m, player)) {
+            const pred = getMatchPred(m, player);
+            const pts = getMatchScorePts(m, player);
+            const cls = pts === 3 ? 'exact' : pts >= 1 ? 'outcome' : 'wrong';
+            const lbl = pts === 3 ? `⚡ ${pred}  +3 pts` : pts >= 1 ? `✓ ${pred}  +1 pt` : `✗ ${pred}  +0 pts`;
             predBadge = `<span class="stat-match-pred-badge ${cls}">${escapeHtml(lbl)}</span>`;
           } else {
             predBadge = `<span class="stat-match-pred-badge na">💀 0 pts each</span>`;
@@ -5346,13 +5372,7 @@
     }
 
 function buildProfileNeighbors(player) {
-      const lb = [...DATA.players]
-        .map(p => ({ p, pts: DATA.matches.reduce((s, m) => {
-          if (!m.actual_score || !m.predictions[p]) return s;
-          return s + (calcPts(m.predictions[p], m.actual_score) || 0);
-        }, 0) }))
-        .sort((a, b) => b.pts - a.pts);
-
+      const lb = calcLB().map(x => ({ p: x.player, pts: x.pts }));
       const idx  = lb.findIndex(x => x.p === player);
       if (idx === -1) return '';
       const mine = lb[idx];
@@ -5419,29 +5439,23 @@ function buildProfileNeighbors(player) {
         ppFooter.style.display = isOwnProfile ? '' : 'none';
       }
 
-      const played = DATA.matches.filter(m => m.actual_score);
-      const sortedPlayed = [...played].sort((a, b) =>
-        (a.date + a.time) < (b.date + b.time) ? -1 : 1
-      );
+      const sortedPlayed = DATA.matches
+        .filter(m => m.actual_score)
+        .sort((a, b) => (a.date + (a.time || '')) < (b.date + (b.time || '')) ? -1 : 1);
 
-      let totalPts = 0, exact = 0, correct = 0, cur = 0, best = 0;
+      let exact = 0, correct = 0, cur = 0, best = 0;
       for (const m of sortedPlayed) {
-        const pred = m.predictions[player];
-        if (!pred) continue;
-        const pts = calcPts(pred, m.actual_score);
-        totalPts += pts || 0;
+        const pts = getMatchScorePts(m, player);
+        if (pts === null) continue;
         if (pts === 3) exact++;
         if (pts >= 1) { correct++; cur++; if (cur > best) best = cur; }
         else cur = 0;
       }
 
-      const lb = [...DATA.players]
-        .map(p => ({ p, pts: DATA.matches.reduce((s, m) => {
-          if (!m.actual_score || !m.predictions[p]) return s;
-          return s + (calcPts(m.predictions[p], m.actual_score) || 0);
-        }, 0) }))
-        .sort((a, b) => b.pts - a.pts);
-      const rank = lb.findIndex(x => x.p === player) + 1;
+      const lb = calcLB();
+      const lbEntry = lb.find(x => x.player === player);
+      const totalPts = lbEntry?.pts || 0;
+      const rank = lb.findIndex(x => x.player === player) + 1;
 
       const statsHtml = `<div class="pp-stats">
         <div class="pp-stat"><span class="pp-stat-val">#${rank}</span><span class="pp-stat-lbl">Rank</span></div>
@@ -5577,7 +5591,7 @@ function buildProfileNeighbors(player) {
       <div id="modal-content"></div>
     </div>
   </div>
-
+  
 </body>
 
 </html>
