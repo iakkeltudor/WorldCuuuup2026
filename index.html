@@ -5467,7 +5467,7 @@ function buildProfileNeighbors(player) {
 
       // Lucky team: team whose matches gave the player the most points
       const teamPts = {};
-      for (const m of played) {
+      for (const m of sortedPlayed) {
         if (m.id >= 73 || !m.home || !m.away || !m.predictions) continue;
         const pred = m.predictions[player];
         if (!pred) continue;
