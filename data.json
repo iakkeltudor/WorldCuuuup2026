@@ -2138,7 +2138,8 @@
             "venue": "Estadio BBVA, Guadalupe",
             "home": "Netherlands",
             "away": "Morocco",
-            "actual_score": null
+            "actual_score": "1-1",
+            "referee": "Wilton Sampaio (Brazil)"
         },
         {
             "id": 76,
