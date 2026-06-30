@@ -615,6 +615,7 @@
     .pred-col-qual-abbr { font-size: .45rem; color: var(--text2); font-weight: 600; }
     .ko-duration-label { display: inline-flex; align-items: center; background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.25); border-radius: 20px; font-size: .6rem; font-weight: 700; color: var(--green); padding: 2px 9px; margin-top: 4px; text-transform: uppercase; letter-spacing: .05em; }
     .bk-duration-label { display: block; font-size: .45rem; font-weight: 700; color: var(--green); text-align: center; text-transform: uppercase; letter-spacing: .06em; background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.2); border-radius: 6px; margin: 0 7px 4px; padding: 1px 4px; }
+    .bk-duration-label.bk-duration-hidden { visibility: hidden; }
     .bk-pens-sup { font-size: .56rem; font-weight: 600; color: var(--text2); line-height: 1; margin-top: 1px; }
 
     /* ── GROUPS TAB ─────────────────────────────────────── */
@@ -2622,6 +2623,24 @@
       if (h !== a) return h > a ? 'home' : 'away';
       return KO_DATA[matchNum]?.qualifier || null;
     }
+    function getEliminatedTeams() {
+      const eliminated = new Set();
+      if (!DATA?.matches) return eliminated;
+      for (const match of DATA.matches) {
+        if (match.id < 73 || !match.actual_score) continue;
+        const home = match.home || KO_DATA[match.id]?.home;
+        const away = match.away || KO_DATA[match.id]?.away;
+        if (!home || !away) continue;
+        const [h, a] = match.actual_score.split('-').map(Number);
+        let loser;
+        if (h > a) loser = away;
+        else if (a > h) loser = home;
+        else if (match.qualifier === 'home') loser = away;
+        else if (match.qualifier === 'away') loser = home;
+        if (loser) eliminated.add(loser);
+      }
+      return eliminated;
+    }
     // Unified helpers — work for both group (m.id < 73) and KO matches
     function getMatchPred(match, player) {
       if (match.id < 73) return match.predictions?.[player] || null;
@@ -2983,9 +3002,7 @@
              onclick="event.stopPropagation()">`
         : `<span>${dateStr}</span>${predBadge}`;
       const bkDurationText = bkDuration === 'pens' ? 'pens' : 'AET';
-      const bkDurationHtml = bkDuration
-        ? `<div class="bk-duration-label">${bkDurationText}</div>`
-        : '';
+      const bkDurationHtml = `<div class="bk-duration-label${bkDuration ? '' : ' bk-duration-hidden'}">${bkDuration ? bkDurationText : ' '}</div>`;
       return `<div class="bk-match${m.cls ? ' ' + m.cls : ''}" onclick="showMatchModal(${m.num})">
         <div class="bk-match-meta"><span>M${m.num}</span>${metaRight}</div>
         ${bkTeamRow(hInfo, homeWon)}
@@ -5014,12 +5031,20 @@
 
     function _winnerPickCols(useNickname = true) {
       const actual = WINNER_DATA.actual;
+      const eliminated = actual ? null : getEliminatedTeams();
       return DATA.players.map(player => {
         const pred = WINNER_DATA.predictions?.[player] || null;
-        const cls = !actual ? 'st-pending' : pred === actual ? 'st-exact' : 'st-wrong';
+        const isEliminated = !actual && !!pred && eliminated.has(pred);
+        const cls = actual
+          ? (pred === actual ? 'st-exact' : 'st-wrong')
+          : isEliminated ? 'st-wrong' : 'st-pending';
         const isMe = player === CURRENT_USER?.playerName;
         const mine = isMe ? ' pred-col-mine' : '';
-        const pts = actual && pred === actual ? `<span class="pred-col-pts">+5</span>` : '';
+        const pts = actual && pred === actual
+          ? `<span class="pred-col-pts">+5</span>`
+          : isEliminated
+            ? `<span class="pred-col-pts">+0</span>`
+            : '';
         const scoreHtml = pred
           ? `<span class="pred-col-score" style="font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">${_winnerFlagImg(pred)}${escapeHtml(pred)}</span>`
           : `<span class="pred-col-score" style="color:var(--text3)">—</span>`;
