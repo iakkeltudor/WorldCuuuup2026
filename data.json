@@ -2128,6 +2128,9 @@
             "home": "Germany",
             "away": "Paraguay",
             "actual_score": "1-1",
+            "qualifier": "away",
+            "duration": "pens",
+            "final_score": "4-5",
             "referee": "Jalal Jayed (Morocco)"
         },
         {
@@ -2139,6 +2142,9 @@
             "home": "Netherlands",
             "away": "Morocco",
             "actual_score": "1-1",
+            "qualifier": "away",
+            "duration": "pens",
+            "final_score": "3-4",
             "referee": "Wilton Sampaio (Brazil)"
         },
         {

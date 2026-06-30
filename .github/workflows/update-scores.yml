@@ -31,6 +31,7 @@ jobs:
         env:
           FOOTBALL_API_KEY: ${{ secrets.FOOTBALL_API_KEY }}
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
         run: node scripts/update-scores.js
 
       - name: Check for changes
