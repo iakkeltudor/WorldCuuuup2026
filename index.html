@@ -477,7 +477,7 @@
     .bk-divider { height: 1px; background: var(--border); }
     .bk-col { display: flex; flex-direction: column; width: 168px; flex-shrink: 0; }
     .bk-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .bk-score-slot { width: 22px; text-align: center; flex-shrink: 0; font-size: .68rem; font-weight: 700; color: var(--text2); }
+    .bk-score-slot { width: 30px; text-align: center; flex-shrink: 0; font-size: .68rem; font-weight: 700; color: var(--text2); display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .bk-match { cursor: pointer; }
     .bk-match:hover { border-color: rgba(255,255,255,.18); }
     .bk-match.bk-final { border-color: rgba(251,191,36,.6); box-shadow: 0 0 14px rgba(251,191,36,.18); }
@@ -613,8 +613,9 @@
     .pred-col-qual { display: flex; align-items: center; justify-content: center; gap: 3px; margin-top: 1px; }
     .pred-col-qual-flag { width: 14px; height: auto; border-radius: 2px; opacity: .85; }
     .pred-col-qual-abbr { font-size: .45rem; color: var(--text2); font-weight: 600; }
-    .ko-duration-label { font-size: .62rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; text-align: center; }
-    .bk-duration-label { font-size: .5rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; text-align: center; padding: 2px 0 3px; }
+    .ko-duration-label { display: inline-flex; align-items: center; background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.25); border-radius: 20px; font-size: .6rem; font-weight: 700; color: var(--green); padding: 2px 9px; margin-top: 4px; text-transform: uppercase; letter-spacing: .05em; }
+    .bk-duration-label { display: block; font-size: .45rem; font-weight: 700; color: var(--green); text-align: center; text-transform: uppercase; letter-spacing: .06em; background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.2); border-radius: 6px; margin: 0 7px 4px; padding: 1px 4px; }
+    .bk-pens-sup { font-size: .56rem; font-weight: 600; color: var(--text2); line-height: 1; margin-top: 1px; }
 
     /* ── GROUPS TAB ─────────────────────────────────────── */
     #main-groups { max-width: 1100px; margin: 0 auto; padding: 20px 14px 70px; }
@@ -2915,7 +2916,8 @@
     function bkTeamRow(info, won) {
       const name = info?.name;
       const status = info?.status || 'tbd';
-      const scoreSlot = `<span class="bk-score-slot">${info?.score ? escapeHtml(info.score) : ''}</span>`;
+      const pensStr = info?.pensScore != null ? `<span class="bk-pens-sup">(${info.pensScore})</span>` : '';
+      const scoreSlot = `<span class="bk-score-slot">${info?.score ? `<span>${escapeHtml(info.score)}</span>${pensStr}` : ''}</span>`;
       if (!name || status === 'tbd') {
         return `<div class="bk-team tbd"><span class="bk-name">${escapeHtml(info?.label || 'TBD')}</span>${scoreSlot}</div>`;
       }
@@ -2951,8 +2953,14 @@
         const hn = data?.home ? parseTeam(data.home).name : homeInfo?.name;
         const an = data?.away ? parseTeam(data.away).name : awayInfo?.name;
         const [hs, as] = score.split('-');
-        hInfo = { name: hn, status: 'result', score: hs };
-        aInfo = { name: an, status: 'result', score: as };
+        let displayHs = hs, displayAs = as, pensHs = null, pensAs = null;
+        if (bkFinalScore) {
+          const [fh, fa] = bkFinalScore.split('-');
+          if (bkDuration === 'pens') { pensHs = fh; pensAs = fa; }
+          else if (bkDuration === 'aet') { displayHs = fh; displayAs = fa; }
+        }
+        hInfo = { name: hn, status: 'result', score: displayHs, pensScore: pensHs };
+        aInfo = { name: an, status: 'result', score: displayAs, pensScore: pensAs };
       } else {
         // No result yet — use computed slot info (or nothing for R16+)
         hInfo = homeInfo || (data?.home ? { name: parseTeam(data.home).name, status: 'result' } : null);
@@ -2976,7 +2984,7 @@
         : `<span>${dateStr}</span>${predBadge}`;
       const bkDurationText = bkDuration === 'pens' ? 'pens' : 'AET';
       const bkDurationHtml = bkDuration
-        ? `<div class="bk-duration-label">${bkFinalScore ? `${bkFinalScore} ${bkDurationText}` : bkDurationText}</div>`
+        ? `<div class="bk-duration-label">${bkDurationText}</div>`
         : '';
       return `<div class="bk-match${m.cls ? ' ' + m.cls : ''}" onclick="showMatchModal(${m.num})">
         <div class="bk-match-meta"><span>M${m.num}</span>${metaRight}</div>
@@ -3233,7 +3241,14 @@
       if (state === 'no-teams') {
         html += `<div class="ko-no-teams">Teams not yet confirmed</div>`;
       } else if (state === 'played') {
-        html += `<div class="m-score-block"><div class="m-score-big">${escapeHtml(score)}</div><div class="m-score-label">Final score</div></div>`;
+        const matchData = DATA?.matches?.find(m => m.id === matchNum);
+        const mDuration = matchData?.duration || null;
+        const mFinalScore = matchData?.final_score || null;
+        const mDurationText = mDuration === 'pens' ? 'pens' : 'AET';
+        const mDurationPill = mDuration
+          ? `<div style="margin-top:6px"><span class="ko-duration-label">${mFinalScore ? `${mFinalScore} ${mDurationText}` : mDurationText}</span></div>`
+          : '';
+        html += `<div class="m-score-block"><div class="m-score-big">${escapeHtml(score)}</div><div class="m-score-label">After 90 mins</div>${mDurationPill}</div>`;
         html += _koPredsTable(players, allPreds, teams?.home, teams?.away);
       } else if (state === 'open') {
         html += `<div class="ko-pred-hint">Lock in your prediction to see everyone else's</div>
@@ -4956,7 +4971,7 @@
     }
 
     function showWinnerModal() {
-      if (!CURRENT_USER) return;
+      if (!CURRENT_USER || !winnerPredOpen()) return;
       const teams = getAllTeams();
       const myPred = WINNER_DATA.predictions?.[CURRENT_USER.playerName];
       const flagImg = name => { const c = FLAGS[name]; return c ? `<img src="https://flagcdn.com/w20/${c}.png" alt="${escapeHtml(name)}" loading="lazy" style="width:16px;vertical-align:middle;border-radius:2px;margin-right:4px">` : ''; };
@@ -5018,7 +5033,9 @@
            </div>`
         : `<div class="pred-grid" style="--pred-cols:${cols};--pred-cols-sm:${colsSm}">${_winnerPickCols(false)}</div>`;
       const myPickBtn = myPred
-        ? `<button class="winner-change-btn" onclick="event.stopPropagation();showWinnerModal()">${_winnerFlagImg(myPred)}${escapeHtml(myPred)}${isOpen ? ' <span style="opacity:.5;font-size:.8rem">· change</span>' : ''}</button>`
+        ? isOpen
+          ? `<button class="winner-change-btn" onclick="event.stopPropagation();showWinnerModal()">${_winnerFlagImg(myPred)}${escapeHtml(myPred)} <span style="opacity:.5;font-size:.8rem">· change</span></button>`
+          : `<div class="winner-change-btn" style="cursor:default">${_winnerFlagImg(myPred)}${escapeHtml(myPred)}</div>`
         : '';
       const actualHtml = actual ? `<div class="winner-actual">🏆 Winner: <strong>${escapeHtml(actual)}</strong> ${_winnerFlagImg(actual)}</div>` : '';
       const adminHtml = ADMIN ? `<div class="ko-qualifier-section" style="margin-top:6px">
