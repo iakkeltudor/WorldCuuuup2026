@@ -3249,7 +3249,7 @@
           ? `<div style="margin-top:6px"><span class="ko-duration-label">${mFinalScore ? `${mFinalScore} ${mDurationText}` : mDurationText}</span></div>`
           : '';
         html += `<div class="m-score-block"><div class="m-score-big">${escapeHtml(score)}</div><div class="m-score-label">After 90 mins</div>${mDurationPill}</div>`;
-        html += _koPredsTable(players, allPreds, teams?.home, teams?.away);
+        html += _koPredsTable(players, allPreds, teams?.home, teams?.away, score, matchData?.qualifier || getActualQualifier(matchNum));
       } else if (state === 'open') {
         html += `<div class="ko-pred-hint">Lock in your prediction to see everyone else's</div>
           <div class="ko-pred-inputs">
@@ -3276,15 +3276,17 @@
         } else {
           html += `<div class="ko-missed">You didn't lock in a prediction for this match</div>`;
         }
-        html += _koPredsTable(players, allPreds, teams?.home, teams?.away);
+        const lockedMatchData = DATA?.matches?.find(m => m.id === matchNum);
+        html += _koPredsTable(players, allPreds, teams?.home, teams?.away, score, lockedMatchData?.qualifier || getActualQualifier(matchNum));
       }
 
       document.getElementById('modal-content').innerHTML = html;
       document.getElementById('match-modal').classList.remove('hidden');
     }
 
-    function _koPredsTable(players, allPreds, homeName, awayName) {
+    function _koPredsTable(players, allPreds, homeName, awayName, actualScore, actualQualifier) {
       let rows = '';
+      const hasScore = !!actualScore;
       players.forEach(p => {
         const pred = allPreds[p];
         const { score, qualifier } = parseKoPred(pred);
@@ -3293,11 +3295,22 @@
           const qualName = qualifier === 'home' ? homeName : qualifier === 'away' ? awayName : null;
           cell = escapeHtml(score) + (qualName ? ` <span class="ko-pred-qualifier">→ ${escapeHtml(qualName)}</span>` : '');
         }
-        rows += `<tr><td>${escapeHtml(p)}</td><td>${cell}</td></tr>`;
+        let ptsHtml = '';
+        if (hasScore) {
+          const totalPts = calcKoPts(pred, actualScore, actualQualifier);
+          if (totalPts === null) {
+            ptsHtml = `<td class="no-pred">—</td>`;
+          } else {
+            const scorePts = score ? calcPts(score, actualScore) : 0;
+            const cls = scorePts === 3 ? 'm-pts-exact' : scorePts === 1 ? 'm-pts-outcome' : 'm-pts-wrong';
+            ptsHtml = `<td class="${cls}">+${totalPts}</td>`;
+          }
+        }
+        rows += `<tr><td>${escapeHtml(p)}</td><td>${cell}</td>${ptsHtml}</tr>`;
       });
       return `<div class="m-preds-head">Predictions</div>
         <table class="m-tbl">
-          <thead><tr><th>Player</th><th>Prediction</th></tr></thead>
+          <thead><tr><th>Player</th><th>Prediction</th>${hasScore ? '<th>Pts</th>' : ''}</tr></thead>
           <tbody>${rows}</tbody>
         </table>`;
     }
