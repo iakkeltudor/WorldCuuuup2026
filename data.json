@@ -2285,7 +2285,7 @@
             "timezone": "UTC+3",
             "venue": "Lincoln Financial Field, Philadelphia",
             "home": "Canada",
-            "away": null,
+            "away": "Morocco",
             "actual_score": null
         },
         {
@@ -2294,7 +2294,7 @@
             "time": "20:00",
             "timezone": "UTC+3",
             "venue": "NRG Stadium, Houston",
-            "home": null,
+            "home": "Paraguay",
             "away": null,
             "actual_score": null
         },
