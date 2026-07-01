@@ -2317,7 +2317,7 @@
             "time": "02:00",
             "timezone": "UTC+3",
             "venue": "Estadio Azteca, Mexico City",
-            "home": null,
+            "home": "Mexico",
             "away": null,
             "actual_score": null
         },
