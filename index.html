@@ -20,6 +20,10 @@
       --green-bg: rgba(16, 185, 129, .12);
       --amber: #f59e0b;
       --amber-bg: rgba(245, 158, 11, .12);
+      --lime: #84cc16;
+      --lime-bg: rgba(132, 204, 22, .12);
+      --teal: #06b6d4;
+      --teal-bg: rgba(6, 182, 212, .12);
       --red: #ef4444;
       --red-bg: rgba(239, 68, 68, .12);
       --text: #e2e8f0;
@@ -174,9 +178,18 @@
     .pp-pred.none { color: var(--text3); font-weight: 400; font-size: .75rem; }
     .pp-actual { font-size: .75rem; color: var(--text3); }
     .pp-pts { font-size: .72rem; font-weight: 700; min-width: 22px; text-align: right; }
-    .pp-pts.green { color: var(--green); }
-    .pp-pts.amber { color: var(--amber); }
-    .pp-pts.red { color: var(--red); opacity: .5; }
+    /* Universal pts tier colors — used by pp-pts, pp-pred, m-tbl, form dots */
+    .pts-0 { color: var(--red); opacity: .55; }
+    .pts-1 { color: var(--amber); }
+    .pts-2 { color: var(--lime); }
+    .pts-3 { color: var(--green); }
+    .pts-4 { color: var(--teal); }
+    /* Prediction badge gets background too */
+    .pp-pred.pts-0 { background: var(--red-bg);  color: var(--red);   opacity: 1; }
+    .pp-pred.pts-1 { background: var(--amber-bg); color: var(--amber); opacity: 1; }
+    .pp-pred.pts-2 { background: var(--lime-bg);  color: var(--lime);  opacity: 1; }
+    .pp-pred.pts-3 { background: var(--green-bg); color: var(--green); opacity: 1; }
+    .pp-pred.pts-4 { background: var(--teal-bg);  color: var(--teal);  opacity: 1; }
     .pp-footer {
       padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0;
     }
@@ -513,9 +526,11 @@
     .m-tbl td:last-child { text-align: right; font-weight: 700; }
     .m-tbl tr:last-child td { border-bottom: none; }
     .m-tbl .no-pred { color: var(--text3); font-style: italic; }
-    .m-pts-exact { color: var(--green); }
-    .m-pts-outcome { color: var(--amber); }
-    .m-pts-wrong { color: var(--red); }
+    .m-tbl td.pts-0 { color: var(--red); opacity: .55; }
+    .m-tbl td.pts-1 { color: var(--amber); }
+    .m-tbl td.pts-2 { color: var(--lime); }
+    .m-tbl td.pts-3 { color: var(--green); }
+    .m-tbl td.pts-4 { color: var(--teal); }
     /* ── KO countdown ────────────────────────────────── */
     .ko-countdown-banner { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 16px; margin-bottom: 12px; background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.2); border-radius: 10px; flex-wrap: wrap; }
     #bk-countdown .ko-countdown-banner { margin: 0 0 10px 0; }
@@ -1865,17 +1880,11 @@
       flex-shrink: 0;
     }
 
-    .fd-exact {
-      background: var(--green);
-    }
-
-    .fd-outcome {
-      background: var(--amber);
-    }
-
-    .fd-wrong {
-      background: var(--red);
-    }
+    .fd-pts-0 { background: var(--red); }
+    .fd-pts-1 { background: var(--amber); }
+    .fd-pts-2 { background: var(--lime); }
+    .fd-pts-3 { background: var(--green); }
+    .fd-pts-4 { background: var(--teal); }
 
     .form-empty {
       color: var(--text3);
@@ -2690,6 +2699,21 @@
       const { score } = parseKoPred(pred);
       return score ? calcPts(score, match.actual_score) : null;
     }
+    function getMatchTotalPts(match, player) {
+      const pred = getMatchPred(match, player);
+      if (!pred || !match.actual_score) return null;
+      if (match.id < 73) return calcPts(pred, match.actual_score);
+      const actualQualifier = match.qualifier || getActualQualifier(match.id);
+      return calcKoPts(pred, match.actual_score, actualQualifier);
+    }
+    function ptsCls(pts) {
+      if (pts === null) return '';
+      if (pts >= 4) return 'pts-4';
+      if (pts === 3) return 'pts-3';
+      if (pts === 2) return 'pts-2';
+      if (pts === 1) return 'pts-1';
+      return 'pts-0';
+    }
     function getMatchPredOutcome(match, player) {
       const pred = getMatchPred(match, player);
       if (!pred) return null;
@@ -2794,13 +2818,13 @@
         .filter(m => m.actual_score && getMatchPred(m, player) && (!LB_DATE || m.date <= LB_DATE))
         .sort((a, b) => (a.date + (a.time || '')) < (b.date + (b.time || '')) ? -1 : 1)
         .slice(-5)
-        .map(m => getMatchScorePts(m, player));
+        .map(m => getMatchTotalPts(m, player));
     }
     function renderFormDots(form) {
       if (!form.length) return '<span class="form-empty">—</span>';
       return '<div class="form-row">' + form.map(p => {
-        const cls = p === 3 ? 'fd-exact' : p === 1 ? 'fd-outcome' : 'fd-wrong';
-        const lbl = p === 3 ? 'Exact +3' : p === 1 ? 'Outcome +1' : 'Wrong 0';
+        const cls = 'fd-pts-' + Math.min(p ?? 0, 4);
+        const lbl = p === 4 ? '+4 pts' : p === 3 ? '+3 pts' : p === 2 ? '+2 pts' : p === 1 ? '+1 pt' : '0 pts';
         return `<span class="fd ${cls}" title="${lbl}"></span>`;
       }).join('') + '</div>';
     }
@@ -3216,8 +3240,7 @@
         let ptsHtml = '';
         if (score && pred) {
           const pts = calcPts(pred, score);
-          const cls = pts === 3 ? 'm-pts-exact' : pts === 1 ? 'm-pts-outcome' : 'm-pts-wrong';
-          ptsHtml = `<td class="${cls}">${pts} pt${pts !== 1 ? 's' : ''}</td>`;
+          ptsHtml = `<td class="${ptsCls(pts)}">${pts > 0 ? '+' : ''}${pts}</td>`;
         } else {
           ptsHtml = `<td class="no-pred">—</td>`;
         }
@@ -3358,9 +3381,7 @@
           if (totalPts === null) {
             ptsHtml = `<td class="no-pred">—</td>`;
           } else {
-            const scorePts = score ? calcPts(score, actualScore) : 0;
-            const cls = scorePts === 3 ? 'm-pts-exact' : scorePts === 1 ? 'm-pts-outcome' : 'm-pts-wrong';
-            ptsHtml = `<td class="${cls}">+${totalPts}</td>`;
+            ptsHtml = `<td class="${ptsCls(totalPts)}">+${totalPts}</td>`;
           }
         }
         rows += `<tr><td>${escapeHtml(p)}</td><td>${cell}</td>${ptsHtml}</tr>`;
@@ -5654,15 +5675,14 @@ function buildProfileNeighbors(player) {
         const rows = matches.map(m => {
           const pred = m.predictions[player];
           const pts  = pred && m.actual_score ? calcPts(pred, m.actual_score) : null;
-          const cls  = pts === 3 ? 'green' : pts === 1 ? 'amber' : pts === 0 ? 'red' : '';
           const predHtml   = pred
-            ? `<span class="pp-pred ${cls}">${escapeHtml(pred)}</span>`
+            ? `<span class="pp-pred ${pts !== null ? ptsCls(pts) : ''}">${escapeHtml(pred)}</span>`
             : `<span class="pp-pred none">—</span>`;
           const actualHtml = m.actual_score
             ? `<span class="pp-actual">${escapeHtml(m.actual_score)}</span>`
             : `<span class="pp-actual">—</span>`;
           const ptsHtml = pts !== null
-            ? `<span class="pp-pts ${cls}">${pts > 0 ? '+' : ''}${pts}</span>`
+            ? `<span class="pp-pts ${ptsCls(pts)}">${pts > 0 ? '+' : ''}${pts}</span>`
             : `<span class="pp-pts"></span>`;
           return `<div class="pp-match">
             <span class="pp-teams">${escapeHtml(m.home)}<span class="pp-vs"> vs </span>${escapeHtml(m.away)}</span>
@@ -5672,11 +5692,55 @@ function buildProfileNeighbors(player) {
         return `<div class="pp-day-header">${fmtLong(date)}</div>${rows}`;
       }).join('');
 
+      // KO stage matches grouped by date
+      const koPlayed = DATA.matches
+        .filter(m => m.id >= 73 && m.actual_score && (m.home || KO_DATA[m.id]?.home) && (m.away || KO_DATA[m.id]?.away))
+        .sort((a, b) => (a.date + (a.time || '')) < (b.date + (b.time || '')) ? -1 : 1);
+
+      let koHtml = '';
+      if (koPlayed.length > 0) {
+        const koDayGroups = {};
+        for (const m of koPlayed) {
+          const d = sessionDate(m);
+          (koDayGroups[d] = koDayGroups[d] || []).push(m);
+        }
+        const koRows = Object.entries(koDayGroups).map(([date, matches]) => {
+          const rows = matches.map(m => {
+            const home = m.home || KO_DATA[m.id]?.home || '?';
+            const away = m.away || KO_DATA[m.id]?.away || '?';
+            const pred = KO_DATA[m.id]?.predictions?.[player] || null;
+            const { score: predScore, qualifier: predQual } = parseKoPred(pred);
+            const actualQualifier = m.qualifier || getActualQualifier(m.id);
+            const totalPts = pred ? calcKoPts(pred, m.actual_score, actualQualifier) : null;
+            const scorePts = predScore ? calcPts(predScore, m.actual_score) : null;
+            const qualName = predQual === 'home' ? home : predQual === 'away' ? away : null;
+            const predDisplay = predScore
+              ? escapeHtml(predScore) + (qualName ? ` <span style="opacity:.65;font-weight:400">→ ${escapeHtml(qualName)}</span>` : '')
+              : null;
+            const predHtml = predDisplay
+              ? `<span class="pp-pred ${totalPts !== null ? ptsCls(totalPts) : ''}">${predDisplay}</span>`
+              : `<span class="pp-pred none">—</span>`;
+            const durationSuffix = m.duration ? ` <span style="opacity:.6;font-size:.68rem">(${m.duration === 'pens' ? 'pens' : 'AET'})</span>` : '';
+            const actualHtml = `<span class="pp-actual">${escapeHtml(m.actual_score)}${durationSuffix}</span>`;
+            const ptsHtml = totalPts !== null
+              ? `<span class="pp-pts ${ptsCls(totalPts)}">${totalPts > 0 ? '+' : ''}${totalPts}</span>`
+              : `<span class="pp-pts"></span>`;
+            return `<div class="pp-match">
+              <span class="pp-teams">${escapeHtml(home)}<span class="pp-vs"> vs </span>${escapeHtml(away)}</span>
+              <div class="pp-right">${predHtml}${actualHtml}${ptsHtml}</div>
+            </div>`;
+          }).join('');
+          return `<div class="pp-day-header">${fmtLong(date)}</div>${rows}`;
+        }).join('');
+        koHtml = `<div class="pp-day-header" style="background:rgba(139,92,246,.08);color:var(--purple,#8b5cf6);margin-top:6px">⚡ Knockout Stage</div>${koRows}`;
+      }
+
       document.getElementById('pp-body').innerHTML =
         statsHtml +
         luckyHtml +
         buildProfileNeighbors(player) +
-        daysHtml;
+        daysHtml +
+        koHtml;
     }
 
     function showApp(playerName, displayName, photoURL) {
