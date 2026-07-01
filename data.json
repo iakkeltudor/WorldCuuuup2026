@@ -2166,17 +2166,19 @@
             "venue": "MetLife Stadium, East Rutherford",
             "home": "France",
             "away": "Sweden",
-            "actual_score": null
+            "actual_score": "3-0",
+            "referee": "Danny Makkelie (Netherlands)"
         },
         {
             "id": 78,
             "date": "2026-06-30",
-            "time": "19:00",
+            "time": "20:00",
             "timezone": "UTC+3",
             "venue": "AT&T Stadium, Arlington",
             "home": "Ivory Coast",
             "away": "Norway",
-            "actual_score": null
+            "actual_score": "1-2",
+            "referee": "Jesús Valenzuela (Venezuela)"
         },
         {
             "id": 79,
@@ -2185,8 +2187,9 @@
             "timezone": "UTC+3",
             "venue": "Estadio Azteca, Mexico City",
             "home": "Mexico",
-            "away": "Scotland",
-            "actual_score": null
+            "away": "Ecuador",
+            "actual_score": "2-0",
+            "referee": "Slavko Vinčič (Slovenia)"
         },
         {
             "id": 80,
@@ -2285,7 +2288,7 @@
             "timezone": "UTC+3",
             "venue": "Lincoln Financial Field, Philadelphia",
             "home": "Canada",
-            "away": null,
+            "away": "Morocco",
             "actual_score": null
         },
         {
@@ -2294,8 +2297,8 @@
             "time": "20:00",
             "timezone": "UTC+3",
             "venue": "NRG Stadium, Houston",
-            "home": null,
-            "away": null,
+            "home": "Paraguay",
+            "away": "France",
             "actual_score": null
         },
         {
@@ -2305,7 +2308,7 @@
             "timezone": "UTC+3",
             "venue": "MetLife Stadium, East Rutherford",
             "home": "Brazil",
-            "away": null,
+            "away": "Norway",
             "actual_score": null
         },
         {
@@ -2314,7 +2317,7 @@
             "time": "02:00",
             "timezone": "UTC+3",
             "venue": "Estadio Azteca, Mexico City",
-            "home": null,
+            "home": "Mexico",
             "away": null,
             "actual_score": null
         },
