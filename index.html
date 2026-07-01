@@ -1150,17 +1150,16 @@
     }
     .pred-col.st-none .pred-col-score { color: var(--text3); font-size: .75rem; }
 
-    .pred-col.st-exact {
-      background: var(--green-bg);
-    }
+    .pred-col.st-exact  { background: var(--green-bg); }
+    .pred-col.st-outcome{ background: var(--amber-bg); }
+    .pred-col.st-wrong  { background: var(--red-bg);   }
 
-    .pred-col.st-outcome {
-      background: var(--amber-bg);
-    }
-
-    .pred-col.st-wrong {
-      background: var(--red-bg);
-    }
+    /* 5-tier backgrounds for match pred-cols */
+    .pred-col.pts-0 { background: var(--red-bg);   }
+    .pred-col.pts-1 { background: var(--amber-bg); }
+    .pred-col.pts-2 { background: var(--lime-bg);  }
+    .pred-col.pts-3 { background: var(--green-bg); }
+    .pred-col.pts-4 { background: var(--teal-bg);  }
 
     .pred-col-name {
       font-size: .57rem;
@@ -1174,17 +1173,15 @@
       white-space: nowrap;
     }
 
-    .pred-col.st-exact .pred-col-name {
-      color: var(--green);
-    }
+    .pred-col.st-exact   .pred-col-name { color: var(--green); }
+    .pred-col.st-outcome .pred-col-name { color: var(--amber); }
+    .pred-col.st-wrong   .pred-col-name { color: var(--red);   }
 
-    .pred-col.st-outcome .pred-col-name {
-      color: var(--amber);
-    }
-
-    .pred-col.st-wrong .pred-col-name {
-      color: var(--red);
-    }
+    .pred-col.pts-0 .pred-col-name { color: var(--red);   }
+    .pred-col.pts-1 .pred-col-name { color: var(--amber); }
+    .pred-col.pts-2 .pred-col-name { color: var(--lime);  }
+    .pred-col.pts-3 .pred-col-name { color: var(--green); }
+    .pred-col.pts-4 .pred-col-name { color: var(--teal);  }
 
     .pred-col-score {
       font-size: .88rem;
@@ -1192,17 +1189,15 @@
       color: var(--text2);
     }
 
-    .pred-col.st-exact .pred-col-score {
-      color: #d1fae5;
-    }
+    .pred-col.st-exact   .pred-col-score { color: #d1fae5; }
+    .pred-col.st-outcome .pred-col-score { color: #fef3c7; }
+    .pred-col.st-wrong   .pred-col-score { color: #fee2e2; }
 
-    .pred-col.st-outcome .pred-col-score {
-      color: #fef3c7;
-    }
-
-    .pred-col.st-wrong .pred-col-score {
-      color: #fee2e2;
-    }
+    .pred-col.pts-0 .pred-col-score { color: #fee2e2; }
+    .pred-col.pts-1 .pred-col-score { color: #fef3c7; }
+    .pred-col.pts-2 .pred-col-score { color: #ecfccb; }
+    .pred-col.pts-3 .pred-col-score { color: #d1fae5; }
+    .pred-col.pts-4 .pred-col-score { color: #cffafe; }
 
     .pred-col-pts {
       font-size: .58rem;
@@ -1210,17 +1205,11 @@
       color: var(--text3);
     }
 
-    .pred-col.st-exact .pred-col-pts {
-      color: var(--green);
-    }
-
-    .pred-col.st-outcome .pred-col-pts {
-      color: var(--amber);
-    }
-
-    .pred-col.st-wrong .pred-col-pts {
-      color: var(--red);
-    }
+    .pred-col-pts.pts-0 { color: var(--red); opacity: .75; }
+    .pred-col-pts.pts-1 { color: var(--amber); }
+    .pred-col-pts.pts-2 { color: var(--lime); }
+    .pred-col-pts.pts-3 { color: var(--green); }
+    .pred-col-pts.pts-4 { color: var(--teal); }
 
     /* ── STATS TAB ───────────────────────────────────── */
     .insights-grid {
@@ -4668,10 +4657,10 @@
         const pred = match.predictions[player];
         if (!pred) return '';
         const pts = calcPts(pred, match.actual_score);
-        const cls = stateClass(pts);
+        const cls = pts === null ? 'st-pending' : ptsCls(pts);
         const mine = CURRENT_USER?.playerName === player ? ' pred-col-mine' : '';
         const ptsHtml = pts !== null
-          ? `<span class="pred-col-pts">${pts > 0 ? '+' : ''}${pts}</span>`
+          ? `<span class="pred-col-pts ${ptsCls(pts)}">${pts > 0 ? '+' : ''}${pts}</span>`
           : '';
         return `<div class="pred-col ${cls}${mine}" title="${player}: ${pred}${pts !== null ? ` (${pts}pts)` : ''}">
       <span class="pred-col-name">${player}</span>
@@ -4795,11 +4784,10 @@
         const { score, qualifier } = parseKoPred(pred);
         const actualQual = getActualQualifier(matchNum);
         const pts = calcKoPts(pred, actualScore, actualQual);
-        const scorePts = calcPts(score, actualScore);
-        const cls = stateClass(scorePts);
+        const cls = pts === null ? 'st-pending' : ptsCls(pts);
         const mine = CURRENT_USER?.playerName === player ? ' pred-col-mine' : '';
         const ptsHtml = pts !== null
-          ? `<span class="pred-col-pts">${pts > 0 ? '+' : ''}${pts}</span>`
+          ? `<span class="pred-col-pts ${ptsCls(pts)}">${pts > 0 ? '+' : ''}${pts}</span>`
           : '';
         // For draw predictions, show a small flag of the predicted qualifier
         let qualHtml = '';
