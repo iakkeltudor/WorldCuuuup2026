@@ -2221,7 +2221,11 @@
             "venue": "Lumen Field, Seattle",
             "home": "Belgium",
             "away": "Senegal",
-            "actual_score": null
+            "actual_score": "2-2",
+            "qualifier": "home",
+            "duration": "aet",
+            "final_score": "3-2",
+            "referee": "Said Martinez (Honduras)"
         },
         {
             "id": 83,
