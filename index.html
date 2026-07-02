@@ -2967,6 +2967,19 @@
       third: {num:103, date:'2026-07-19', cls:'bk-third'},
     };
 
+    // Which previous matches feed each R16+ slot (home/away winner)
+    const KO_FEEDS = {
+       89: {home:73,away:75},  90: {home:74,away:77},
+       93: {home:83,away:84},  94: {home:81,away:82},
+       91: {home:76,away:78},  92: {home:79,away:80},
+       95: {home:86,away:88},  96: {home:85,away:87},
+       97: {home:89,away:90},  98: {home:93,away:94},
+       99: {home:91,away:92}, 100: {home:95,away:96},
+      101: {home:97,away:98}, 102: {home:99,away:100},
+      104: {home:101,away:102},
+      103: {home:101,away:102}, // 3rd place — losers of SFs
+    };
+
     // ISO 3166-1 alpha-2 codes → flagcdn.com images (emoji flags don't render on Windows)
     const FLAGS = {
       'Mexico':'mx','South Africa':'za','South Korea':'kr',
@@ -3102,6 +3115,21 @@
         return { name: team.name, status: confirmed ? 'confirmed' : 'predicted', label: rankLabel + slot.g };
       }
 
+      // Derive winner/loser of a completed match from data.json
+      function getKoWinner(matchNum, loser = false) {
+        const md = matchById[matchNum];
+        if (!md?.actual_score) return null;
+        const [h, a] = md.actual_score.split('-').map(Number);
+        let winnerSide;
+        if (h > a) winnerSide = 'home';
+        else if (a > h) winnerSide = 'away';
+        else winnerSide = md.qualifier || null;
+        if (!winnerSide) return null;
+        if (loser) winnerSide = winnerSide === 'home' ? 'away' : 'home';
+        const raw = winnerSide === 'home' ? md.home : md.away;
+        return raw ? parseTeam(raw).name : null;
+      }
+
       // Build match HTML, injecting slot info for R32 matches
       function matchHtml(m) {
         const data = matchById[m.num];
@@ -3112,6 +3140,19 @@
         const koEntry = KO_DATA[m.num];
         if (koEntry?.home) hInfo = { name: koEntry.home, status: 'confirmed', label: hInfo?.label || '' };
         if (koEntry?.away) aInfo = { name: koEntry.away, status: 'confirmed', label: aInfo?.label || '' };
+        // Auto-derive from previous round results when Firebase hasn't been set yet
+        const feeds = KO_FEEDS[m.num];
+        if (feeds) {
+          const is3rd = m.num === 103;
+          if (!hInfo?.name) {
+            const w = getKoWinner(feeds.home, is3rd);
+            if (w) hInfo = { name: w, status: 'confirmed', label: hInfo?.label || '' };
+          }
+          if (!aInfo?.name) {
+            const w = getKoWinner(feeds.away, is3rd);
+            if (w) aInfo = { name: w, status: 'confirmed', label: aInfo?.label || '' };
+          }
+        }
         _bkCache[m.num] = { hInfo, aInfo, data, m };
         return bkMatchHtml(m, data, hInfo, aInfo);
       }
@@ -5375,11 +5416,28 @@
       } catch { return false; }
     }
 
+    function getKoWinnerFromData(matchNum) {
+      const md = DATA?.matches?.find(m => m.id === matchNum);
+      if (!md?.actual_score) return null;
+      const [h, a] = md.actual_score.split('-').map(Number);
+      let side = h > a ? 'home' : a > h ? 'away' : (md.qualifier || null);
+      if (!side) return null;
+      const raw = side === 'home' ? md.home : md.away;
+      return raw ? parseTeam(raw).name : null;
+    }
+
     function getKoTeams(matchNum) {
       const ko = KO_DATA[matchNum];
       if (ko?.home && ko?.away) return { home: ko.home, away: ko.away };
       const d = DATA?.matches?.find(m => m.id === matchNum);
       if (d?.home && d?.away) return { home: parseTeam(d.home).name, away: parseTeam(d.away).name };
+      // Derive from previous round results
+      const feeds = KO_FEEDS[matchNum];
+      if (feeds) {
+        const home = getKoWinnerFromData(feeds.home);
+        const away = getKoWinnerFromData(feeds.away);
+        if (home || away) return { home: home || null, away: away || null };
+      }
       return null;
     }
 
@@ -5424,13 +5482,21 @@
       DATA?.matches?.forEach(m => { matchById[m.id] = m; });
       for (const [numStr, next] of Object.entries(KO_NEXT)) {
         const num = Number(numStr);
-        const score = matchById[num]?.actual_score || KO_DATA[num]?.actual_score;
+        const md = matchById[num];
+        const score = md?.actual_score || KO_DATA[num]?.actual_score;
         if (!score) continue;
         const parts = score.split('-').map(Number);
-        if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1]) || parts[0] === parts[1]) continue;
-        const homeWon = parts[0] > parts[1];
+        if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) continue;
         const teams = getKoTeams(num);
-        const winner = homeWon ? teams?.home : teams?.away;
+        let winner;
+        if (parts[0] !== parts[1]) {
+          winner = parts[0] > parts[1] ? teams?.home : teams?.away;
+        } else {
+          // Draw — result decided by AET/pens; qualifier stored in data.json
+          const qualifier = md?.qualifier || KO_DATA[num]?.qualifier;
+          if (!qualifier) continue;
+          winner = qualifier === 'home' ? teams?.home : teams?.away;
+        }
         if (!winner) continue;
         const existingNext = KO_DATA[next.match] || {};
         if (existingNext[next.side]) continue;
