@@ -2652,6 +2652,8 @@
       return scorePts + qualPts;
     }
     function getActualQualifier(matchNum) {
+      const matchData = DATA?.matches?.find(m => m.id === matchNum);
+      if (matchData?.qualifier) return matchData.qualifier;
       const actualScore = getKoScore(matchNum);
       if (!actualScore) return null;
       const [h, a] = actualScore.split('-').map(Number);
