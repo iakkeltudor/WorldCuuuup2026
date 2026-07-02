@@ -2199,7 +2199,8 @@
             "venue": "Mercedes-Benz Stadium, Atlanta",
             "home": "England",
             "away": "DR Congo",
-            "actual_score": null
+            "actual_score": "2-1",
+            "referee": "Adham Makhadmeh (Jordan)"
         },
         {
             "id": 81,
@@ -2209,7 +2210,8 @@
             "venue": "Levi's Stadium, Santa Clara",
             "home": "United States",
             "away": "Bosnia and Herzegovina",
-            "actual_score": null
+            "actual_score": "2-0",
+            "referee": "Raphael Claus (Brazil)"
         },
         {
             "id": 82,
@@ -2219,7 +2221,11 @@
             "venue": "Lumen Field, Seattle",
             "home": "Belgium",
             "away": "Senegal",
-            "actual_score": null
+            "actual_score": "2-2",
+            "qualifier": "home",
+            "duration": "aet",
+            "final_score": "3-2",
+            "referee": "Said Martinez (Honduras)"
         },
         {
             "id": 83,
@@ -2318,7 +2324,7 @@
             "timezone": "UTC+3",
             "venue": "Estadio Azteca, Mexico City",
             "home": "Mexico",
-            "away": null,
+            "away": "England",
             "actual_score": null
         },
         {
@@ -2337,7 +2343,7 @@
             "time": "03:00",
             "timezone": "UTC+3",
             "venue": "Lumen Field, Seattle",
-            "home": null,
+            "home": "United States",
             "away": null,
             "actual_score": null
         },
