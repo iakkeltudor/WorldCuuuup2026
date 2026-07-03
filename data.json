@@ -2235,7 +2235,8 @@
             "venue": "BMO Field, Toronto",
             "home": "Portugal",
             "away": "Croatia",
-            "actual_score": null
+            "actual_score": "2-1",
+            "referee": "Espen Eskås (Norway)"
         },
         {
             "id": 84,
