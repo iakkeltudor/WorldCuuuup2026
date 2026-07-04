@@ -2301,8 +2301,8 @@
         },
         {
             "id": 89,
-            "date": "2026-07-05",
-            "time": "00:00",
+            "date": "2026-07-04",
+            "time": "20:00",
             "timezone": "UTC+3",
             "venue": "Lincoln Financial Field, Philadelphia",
             "home": "Canada",
@@ -2311,8 +2311,8 @@
         },
         {
             "id": 90,
-            "date": "2026-07-04",
-            "time": "20:00",
+            "date": "2026-07-05",
+            "time": "00:00",
             "timezone": "UTC+3",
             "venue": "NRG Stadium, Houston",
             "home": "Paraguay",
