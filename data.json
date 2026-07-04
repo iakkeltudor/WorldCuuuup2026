@@ -2307,7 +2307,8 @@
             "venue": "Lincoln Financial Field, Philadelphia",
             "home": "Canada",
             "away": "Morocco",
-            "actual_score": null
+            "actual_score": "0-3",
+            "referee": "Michael Oliver (England)"
         },
         {
             "id": 90,
