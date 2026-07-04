@@ -2318,7 +2318,8 @@
             "venue": "NRG Stadium, Houston",
             "home": "Paraguay",
             "away": "France",
-            "actual_score": null
+            "actual_score": "0-1",
+            "referee": "Il'giz Tantashev (Uzbekistan)"
         },
         {
             "id": 91,
