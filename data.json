@@ -2268,7 +2268,11 @@
             "venue": "Hard Rock Stadium, Miami Gardens",
             "home": "Argentina",
             "away": "Cape Verde",
-            "actual_score": null
+            "actual_score": "1-1",
+            "qualifier": "home",
+            "duration": "aet",
+            "final_score": "3-2",
+            "referee": "Drew Fischer (Canada)"
         },
         {
             "id": 87,
