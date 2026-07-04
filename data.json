@@ -666,7 +666,7 @@
             "time": "02:00",
             "timezone": "UTC+3",
             "venue": "Toronto Stadium, Toronto",
-            "home": "Ghana (73)",
+            "home": " (73)",
             "away": "Panama (33)",
             "group": "Group L",
             "actual_score": "1-0",
@@ -1334,7 +1334,7 @@
             "timezone": "UTC+3",
             "venue": "Gillette Stadium, Foxborough",
             "home": "England (4)",
-            "away": "Ghana (73)",
+            "away": " (73)",
             "group": "Group L",
             "actual_score": "0-0",
             "predictions": {
@@ -1970,7 +1970,7 @@
             "timezone": "UTC+3",
             "venue": "Lincoln Financial Field, Philadelphia",
             "home": "Croatia (11)",
-            "away": "Ghana (73)",
+            "away": " (73)",
             "group": "Group L",
             "actual_score": "2-1",
             "predictions": {
@@ -2282,7 +2282,7 @@
             "venue": "Arrowhead Stadium, Kansas City",
             "home": "Colombia",
             "away": "Ghana",
-            "actual_score": "2-0",
+            "actual_score": "1-0",
             "referee": "Clément Turpin (France)"
         },
         {
