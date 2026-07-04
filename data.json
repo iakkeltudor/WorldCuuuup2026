@@ -2293,7 +2293,11 @@
             "venue": "AT&T Stadium, Arlington",
             "home": "Australia",
             "away": "Egypt",
-            "actual_score": null
+            "actual_score": "1-1",
+            "qualifier": "away",
+            "duration": "pens",
+            "final_score": "3-5",
+            "referee": "Gustavo Tejera (Uruguay)"
         },
         {
             "id": 89,
@@ -2361,7 +2365,7 @@
             "time": "19:00",
             "timezone": "UTC+3",
             "venue": "Mercedes-Benz Stadium, Atlanta",
-            "home": null,
+            "home": "Argentina",
             "away": null,
             "actual_score": null
         },
