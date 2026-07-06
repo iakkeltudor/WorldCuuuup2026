@@ -2351,7 +2351,8 @@
             "venue": "AT&T Stadium, Arlington",
             "home": "Portugal",
             "away": "Spain",
-            "actual_score": null
+            "actual_score": "0-1",
+            "referee": "Anthony Taylor (England)"
         },
         {
             "id": 94,
