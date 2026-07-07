@@ -2384,7 +2384,11 @@
             "venue": "BC Place, Vancouver",
             "home": "Switzerland",
             "away": "Colombia",
-            "actual_score": null
+            "actual_score": "0-0",
+            "qualifier": "home",
+            "duration": "pens",
+            "final_score": "4-3",
+            "referee": "Ivan Barton"
         },
         {
             "id": 97,
