@@ -2373,7 +2373,8 @@
             "venue": "Mercedes-Benz Stadium, Atlanta",
             "home": "Argentina",
             "away": "Egypt",
-            "actual_score": null
+            "actual_score": "3-2",
+            "referee": "François Letexier (France)"
         },
         {
             "id": 96,
