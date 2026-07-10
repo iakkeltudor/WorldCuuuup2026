@@ -2408,7 +2408,8 @@
             "venue": "SoFi Stadium, Inglewood",
             "home": "Spain",
             "away": "Belgium",
-            "actual_score": null
+            "actual_score": "2-1",
+            "referee": "Michael Oliver (England)"
         },
         {
             "id": 99,
