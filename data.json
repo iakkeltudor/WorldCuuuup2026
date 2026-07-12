@@ -2419,7 +2419,11 @@
             "venue": "Hard Rock Stadium, Miami Gardens",
             "home": "Norway",
             "away": "England",
-            "actual_score": null
+            "actual_score": "1-1",
+            "qualifier": "away",
+            "duration": "aet",
+            "final_score": "1-2",
+            "referee": "Clément Turpin (France)"
         },
         {
             "id": 100,
@@ -2429,7 +2433,11 @@
             "venue": "Arrowhead Stadium, Kansas City",
             "home": "Argentina",
             "away": "Switzerland",
-            "actual_score": null
+            "actual_score": "1-1",
+            "qualifier": "home",
+            "duration": "aet",
+            "final_score": "3-1",
+            "referee": "João Pinheiro (Portugal)"
         },
         {
             "id": 101,
