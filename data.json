@@ -2455,8 +2455,8 @@
             "time": "22:00",
             "timezone": "UTC+3",
             "venue": "Mercedes-Benz Stadium, Atlanta",
-            "home": null,
-            "away": null,
+            "home": "England",
+            "away": "Argentina",
             "actual_score": null
         },
         {
