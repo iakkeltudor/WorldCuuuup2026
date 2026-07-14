@@ -2447,7 +2447,8 @@
             "venue": "AT&T Stadium, Arlington",
             "home": "France",
             "away": "Spain",
-            "actual_score": null
+            "actual_score": "0-2",
+            "referee": "Ivan Barton"
         },
         {
             "id": 102,
