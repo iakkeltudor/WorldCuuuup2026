@@ -2458,7 +2458,8 @@
             "venue": "Mercedes-Benz Stadium, Atlanta",
             "home": "England",
             "away": "Argentina",
-            "actual_score": null
+            "actual_score": "1-2",
+            "referee": "Ismail Elfath (United States)"
         },
         {
             "id": 103,
