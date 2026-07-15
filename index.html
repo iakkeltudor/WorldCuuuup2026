@@ -2977,7 +2977,7 @@
        99: {home:91,away:92}, 100: {home:95,away:96},
       101: {home:97,away:98}, 102: {home:99,away:100},
       104: {home:101,away:102},
-      103: {home:101,away:102}, // 3rd place — losers of SFs
+      103: {home:101,away:102,loser:true}, // 3rd place — losers of SFs
     };
 
     // ISO 3166-1 alpha-2 codes → flagcdn.com images (emoji flags don't render on Windows)
@@ -3115,18 +3115,18 @@
         return { name: team.name, status: confirmed ? 'confirmed' : 'predicted', label: rankLabel + slot.g };
       }
 
-      // Derive winner/loser of a completed match from data.json
+      // Derive winner/loser of a completed match from data.json + KO_DATA
       function getKoWinner(matchNum, loser = false) {
         const md = matchById[matchNum];
         if (!md?.actual_score) return null;
         const [h, a] = md.actual_score.split('-').map(Number);
-        let winnerSide;
-        if (h > a) winnerSide = 'home';
-        else if (a > h) winnerSide = 'away';
-        else winnerSide = md.qualifier || null;
-        if (!winnerSide) return null;
-        if (loser) winnerSide = winnerSide === 'home' ? 'away' : 'home';
-        const raw = winnerSide === 'home' ? md.home : md.away;
+        let side;
+        if (h > a) side = 'home';
+        else if (a > h) side = 'away';
+        else side = md.qualifier || null;
+        if (!side) return null;
+        if (loser) side = side === 'home' ? 'away' : 'home';
+        const raw = (side === 'home' ? md.home : md.away) || KO_DATA[matchNum]?.[side];
         return raw ? parseTeam(raw).name : null;
       }
 
@@ -3208,10 +3208,10 @@
         <div class="bk-center-col">
           <div class="bk-center-head">&#9917; Final</div>
           <div class="bk-center-slots">
-            <div>${(() => { const md = matchById[KO_BRACKET.final.num]; _bkCache[KO_BRACKET.final.num] = {hInfo:null,aInfo:null,data:md,m:KO_BRACKET.final}; return bkMatchHtml(KO_BRACKET.final, md, null, null); })()}</div>
+            <div>${matchHtml(KO_BRACKET.final)}</div>
             <div>
               <div class="bk-3rd-label">&#129353; 3rd Place</div>
-              ${(() => { const md = matchById[KO_BRACKET.third.num]; _bkCache[KO_BRACKET.third.num] = {hInfo:null,aInfo:null,data:md,m:KO_BRACKET.third}; return bkMatchHtml(KO_BRACKET.third, md, null, null); })()}
+              ${matchHtml(KO_BRACKET.third)}
             </div>
           </div>
         </div>
@@ -5416,13 +5416,14 @@
       } catch { return false; }
     }
 
-    function getKoWinnerFromData(matchNum) {
+    function getKoWinnerFromData(matchNum, loser = false) {
       const md = DATA?.matches?.find(m => m.id === matchNum);
       if (!md?.actual_score) return null;
       const [h, a] = md.actual_score.split('-').map(Number);
       let side = h > a ? 'home' : a > h ? 'away' : (md.qualifier || null);
       if (!side) return null;
-      const raw = side === 'home' ? md.home : md.away;
+      if (loser) side = side === 'home' ? 'away' : 'home';
+      const raw = (side === 'home' ? md.home : md.away) || KO_DATA[matchNum]?.[side];
       return raw ? parseTeam(raw).name : null;
     }
 
@@ -5434,8 +5435,9 @@
       // Derive from previous round results
       const feeds = KO_FEEDS[matchNum];
       if (feeds) {
-        const home = getKoWinnerFromData(feeds.home);
-        const away = getKoWinnerFromData(feeds.away);
+        const loser = feeds.loser || false;
+        const home = getKoWinnerFromData(feeds.home, loser);
+        const away = getKoWinnerFromData(feeds.away, loser);
         if (home || away) return { home: home || null, away: away || null };
       }
       return null;
@@ -5502,6 +5504,29 @@
         if (existingNext[next.side]) continue;
         KO_DATA[next.match] = { ...existingNext, [next.side]: winner };
         if (!ADMIN) koPatch(next.match, { [next.side]: winner });
+      }
+      // 3rd place match — write losers of both SFs
+      for (const [sfNum, side] of [[101, 'home'], [102, 'away']]) {
+        const md = matchById[sfNum];
+        const score = md?.actual_score || KO_DATA[sfNum]?.actual_score;
+        if (!score) continue;
+        const existing103 = KO_DATA[103] || {};
+        if (existing103[side]) continue;
+        const parts = score.split('-').map(Number);
+        if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) continue;
+        const teams = getKoTeams(sfNum);
+        let loserSide;
+        if (parts[0] !== parts[1]) {
+          loserSide = parts[0] > parts[1] ? 'away' : 'home';
+        } else {
+          const qualifier = md?.qualifier || KO_DATA[sfNum]?.qualifier;
+          if (!qualifier) continue;
+          loserSide = qualifier === 'home' ? 'away' : 'home';
+        }
+        const loser = teams?.[loserSide];
+        if (!loser) continue;
+        KO_DATA[103] = { ...existing103, [side]: loser };
+        if (!ADMIN) koPatch(103, { [side]: loser });
       }
     }
 
