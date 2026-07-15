@@ -2468,7 +2468,7 @@
             "timezone": "UTC+3",
             "venue": "Hard Rock Stadium, Miami Gardens",
             "home": "France",
-            "away": null,
+            "away": "England",
             "actual_score": null
         },
         {
@@ -2478,7 +2478,7 @@
             "timezone": "UTC+3",
             "venue": "MetLife Stadium, East Rutherford",
             "home": "Spain",
-            "away": null,
+            "away": "Argentina",
             "actual_score": null
         }
     ]
