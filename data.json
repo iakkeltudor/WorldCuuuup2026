@@ -2480,7 +2480,11 @@
             "venue": "MetLife Stadium, East Rutherford",
             "home": "Spain",
             "away": "Argentina",
-            "actual_score": null
+            "actual_score": "0-0",
+            "qualifier": "home",
+            "duration": "aet",
+            "final_score": "1-0",
+            "referee": "Slavko Vinčič (Slovenia)"
         }
     ]
 }
