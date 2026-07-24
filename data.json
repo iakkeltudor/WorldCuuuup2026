@@ -2458,7 +2458,8 @@
             "venue": "Mercedes-Benz Stadium, Atlanta",
             "home": "England",
             "away": "Argentina",
-            "actual_score": null
+            "actual_score": "1-2",
+            "referee": "Ismail Elfath (United States)"
         },
         {
             "id": 103,
@@ -2466,9 +2467,10 @@
             "time": "00:00",
             "timezone": "UTC+3",
             "venue": "Hard Rock Stadium, Miami Gardens",
-            "home": null,
-            "away": null,
-            "actual_score": null
+            "home": "France",
+            "away": "England",
+            "actual_score": "4-6",
+            "referee": "Jesús Valenzuela (Venezuela)"
         },
         {
             "id": 104,
@@ -2477,8 +2479,12 @@
             "timezone": "UTC+3",
             "venue": "MetLife Stadium, East Rutherford",
             "home": "Spain",
-            "away": null,
-            "actual_score": null
+            "away": "Argentina",
+            "actual_score": "0-0",
+            "qualifier": "home",
+            "duration": "aet",
+            "final_score": "1-0",
+            "referee": "Slavko Vinčič (Slovenia)"
         }
     ]
 }
