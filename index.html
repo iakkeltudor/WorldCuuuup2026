@@ -2796,7 +2796,8 @@
             else wrong++;
           }
         });
-        if (!LB_DATE && WINNER_DATA.actual && WINNER_DATA.predictions?.[player] === WINNER_DATA.actual) {
+        const tournWinner = getTournamentWinner();
+        if (!LB_DATE && tournWinner && WINNER_DATA.predictions?.[player] === tournWinner) {
           pts += 5;
         }
         const ppg = played > 0 ? (pts / played).toFixed(1) : '—';
@@ -5081,6 +5082,11 @@
       } catch {}
     }
 
+    function getTournamentWinner() {
+      if (WINNER_DATA.actual) return WINNER_DATA.actual;
+      return getKoWinnerFromData(104); // auto-derive from final result
+    }
+
     function winnerPredOpen() {
       const firstKoMs = (DATA?.matches || [])
         .filter(m => m.id >= 73 && m.date && m.time)
@@ -5156,7 +5162,7 @@
     }
 
     function _winnerPickCols(useNickname = true) {
-      const actual = WINNER_DATA.actual;
+      const actual = getTournamentWinner();
       const eliminated = actual ? null : getEliminatedTeams();
       return DATA.players.map(player => {
         const pred = WINNER_DATA.predictions?.[player] || null;
@@ -5185,7 +5191,7 @@
     function renderWinnerCard() {
       const myPlayer = CURRENT_USER?.playerName;
       const myPred = myPlayer ? (WINNER_DATA.predictions?.[myPlayer] || null) : null;
-      const actual = WINNER_DATA.actual;
+      const actual = getTournamentWinner();
       const isOpen = winnerPredOpen();
       const canSeeAll = !isOpen || !!myPred || !CURRENT_USER;
       const n = DATA.players.length;
@@ -5223,7 +5229,7 @@
     function renderWinnerSummary() {
       const el = document.getElementById('winner-summary');
       if (!el) return;
-      const actual = WINNER_DATA.actual;
+      const actual = getTournamentWinner();
       const isOpen = winnerPredOpen();
       const myPred = CURRENT_USER ? (WINNER_DATA.predictions?.[CURRENT_USER.playerName] || null) : null;
       const canSeeAll = !isOpen || !!myPred || !CURRENT_USER;
